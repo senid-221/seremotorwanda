@@ -8,6 +8,7 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "seed": "node scripts/seed.js",
+    "seed:locations": "node scripts/seed-locations.js",
     "test": "node test/smoke.js",
     "test:i18n": "node scripts/check-i18n.js",
     "test:dashboards": "node test/dashboards.js"
