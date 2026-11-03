@@ -1,9 +1,6 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/", "destination": "/index.html" }
-  ],
+  "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }],
   "functions": {
     "api/index.js": { "maxDuration": 60, "memory": 512 }
   }
