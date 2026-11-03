@@ -1140,6 +1140,20 @@ await check('rider document storage reports its real state', async () => {
   assert.equal(ticket.json.error, 'storage_not_configured');
 });
 
+/* A serverless bundle has no public/ on disk, so the landing page it serves comes from src/landing.js.
+   That copy is generated, and a generated copy is only trustworthy while something checks it. */
+await check('the traced landing copy matches public/index.html', async () => {
+  const { LANDING_HTML } = await import('../src/landing.js');
+  assert.equal(LANDING_HTML, fs.readFileSync(path.join(ROOT, 'public', 'index.html'), 'utf8'));
+});
+
+await check('the landing page answers the root path', async () => {
+  const res = await fetch(`${BASE}/`);
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type') || '', /text\/html/);
+  assert.match(await res.text(), /<html lang="(rw|en)">/);
+});
+
 await check('bad JSON and unknown routes fail cleanly', async () => {
   const broken = await api('/api/requests', { method: 'POST', raw: '{not json' });
   assert.equal(broken.status, 400);

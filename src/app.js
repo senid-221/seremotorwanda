@@ -47,6 +47,9 @@ app.get('/api/health', async (_req, res) => {
 });
 
 app.use(express.static(path.join(import.meta.dirname, '..', 'public'), { extensions: ['html'] }));
+/* Where the deploy has no public/ on disk — a serverless bundle — the landing page still has to answer
+   `/`, and this is the copy the bundler could trace. express.static wins wherever the files are there. */
+app.get('/', (_req, res) => res.type('html').send(LANDING_HTML));
 app.use(authRouter, driversRouter, fareRouter, adminRouter, passengerRouter, requestsRouter, paymentsRouter, webhooksRouter, kycRouter, locationsRouter);
 
 app.use((_req, res) => res.status(404).json({ error: 'not_found' }));

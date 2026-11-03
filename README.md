@@ -722,10 +722,15 @@ HOST=0.0.0.0 PORT=3000 PUBLIC_URL=https://your-domain.rw npm start
   Vercel puts these into `process.env` itself: there is no `.env` file in the build, `dotenv` finds nothing and
   the platform values are used as-is, so `.env` stays gitignored and never has to be uploaded. `PORT` and
   `HOST` are ignored — the runtime invokes the function. Node 22 is pinned in `package.json` because Vercel
-  only accepts an exact major. `functions."api/index.js".maxDuration` is 60 seconds because the first cold
-  start against an empty database inserts the 17,437 divisions; every later start just reads them. Neon holds
+  only accepts an exact major. Fill the database once from a checkout before the first deploy —
+  `npm run seed:locations` loads the 17,437 divisions, and the app only ever reads them back out of Postgres
+  after that, because a function bundle does not carry `data/locations.json`. `functions."api/index.js".maxDuration`
+  is 60 seconds for that same first boot, which also creates the fifteen tables; every later start just reads
+  them. Neon holds
   the data, so scale-to-zero is safe and nothing needs a disk beyond the checked-in `data/*.json`. Keep
   `DATABASE_POOL_MAX` at 10: each warm function keeps its own pool. Do not add `OTP_ECHO`.
+  `vercel.json` rewrites `/` to `/index.html` because with `trailingSlash: false` the static filesystem does not
+  answer the root path, and an unmatched `/` falls through to the function, which has no pages to serve.
   Paystack and MoMo verify their signature over the raw bytes; Vercel may hand the function an already-parsed
   body, so `src/routes/webhooks.js` falls back to re-serialising `req.body`, which reproduces the compact JSON
   both providers post.
