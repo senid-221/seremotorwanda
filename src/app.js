@@ -16,9 +16,11 @@ import kycRouter from './routes/kyc.js';
 import locationsRouter from './routes/locations.js';
 import { divisionHealth, ensureSeeded } from './locations.js';
 import { storageHealth } from './storage.js';
+import { LANDING_HTML } from './landing.js';
 
 const app = express();
-/* The 17,437 Rwandan divisions go into the database the first time it is opened without them. */
+/* A host with a disk seeds the division register into an empty database itself; a serverless bundle has no
+   data/locations.json to read, so run `npm run seed:locations` once against it instead. */
 await ensureSeeded();
 app.disable('x-powered-by');
 app.use(express.json({
@@ -46,10 +48,11 @@ app.get('/api/health', async (_req, res) => {
   });
 });
 
-app.use(express.static(path.join(import.meta.dirname, '..', 'public'), { extensions: ['html'] }));
-/* Where the deploy has no public/ on disk — a serverless bundle — the landing page still has to answer
-   `/`, and this is the copy the bundler could trace. express.static wins wherever the files are there. */
+/* The landing page is served from src/landing.js rather than from public/index.html, because a serverless
+   bundle only carries what the JS import graph reaches — and Vercel routes `/` to this function anyway.
+   One code path, so the test suite exercises the copy a customer actually gets. */
 app.get('/', (_req, res) => res.type('html').send(LANDING_HTML));
+app.use(express.static(path.join(import.meta.dirname, '..', 'public'), { extensions: ['html'] }));
 app.use(authRouter, driversRouter, fareRouter, adminRouter, passengerRouter, requestsRouter, paymentsRouter, webhooksRouter, kycRouter, locationsRouter);
 
 app.use((_req, res) => res.status(404).json({ error: 'not_found' }));

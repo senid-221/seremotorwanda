@@ -294,7 +294,8 @@ which features will answer 503.
 4. The schema creates itself: `src/db.js` runs `src/schema.js` on boot, and the statement is idempotent
    (`CREATE TABLE IF NOT EXISTS`, named constraints), so the first boot on an empty database builds all
    fifteen tables and later boots change nothing.
-5. `npm run seed` loads the division tree and guarantees the `ADMIN_PHONE` admin account.
+5. `npm run seed:locations` loads the 17,437-row division tree from `data/locations.json`, and `npm run seed`
+   guarantees the `ADMIN_PHONE` admin account. Both are safe to re-run.
 
 There is no MySQL/SQLite mode and no file to back up — Neon keeps its own point-in-time history, which is
 what "Restore" in the console uses.
@@ -729,8 +730,10 @@ HOST=0.0.0.0 PORT=3000 PUBLIC_URL=https://your-domain.rw npm start
   them. Neon holds
   the data, so scale-to-zero is safe and nothing needs a disk beyond the checked-in `data/*.json`. Keep
   `DATABASE_POOL_MAX` at 10: each warm function keeps its own pool. Do not add `OTP_ECHO`.
-  `vercel.json` rewrites `/` to `/index.html` because with `trailingSlash: false` the static filesystem does not
-  answer the root path, and an unmatched `/` falls through to the function, which has no pages to serve.
+  `vercel.json` keeps `cleanUrls` plus the `/api/(.*)` rewrite — without that rewrite the function stops
+  answering anything under `/api`. Vercel does not bind `/` to `public/index.html` either, so the landing page
+  is served by `src/app.js` from `src/landing.js`, a generated copy of the same HTML that the bundler can
+  trace. Edit `public/index.html`, then run `npm run landing`; the smoke suite fails if the two drift apart.
   Paystack and MoMo verify their signature over the raw bytes; Vercel may hand the function an already-parsed
   body, so `src/routes/webhooks.js` falls back to re-serialising `req.body`, which reproduces the compact JSON
   both providers post.
