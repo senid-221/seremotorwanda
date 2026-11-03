@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }],
   "functions": {
-    "api/index.js": { "maxDuration": 60, "memory": 512 }
+    "api/index.js": {
+      "maxDuration": 60,
+      "memory": 512,
+      "includeFiles": ["src/schema.sql"]
+    }
   }
 }
