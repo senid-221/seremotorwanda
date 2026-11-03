@@ -1,7 +1,11 @@
-/* SERE Moto — Neon Postgres schema. Bootstrapped by src/db.js on every start; every statement is
+/* SERE Moto - Neon Postgres schema. Applied by src/db.js on every start; every statement is
    idempotent, so an existing database is upgraded rather than recreated.
 
-   Timestamps stay TEXT in the same 'YYYY-MM-DD HH24:MI:SS' format the API has always returned.
+   This was src/schema.sql, read with fs at boot. A Vercel function is bundled by following the JS
+   import graph, so a non-JS asset that merely sits next to the code never reached /var/task and the
+   app crashed before it could answer a request. An import is traced; a filesystem path is not. */
+export const SCHEMA_SQL = `
+/* Timestamps stay TEXT in the same 'YYYY-MM-DD HH24:MI:SS' format the API has always returned.
    datetime(value, ...modifiers) is a compatibility function for the SQLite call sites the queries
    were written against: it accepts 'now', numeric offsets such as '+2 hours' or '-30 minutes',
    'start of day' and 'start of month', and always works in UTC. */
@@ -228,7 +232,7 @@ CREATE TABLE IF NOT EXISTS webhook_events (
 
 /* What RRA, NIDA and the number-check service answered, keyed by the value asked about.
    A verdict is reused for 24 hours so an application is never billed twice for one lookup,
-   and `note` keeps what the provider actually returned when it said no. */
+   and \`note\` keeps what the provider actually returned when it said no. */
 CREATE TABLE IF NOT EXISTS tin_checks (
   tin        TEXT    PRIMARY KEY,
   valid      INTEGER NOT NULL,
@@ -273,3 +277,4 @@ CREATE TABLE IF NOT EXISTS locations (
 
 CREATE INDEX IF NOT EXISTS idx_locations_parent ON locations (parent_code, name);
 CREATE INDEX IF NOT EXISTS idx_locations_level  ON locations (level, name);
+`;

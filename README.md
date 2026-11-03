@@ -291,7 +291,7 @@ which features will answer 503.
    connection limit.
 3. Keep `?sslmode=require`. The `pg` driver uses it automatically; `DATABASE_SSL` is only needed to force
    `no-verify` against a self-signed proxy. `DATABASE_POOL_MAX` (default 10) is the per-process pool size.
-4. The schema creates itself: `src/db.js` runs `src/schema.sql` on boot, and the statement is idempotent
+4. The schema creates itself: `src/db.js` runs `src/schema.js` on boot, and the statement is idempotent
    (`CREATE TABLE IF NOT EXISTS`, named constraints), so the first boot on an empty database builds all
    fifteen tables and later boots change nothing.
 5. `npm run seed` loads the division tree and guarantees the `ADMIN_PHONE` admin account.
@@ -667,7 +667,7 @@ The Neon database holds fifteen tables: `drivers`, `passengers`, `passenger_plac
 `pending` → `uploaded` status), the OpenStreetMap caches
 `places` (name + anchor → coordinates) and `routes` (pair → distance), the three register verdict caches
 `tin_checks`, `id_checks` and `phone_checks`, and the read-only `locations` tree. There is no database file:
-the schema lives in `src/schema.sql` and is applied on every boot, idempotently, against whatever
+the schema lives in `src/schema.js` and is applied on every boot, idempotently, against whatever
 `DATABASE_URL` points at — Neon's own point-in-time history is the backup. `data/locations.json` and
 `data/division-coords.json` are committed: they are the app's geography, and a deploy without them has no
 divisions to offer. Every driver row carries the picked division as `loc_code` plus the leaf's level and its
@@ -681,9 +681,9 @@ answer could not be parsed, and `checked_at` — so an audit can always say *who
 re-check does not pay for the same lookup twice inside its window.
 
 Timestamps stay ISO-like UTC text (`YYYY-MM-DD HH24:MI:SS`) rather than `timestamptz`, because the whole API
-and both frontends already speak that format; `src/schema.sql` installs a small PL/pgSQL `datetime(text,
+and both frontends already speak that format; `src/schema.js` installs a small PL/pgSQL `datetime(text,
 VARIADIC text[])` shim so the existing `datetime('now')` / `datetime('now', '-24 hours')` calls keep their
-meaning on Postgres. There is no migration step: `src/schema.sql` is written as `CREATE TABLE IF NOT EXISTS`
+meaning on Postgres. There is no migration step: `src/schema.js` is written as `CREATE TABLE IF NOT EXISTS`
 with named constraints, so applying it to an existing Neon database is a no-op and a redeploy never needs a
 dump-and-restore.
 

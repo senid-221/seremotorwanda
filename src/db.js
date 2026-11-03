@@ -1,13 +1,12 @@
 /* SERE Moto — Neon Postgres data layer.
    Every query in this project was written against SQLite's `?` placeholders and synchronous
    prepare/run calls. This module keeps those call sites readable: `?` is translated to `$n`,
-   timestamps stay the same TEXT format (see the datetime() shim in schema.sql), and the exported
+   timestamps stay the same TEXT format (see the datetime() shim in schema.js), and the exported
    helpers are async so routes can await them. */
-import fs from 'node:fs';
-import path from 'node:path';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import pg from 'pg';
 import { config } from './config.js';
+import { SCHEMA_SQL } from './schema.js';
 
 const { Pool, types } = pg;
 
@@ -137,8 +136,7 @@ const ensureColumns = async (table, additions) => {
 };
 
 const bootstrap = async () => {
-  const schema = fs.readFileSync(path.join(import.meta.dirname, 'schema.sql'), 'utf8');
-  await pool.query(schema);
+  await pool.query(SCHEMA_SQL);
 
   await ensureColumns('drivers', [
     ['lat', 'DOUBLE PRECISION'],
