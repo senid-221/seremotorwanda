@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="rw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SERE Moto — Injira / Log in</title>
+<meta name="description" content="Injira kuri konti ya motari wa SERE Moto ukoresheje code ya telefone. Log in to your SERE Moto driver account with a phone code.">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23d97706'/><circle cx='10' cy='22' r='4' fill='white'/><circle cx='23' cy='22' r='4' fill='white'/><path d='M10 22l4-8h6l3 8' stroke='white' stroke-width='2.5' fill='none'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/auth.css">
+</head>
+<body data-page="login">
+<a class="skip" href="#slab" data-i18n="c.skip">Jya ku bwanditsi</a>
+
+<!-- night-shift dispatch field: slow light + Kigali hills + moto line-art -->
+<div class="bg" aria-hidden="true">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <svg class="hills" viewBox="0 0 1440 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <path class="ridges" d="M0 236 C132 178 246 170 358 206 C474 244 566 248 684 210 C802 172 902 150 1014 180 C1132 212 1304 240 1440 216"/>
+    <path class="ridges-2" d="M0 272 C162 240 274 232 396 262 C522 292 644 292 782 262 C920 232 1054 228 1182 254 C1284 274 1364 280 1440 272"/>
+    <g class="moto" transform="translate(1096 250)">
+      <circle cx="0" cy="0" r="7.5"/>
+      <circle cx="31" cy="0" r="7.5"/>
+      <path d="M0 0 L10 -13 H22 L31 0"/>
+      <path d="M10 -13 L6 -21 H17"/>
+      <path d="M22 -13 L27 -22 H34"/>
+    </g>
+  </svg>
+</div>
+
+<div class="page">
+  <header id="appbar"></header>
+
+  <main class="wrap split">
+    <!-- visual panel: one short line only, image + navy grade (desktop) -->
+    <aside class="stage">
+      <div class="stage-in">
+        <span class="stage-rule" aria-hidden="true"></span>
+        <p class="stage-line" data-i18n="c.stageLine">Kigali · ijoro n'amanywa</p>
+      </div>
+    </aside>
+
+    <section class="slab" id="slab">
+      <div class="hd">
+        <span class="eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>
+          <span data-i18n="lg.eyebrow">Injira ya motari</span>
+        </span>
+        <h1 class="title" data-i18n="lg.title">Injira kuri konti</h1>
+        <p class="lede" data-i18n="lg.lede">Dohora telefone yawe, twandikire code y'imibare 6.</p>
+      </div>
+
+      <p class="msg msg-info" id="alreadyIn" hidden aria-live="polite"><span data-i18n="lg.alreadyIn">Urafiye konti? Injira ukoresheje /.</span></p>
+
+      <div class="steps-hd" id="stepHd">
+        <i id="hdStep1" class="on"><span class="n">1</span><span data-i18n="lg.step1">Telefone</span></i>
+        <span class="bar" aria-hidden="true"></span>
+        <i id="hdStep2"><span class="n">2</span><span data-i18n="lg.step2">Emeza</span></i>
+      </div>
+
+      <!-- step 1 — phone -->
+      <div class="step" id="stPhone">
+        <form id="frmPhone" novalidate autocomplete="on">
+          <div class="field" id="fldPhone">
+            <label for="inPhone" data-i18n="lg.phone">Telefone</label>
+            <input id="inPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national"
+                   maxlength="14">
+            <p class="err" id="errPhone" hidden aria-live="polite"></p>
+          </div>
+          <button class="btn btn-p btn-block" id="btnSend" type="submit">
+            <span data-i18n="lg.send">Ohereza code</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="M12 5.5 18.5 12 12 18.5"/></svg>
+          </button>
+        </form>
+        <p class="msg msg-err" id="sendMsg" hidden role="alert"></p>
+
+        <div class="google" id="googleBox" hidden>
+          <p class="sep" data-i18n="lg.or">cyangwa</p>
+          <div class="gsi-slot" id="gsiSlot"></div>
+        </div>
+      </div>
+
+      <!-- step 2 — OTP -->
+      <div class="step" id="stCode" hidden>
+        <p class="okline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a10 10 0 0 0 4.5 4.5l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z"/></svg>
+          <span class="grow" id="codeTo">Twohereje code kuri 0788123456</span>
+          <button class="mini" type="button" id="btnBack" data-i18n="lg.change">Hindura numero</button>
+        </p>
+
+        <div class="field">
+          <span class="lbl" id="otpLbl" data-i18n="lg.code">Code y'emeza</span>
+          <div id="otpHost"></div>
+          <p class="hint" id="codeHint" data-i18n="lg.codeHint">Imibare 6. Code irangira nyuma y'iminota 5.</p>
+          <div class="otp-meta">
+            <button class="mini" type="button" id="btnResend" data-i18n="lg.resend">Ongera wohereze</button>
+            <span class="countdown" id="resendTxt" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <button class="btn btn-p btn-block" id="btnVerify" type="button">
+          <span data-i18n="lg.verify">Emeza code</span>
+        </button>
+        <p class="msg msg-err" id="codeErr" hidden role="alert"></p>
+      </div>
+
+      <!-- state — approved -->
+      <div class="step" id="stOk" hidden>
+        <div class="done">
+          <svg class="tick" viewBox="0 0 80 80" aria-hidden="true">
+            <circle cx="40" cy="40" r="36"/>
+            <circle class="ring" cx="40" cy="40" r="36"/>
+            <path d="M24 41.5 35 52 57 28"/>
+          </svg>
+          <h2 data-i18n="lg.entering">Byakiriye — urimo kwinjira…</h2>
+          <p id="okName"></p>
+        </div>
+      </div>
+
+      <!-- state — waiting for admin approval (no token is stored) -->
+      <div class="step" id="stWait" hidden>
+        <div class="panel-wait">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h3 id="waitTitle" data-i18n="lg.waitTitle">Tegereza emeza ya admin</h3>
+            <p id="waitBody"></p>
+            <p class="hint" data-i18n="lg.waitNote">Gerageza kandi ukoresheje iyi numero igihe cyemejwe.</p>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-p" href="/"><span data-i18n="c.home">Ahabanza</span></a>
+          <a class="btn btn-ghost" href="https://wa.me/250780000000" target="_blank" rel="noopener"><span data-i18n="c.footWa">Ubufasha kuri WhatsApp</span></a>
+        </div>
+      </div>
+
+      <!-- state — phone verified but no account yet -->
+      <div class="step" id="stNew" hidden>
+        <div class="msg msg-wait" id="newMsg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.6h.01"/></svg>
+          <span>
+            <b data-i18n="lg.newTitle">Iyi numero ntabwo ifite konti</b><br>
+            <span id="newBody"></span>
+          </span>
+        </div>
+        <div class="actions">
+          <a class="btn btn-p" id="newLink" href="/signup"><span data-i18n="lg.newCta">Fungura konti</span></a>
+          <a class="btn btn-quiet" href="/"><span data-i18n="c.home">Ahabanza</span></a>
+        </div>
+      </div>
+
+      <!-- state — application rejected -->
+      <div class="step" id="stReject" hidden>
+        <p class="msg msg-err" id="rejMsg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5"/><circle cx="12" cy="17" r=".7" fill="currentColor"/><path d="M10.3 3.9 2.6 17.4A1.9 1.9 0 0 0 4.3 20.3h15.4a1.9 1.9 0 0 0 1.7-2.9L13.7 3.9a1.9 1.9 0 0 0-3.4 0Z"/></svg>
+          <span><b id="rejTitle" data-i18n="lg.rejTitle">Application yawe ntiyemejwe</b></span>
+        </p>
+        <p class="lede" id="rejBody"></p>
+        <p class="app-reason" id="rejReason"></p>
+        <p class="hint" data-i18n="lg.rejHelp">Ushobora kwandikisha ukoresheje izindi nyandiko cyangwa ukavugana na SERE Moto.</p>
+        <div class="actions">
+          <a class="btn btn-p" href="/guide" target="_blank" rel="noopener"><span data-i18n="c.navSignup">Iyandikishe</span></a>
+          <a class="btn btn-quiet" href="/"><span data-i18n="c.home">Ahabanza</span></a>
+        </div>
+      </div>
+
+      <p class="foot">
+        <span data-i18n="lg.noAccount">Ntabwo ufite konti?</span>
+        <a class="link" href="/signup" data-i18n="lg.signupLink">Iyandikishe hano</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="pfoot wrap">
+    <p><span id="rights">© 2026 SERE Moto · Kigali, Rwanda</span></p>
+    <p><a class="pflink" href="https://wa.me/250780000000" target="_blank" rel="noopener" data-i18n="c.footWa">Ubufasha kuri WhatsApp</a></p>
+  </footer>
+</div>
+
+<script src="/assets/auth.js"></script>
+</body>
+</html>

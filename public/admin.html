@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="rw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SERE Moto — Admin</title>
+<meta name="description" content="SERE Moto admin: emeza cyangwa wanse ibyifuzo by'abamotari ukurikije inyandiko za KYC. Approve or reject SERE Moto driver applications.">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="color-scheme" content="dark light">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23d97706'/><circle cx='10' cy='22' r='4' fill='white'/><circle cx='23' cy='22' r='4' fill='white'/><path d='M10 22l4-8h6l3 8' stroke='white' stroke-width='2.5' fill='none'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/auth.css">
+</head>
+<body data-page="admin">
+<a class="skip" href="#slab" data-i18n="c.skip">Jya ku bwanditsi</a>
+
+<div class="bg" aria-hidden="true">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <svg class="hills" viewBox="0 0 1440 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <path class="ridges" d="M0 236 C132 178 246 170 358 206 C474 244 566 248 684 210 C802 172 902 150 1014 180 C1132 212 1304 240 1440 216"/>
+    <path class="ridges-2" d="M0 272 C162 240 274 232 396 262 C522 292 644 292 782 262 C920 232 1054 228 1182 254 C1284 274 1364 280 1440 272"/>
+    <g class="moto" transform="translate(1096 250)">
+      <circle cx="0" cy="0" r="7.5"/>
+      <circle cx="31" cy="0" r="7.5"/>
+      <path d="M0 0 L10 -13 H22 L31 0"/>
+      <path d="M10 -13 L6 -21 H17"/>
+      <path d="M22 -13 L27 -22 H34"/>
+    </g>
+  </svg>
+</div>
+
+<div class="page">
+  <header id="appbar"></header>
+
+  <main class="wrap main-admin">
+    <section class="slab wide" id="slab">
+      <div class="hd admin-hd">
+        <div class="grow">
+          <span class="eyebrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+            <span data-i18n="ad.eyebrow">SERE Moto admin</span>
+          </span>
+          <h1 class="title" data-i18n="ad.title">Ibyifuzo bya motari</h1>
+          <p class="lede" data-i18n="ad.lede">Emeza cyangwa wanse application ukurikije inyandiko za KYC.</p>
+        </div>
+        <div class="tools">
+          <button class="btn btn-quiet btn-s" type="button" id="btnRefresh" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg>
+            <span data-i18n="c.refresh">Vugurura</span>
+          </button>
+          <button class="btn btn-no btn-s" type="button" id="btnLogout" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M15 5.5 20.5 12 15 18.5"/><path d="M4 12h15"/></svg>
+            <span data-i18n="ad.logout">Sohoka</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- gate: no session / not an admin / passenger session -->
+      <div class="gate" id="gate" hidden>
+        <div class="ic" id="gateIcon" aria-hidden="true"></div>
+        <h2 id="gateTitle"></h2>
+        <p id="gateBody"></p>
+        <p class="actions">
+          <button class="btn btn-p" type="button" id="gateCta">Injira nonaha</button>
+        </p>
+      </div>
+
+      <div id="area" hidden>
+        <p class="msg" id="boardMsg" hidden role="status" aria-live="polite"></p>
+        <p class="msg msg-err" id="errMsg" hidden role="alert"></p>
+
+        <div class="tabs x5" id="tabs" role="tablist" aria-label="SERE Moto admin">
+          <button type="button" role="tab" data-tab="overview" aria-selected="true"><span data-i18n="ad.tabOverview">Incamake</span><em></em></button>
+          <button type="button" role="tab" data-tab="apps" aria-selected="false"><span data-i18n="ad.tabApps">Ibyifuzo</span><em id="cntApps"></em></button>
+          <button type="button" role="tab" data-tab="riders" aria-selected="false"><span data-i18n="ad.tabRiders">Abamotari</span><em id="cntRiders"></em></button>
+          <button type="button" role="tab" data-tab="trips" aria-selected="false"><span data-i18n="ad.tabTrips">Inzira</span><em id="cntTrips"></em></button>
+          <button type="button" role="tab" data-tab="payments" aria-selected="false"><span data-i18n="ad.tabPayments">Amafaranga</span><em></em></button>
+          <button type="button" role="tab" data-tab="passengers" aria-selected="false"><span data-i18n="ad.tabPassengers">Abakiriya</span><em></em></button>
+        </div>
+
+        <div id="panel" aria-live="polite"></div>
+
+        <p class="admfoot">
+          <span data-i18n="ad.you">Uwemeza</span>: <b id="meName">—</b>
+          <span class="dotsep" aria-hidden="true">·</span>
+          <span data-i18n="ad.sTotal">Zose</span>: <b id="totalCount">—</b>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <datalist id="zoneList"></datalist>
+
+  <footer class="pfoot wrap">
+    <p><span id="rights">© 2026 SERE Moto · Kigali, Rwanda</span></p>
+    <p><a class="pflink" href="https://wa.me/250780000000" target="_blank" rel="noopener" data-i18n="c.footWa">Ubufasha kuri WhatsApp</a></p>
+  </footer>
+</div>
+
+<script src="/assets/auth.js"></script>
+<script src="/assets/divisions.js"></script>
+<script src="/assets/admin.js"></script>
+</body>
+</html>

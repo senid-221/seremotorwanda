@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SERE Moto — Uko bikora / How it works</title>
+<style>
+:root{--navy:#1e3a8a;--navy-2:#172554;--bg:#f8fafc;--line:#e2e8f0;--ink:#0f172a;--ink-soft:#475569;--white:#fff;--r:14px;--r-s:11px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px}
+header{background:var(--navy-2);color:var(--white);position:sticky;top:0;z-index:5}
+.hd{display:flex;align-items:center;gap:10px;padding:9px 0}
+.logo{display:flex;align-items:center;gap:8px}
+.logo svg{width:26px;height:26px;flex:none}
+.logo b{font-size:16px;letter-spacing:-.2px}
+.nav{margin-left:auto;display:flex;align-items:center;gap:4px}
+.back{background:transparent;border:0;color:#dbe4ff;padding:5px 7px;border-radius:8px;font-weight:700;font-size:12.5px;line-height:1.4;white-space:nowrap;text-decoration:none}
+.back:hover{background:var(--navy);color:var(--white)}
+.lang{display:flex;background:var(--navy);border-radius:7px;padding:2px;gap:1px;margin-left:auto}
+.lang button{border:0;background:transparent;color:#dbe4ff;font-size:10.5px;font-weight:800;padding:3px 0;flex:0 0 30px;text-align:center;border-radius:5px;line-height:1.2}
+.lang button[aria-pressed="true"]{background:var(--white);color:var(--navy)}
+main{padding:14px 0 26px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px;scroll-margin-top:64px}
+.card h2{margin:0 0 2px;font-size:16.5px;letter-spacing:-.2px;display:flex;align-items:center;gap:8px}
+.badge{flex:none;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.card p.lead{margin:0 0 10px;color:var(--ink-soft);font-size:12.5px}
+ol{margin:0;padding-left:20px}
+li{margin-bottom:6px;font-size:13.5px}
+.note{margin-top:10px;border-radius:var(--r-s);padding:9px 11px;font-size:12.5px;border:1px solid transparent}
+.s-navy{background:#eff6ff;border-color:#dbeafe;color:#1e3a8a}
+.s-green{background:#f0fdf4;border-color:#dcfce7;color:#14532d}
+.s-amber{background:#fffbeb;border-color:#fde68a;color:#78350f}
+.s-violet{background:#f5f3ff;border-color:#ddd6fe;color:#4c1d95}
+.b-navy{background:#1e3a8a}.b-green{background:#15803d}.b-amber{background:#b45309}.b-violet{background:#6d28d9}
+.foot{font-size:12.5px;color:var(--ink-soft);text-align:center;padding:4px 0 0}
+@media (max-width:430px){.logo b{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hd">
+    <div class="logo">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="10" cy="22" r="4.4" fill="#fff"/><circle cx="23" cy="22" r="4.4" fill="#fff"/><path d="M10 22l4-8h6l3 8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M14 14h7" stroke="#f6c17a" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <b>SERE Moto</b>
+    </div>
+    <nav class="nav">
+      <a class="back" href="/" data-i18n="site">← Subiza ku rupapuro</a>
+      <span class="lang" role="group" aria-label="Language">
+        <button data-lang="rw" aria-pressed="true">RW</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="card" id="register">
+    <h2><span class="badge b-navy">1</span><span data-i18n="reg.t">Fungura konti ya motari</span></h2>
+    <p class="lead" data-i18n="reg.lead">Kuri motari: nta payment — umuyobozi wa SERE Moto ni we ukwemeza.</p>
+    <ol>
+      <li data-i18h="reg.1">Ku rupapuro, kanda <b>Ndi Motari</b> hejuru.</li>
+      <li data-i18h="reg.2">Uzuza <b>Amazina</b>, <b>Indangamuntu</b> (imibare 16), <b>TIN</b>, <b>Plaque</b> (RAB 123 A) na <b>Telefone</b> (07xxxxxxxx).</li>
+      <li data-i18h="reg.3">Hitamo <b>Ubwoko bw'ikinyabiziga</b>: Moto cyangwa Imodoka/Taksi.</li>
+      <li data-i18h="reg.4">Kanda <b>Ohereza code kuri telefone</b>, wandike <b>code y'imibare 6</b> wahawe, ukande <b>Emeza code</b>.</li>
+      <li data-i18h="reg.5">Kanda <b>Ohereza application</b> — ibi bikora iyo telefone yamaze kwemezwa.</li>
+      <li data-i18h="reg.6">Application iba <b>itegereje kwemezwa</b>. Hanyuma kuri <b>Urubuga rw'umumotari</b> hitamo <b>Aho ukorera</b> (intara → akarere → umurenge → akagari). Umuyobozi ashyiraho serivise (moto zishyurwa ku giciro cya RURA; imodoka zishyiraho RWF/km), akayemeza cyangwa akayitera igiti avuga impamvu.</li>
+    </ol>
+    <p class="note s-navy" data-i18h="reg.note">Kwinjira nyuma: <b>Injira</b> → telefone + code ya SMS. Nta jamo ry'ibanga rikenewe. Iyo umaze kwemezwa, <b>Urubuga rw'umumotari</b> rufunguka.</p>
+  </div>
+
+  <div class="card" id="find">
+    <h2><span class="badge b-green">2</span><span data-i18n="find.t">Shaka motari cyangwa taxi</span></h2>
+    <p class="lead" data-i18n="find.lead">Kuri wowe ukeneye: nta konti ikenewe kugira ngo ushake.</p>
+    <ol>
+      <li data-i18h="find.1">Kanda <b>Nshaka Motari</b> hejuru.</li>
+      <li data-i18h="find.2">Kanda <b>Hafi yanjye · 25 km</b> — urutonde ruhita rwerekana abamotari bari hafi yawe kandi bateguye.</li>
+      <li data-i18h="find.3">Ushobora no gushakisha uhereye kuri <b>Aho uvuye</b> (intara → akarere → umurenge), ku <b>bwoko</b> (Moto / Imodoka) cyangwa ku <b>serivise</b>.</li>
+      <li data-i18h="find.4">Buri kadi yerekana amanota, intera iri hagati yanyu, ikimenyetso cya <b>LIVE</b> n'igiciro. Izina ry'umurenge werekanwe ni aho telefone yabo iheruka kugaragara — ni <i>hafi</i> yawo, si muri wo neza.</li>
+      <li data-i18h="find.5">Umupingu utwaye umugenzi werekanwa nk'<b>Afite umugenzi</b>; <b>Ntwara</b> kurwo rupapuro ntikora.</li>
+    </ol>
+    <p class="note s-green" data-i18n="find.note">Nta n'umwe ugaragara hafi? Abamotari bakoresha GPS gusa iyo app yabo ifunguye — gerageza akarere kandi.</p>
+  </div>
+
+  <div class="card" id="send">
+    <h2><span class="badge b-amber">3</span><span data-i18n="send.t">Ntwara</span></h2>
+    <p class="lead" data-i18n="send.lead">Demand ibikwa, WhatsApp igahita ifunguka ifite ubutumwa bwanditse.</p>
+    <ol>
+      <li data-i18h="send.1">Kanda <b>Ntwara</b> ku motari wahisemo — idirishya ryo kwuzuza rirafunguka.</li>
+      <li data-i18h="send.2">Uzuza <b>Izina ryawe</b> na <b>Telefone</b> kugira ngo motari ikubaze.</li>
+      <li data-i18h="send.3">Hitamo <b>Icyo ushaka</b>: Gutwarwa (abagenzi) cyangwa Kohereza Imizigo (Derivari).</li>
+      <li data-i18h="send.4">Andika <b>Uva</b> na <b>Ujya</b> — intera ibarwa ku mihanda nyayo (OpenStreetMap); niba izina ry'ahantu ritabonetse, shyiramo <b>Intera (km)</b> ubwawe.</li>
+      <li data-i18h="send.5">Kanda <b>Ntwara</b>. Ushobora no guhita uhamagara ukoresheje <b>Hamagara</b>.</li>
+      <li data-i18h="send.6">Umumotari yemera cyangwa akanira kuri <b>Urubuga rw'umumotari</b> — akanda <b>Emera</b> cyangwa <b>Inga</b> kuri tabi ya <b>Ziriho</b>.</li>
+    </ol>
+    <p class="note s-amber" data-i18n="send.note">Igiciro cy'umupingu kigenwa na RURA: 400 RWF kuri km 2 za mbere, 117 RWF/km kugeza kuri 40 km, 187 RWF/km iyo byarenze; iminota 10 ya mbere yo gutegereza ni ubuntu. Urugero: 5,5 km = 810 RWF.</p>
+  </div>
+
+  <div class="card" id="pay">
+    <h2><span class="badge b-violet">4</span><span data-i18n="pay.t">Kwishyura nyuma y'urugendo</span></h2>
+    <p class="lead" data-i18n="pay.lead">Ubwishyura butangizwa n'uwatwawe iyo urugendo rwemejwe cyangwa narwo rurarangiye.</p>
+    <ol>
+      <li data-i18h="pay.1">Muri <b>Ibyange</b>, kuri tabi ya <b>Inzira</b>, kanda <b>Kwishyura</b> ku rugendo.</li>
+      <li data-i18h="pay.2">Hitamo <b>MTN MoMo</b> (telefone yishyura) cyangwa <b>Karita</b> (Paystack — imeyili).</li>
+      <li data-i18h="pay.3">Kanda <b>Fungura urupapa rw'ishyura</b>. MoMo igusaba kwemeza kuri telefone yawe.</li>
+      <li data-i18h="pay.4">Ikarita y'urugendo ihita yerekana <b>Byishyuwe</b> cyangwa <b>Birategereje</b>.</li>
+      <li data-i18h="pay.5">Umumotari ubwe abona amafaranga ye kuri tabi ya <b>Amafaranga</b> ho kuri <b>Urubuga rw'umumotari</b>.</li>
+    </ol>
+    <p class="note s-violet" data-i18h="pay.note">Platform ikuramo 5% by'igiciro; motari ikagumana 95%. Umumotari awkanda <b>Rangiza urugendo</b> ahita aba offline — yongera kuboneka iyo akoze <b>Nditeguye</b>.</p>
+  </div>
+
+  <p class="foot" data-i18n="foot">Ikibazo? Tweranda kuri WhatsApp: 0780000000.</p>
+</main>
+
+<script>
+var DICT = {
+  rw: {
+    site:"← Subiza ku rupapuro",
+    "reg.t":"Fungura konti ya motari","reg.lead":"Kuri motari: nta payment — umuyobozi wa SERE Moto ni we ukwemeza.",
+    "reg.1":"Ku rupapuro, kanda <b>Ndi Motari</b> hejuru.",
+    "reg.2":"Uzuza <b>Amazina</b>, <b>Indangamuntu</b> (imibare 16), <b>TIN</b>, <b>Plaque</b> (RAB 123 A) na <b>Telefone</b> (07xxxxxxxx).",
+    "reg.3":"Hitamo <b>Ubwoko bw'ikinyabiziga</b>: Moto cyangwa Imodoka/Taksi.",
+    "reg.4":"Kanda <b>Ohereza code kuri telefone</b>, wandike <b>code y'imibare 6</b> wahawe, ukande <b>Emeza code</b>.",
+    "reg.5":"Kanda <b>Ohereza application</b> — ibi bikora iyo telefone yamaze kwemezwa.",
+    "reg.6":"Application iba <b>itegereje kwemezwa</b>. Hanyuma kuri <b>Urubuga rw'umumotari</b> hitamo <b>Aho ukorera</b> (intara → akarere → umurenge → akagari). Umuyobozi ashyiraho serivise (moto zishyurwa ku giciro cya RURA; imodoka zishyiraho RWF/km), akayemeza cyangwa akayitera igiti avuga impamvu.",
+    "reg.note":"Kwinjira nyuma: <b>Injira</b> → telefone + code ya SMS. Nta jamo ry'ibanga rikenewe. Iyo umaze kwemezwa, <b>Urubuga rw'umumotari</b> rufunguka.",
+    "find.t":"Shaka motari cyangwa taxi","find.lead":"Kuri wowe ukeneye: nta konti ikenewe kugira ngo ushake.",
+    "find.1":"Kanda <b>Nshaka Motari</b> hejuru.",
+    "find.2":"Kanda <b>Hafi yanjye · 25 km</b> — urutonde ruhita rwerekana abamotari bari hafi yawe kandi bateguye.",
+    "find.3":"Ushobora no gushakisha uhereye kuri <b>Aho uvuye</b> (intara → akarere → umurenge), ku <b>bwoko</b> (Moto / Imodoka) cyangwa ku <b>serivise</b>.",
+    "find.4":"Buri kadi yerekana amanota, intera iri hagati yanyu, ikimenyetso cya <b>LIVE</b> n'igiciro. Izina ry'umurenge werekanwe ni aho telefone yabo iheruka kugaragara — ni <i>hafi</i> yawo, si muri wo neza.",
+    "find.5":"Umupingu utwaye umugenzi werekanwa nk'<b>Afite umugenzi</b>; <b>Ntwara</b> kurwo rupapuro ntikora.",
+    "find.note":"Nta n'umwe ugaragara hafi? Abamotari bakoresha GPS gusa iyo app yabo ifunguye — gerageza akarere kandi.",
+    "send.t":"Ntwara","send.lead":"Demand ibikwa, WhatsApp igahita ifunguka ifite ubutumwa bwanditse.",
+    "send.1":"Kanda <b>Ntwara</b> ku motari wahisemo — idirishya ryo kwuzuza rirafunguka.",
+    "send.2":"Uzuza <b>Izina ryawe</b> na <b>Telefone</b> kugira ngo motari ikubaze.",
+    "send.3":"Hitamo <b>Icyo ushaka</b>: Gutwarwa (abagenzi) cyangwa Kohereza Imizigo (Derivari).",
+    "send.4":"Andika <b>Uva</b> na <b>Ujya</b> — intera ibarwa ku mihanda nyayo (OpenStreetMap); niba izina ry'ahantu ritabonetse, shyiramo <b>Intera (km)</b> ubwawe.",
+    "send.5":"Kanda <b>Ntwara</b>. Ushobora no guhita uhamagara ukoresheje <b>Hamagara</b>.",
+    "send.6":"Umumotari yemera cyangwa akanira kuri <b>Urubuga rw'umumotari</b> — akanda <b>Emera</b> cyangwa <b>Inga</b> kuri tabi ya <b>Ziriho</b>.",
+    "send.note":"Igiciro cy'umupingu kigenwa na RURA: 400 RWF kuri km 2 za mbere, 117 RWF/km kugeza kuri 40 km, 187 RWF/km iyo byarenze; iminota 10 ya mbere yo gutegereza ni ubuntu. Urugero: 5,5 km = 810 RWF.",
+    "pay.t":"Kwishyura nyuma y'urugendo","pay.lead":"Ubwishyura butangizwa n'uwatwawe iyo urugendo rwemejwe cyangwa narwo rurarangiye.",
+    "pay.1":"Muri <b>Ibyange</b>, kuri tabi ya <b>Inzira</b>, kanda <b>Kwishyura</b> ku rugendo.",
+    "pay.2":"Hitamo <b>MTN MoMo</b> (telefone yishyura) cyangwa <b>Karita</b> (Paystack — imeyili).",
+    "pay.3":"Kanda <b>Fungura urupapa rw'ishyura</b>. MoMo igusaba kwemeza kuri telefone yawe.",
+    "pay.4":"Ikarita y'urugendo ihita yerekana <b>Byishyuwe</b> cyangwa <b>Birategereje</b>.",
+    "pay.5":"Umumotari ubwe abona amafaranga ye kuri tabi ya <b>Amafaranga</b> ho kuri <b>Urubuga rw'umumotari</b>.",
+    "pay.note":"Platform ikuramo 5% by'igiciro; motari ikagumana 95%. Umumotari awkanda <b>Rangiza urugendo</b> ahita aba offline — yongera kuboneka iyo akoze <b>Nditeguye</b>.",
+    foot:"Ikibazo? Tweranda kuri WhatsApp: 0780000000."
+  },
+  en: {
+    site:"← Back to the app",
+    "reg.t":"Open a rider account","reg.lead":"For riders: no payment — a SERE Moto admin approves you.",
+    "reg.1":"On the home page, tap <b>I'm a rider</b> at the top.",
+    "reg.2":"Fill in <b>Full names</b>, <b>National ID</b> (16 digits), <b>TIN</b>, <b>Plate</b> (RAB 123 A) and <b>Phone</b> (07xxxxxxxx).",
+    "reg.3":"Pick the <b>Vehicle type</b>: Motorcycle or Car / taxi.",
+    "reg.4":"Tap <b>Send phone code</b>, type the <b>6-digit code</b> you received, then tap <b>Verify code</b>.",
+    "reg.5":"Tap <b>Submit application</b> — this only works once the phone is verified.",
+    "reg.6":"Your application becomes <b>pending</b>. Then on the <b>Driver dashboard</b> pick <b>Where you work</b> (province → district → sector → cell). The admin sets your services (motorcycles are priced by RURA; cars set their own RWF/km), then approves you or rejects you with a reason.",
+    "reg.note":"To sign in later: <b>Log in</b> → phone + SMS code. No password is needed. Once an admin approves you, the <b>Driver dashboard</b> opens.",
+    "find.t":"Find a moto or taxi","find.lead":"As a passenger: no account needed to search.",
+    "find.1":"Tap <b>Need a moto</b> at the top.",
+    "find.2":"Tap <b>Near me · 25 km</b> — the list jumps straight to riders who are close and ready.",
+    "find.3":"You can also search from <b>Where you start</b> (province → district → sector), by <b>vehicle</b> (Moto / Car) or by <b>service</b>.",
+    "find.4":"Each card shows the rating, how far they are, the <b>LIVE</b> mark and the fare. A sector name on the card is where their phone was last seen — <i>around</i> it, not proven inside it.",
+    "find.5":"A rider carrying a passenger shows <b>Has a passenger</b> and their <b>Drive me</b> button is off.",
+    "find.note":"Nobody nearby? Riders only share GPS while their app is open — try another district.",
+    "send.t":"Drive me","send.lead":"The request is saved, then WhatsApp opens with a message already written.",
+    "send.1":"Tap <b>Drive me</b> on the rider you chose — the booking form opens.",
+    "send.2":"Enter <b>Your name</b> and <b>Phone</b> so the rider can reach you.",
+    "send.3":"Choose <b>what you need</b>: Get a ride (passengers) or Send goods (Delivery).",
+    "send.4":"Fill <b>From</b> and <b>To</b> — the distance is measured on real roads (OpenStreetMap); if a place is not found, type the <b>Distance (km)</b> yourself.",
+    "send.5":"Tap <b>Drive me</b>. Use <b>Call</b> to phone the rider straight away.",
+    "send.6":"The rider accepts or declines on the <b>Driver dashboard</b> — <b>Accept</b> or <b>Decline</b> on the <b>Live</b> tab.",
+    "send.note":"Motorcycle fares are set by RURA: 400 RWF for the first 2 km, 117 RWF/km up to 40 km, 187 RWF/km beyond, first 10 waiting minutes free. Example: 5.5 km = 810 RWF.",
+    "pay.t":"Pay after the trip","pay.lead":"Payment is started by the passenger once a trip is accepted or completed.",
+    "pay.1":"In <b>My account</b>, on the <b>Trips</b> tab, tap <b>Pay</b> on the trip.",
+    "pay.2":"Choose <b>MTN MoMo</b> (the paying phone) or <b>Card</b> (Paystack — an email).",
+    "pay.3":"Tap <b>Open the payment page</b>. MoMo asks you to approve it on your phone.",
+    "pay.4":"The trip card then shows <b>Paid</b> or <b>Awaiting</b>.",
+    "pay.5":"The rider sees their own money on the <b>Earnings</b> tab of the <b>Driver dashboard</b>.",
+    "pay.note":"The platform keeps 5% of the fare; the rider keeps 95%. Tapping <b>Complete trip</b> also takes the rider offline — they reappear when they tap <b>NDITEGUYE</b>.",
+    foot:"Need help? Write to us on WhatsApp: 0780000000."
+  }
+};
+
+var lang = localStorage.getItem("sere_lang") === "en" ? "en" : "rw";
+function t(k){ var d = DICT[lang]; return Object.prototype.hasOwnProperty.call(d, k) ? d[k] : k; }
+function applyLang(){
+  document.documentElement.lang = lang;
+  localStorage.setItem("sere_lang", lang);
+  [].forEach.call(document.querySelectorAll("[data-i18n]"), function(el){ el.textContent = t(el.getAttribute("data-i18n")); });
+  [].forEach.call(document.querySelectorAll("[data-i18h]"), function(el){ el.innerHTML = t(el.getAttribute("data-i18h")); });
+  [].forEach.call(document.querySelectorAll(".lang button"), function(b){ b.setAttribute("aria-pressed", String(b.dataset.lang === lang)); });
+}
+[].forEach.call(document.querySelectorAll(".lang button"), function(b){ b.onclick = function(){ lang = b.dataset.lang; applyLang(); }; });
+applyLang();
+if (location.hash) { var target = document.querySelector(location.hash); if (target) target.scrollIntoView(); }
+</script>
+</body>
+</html>

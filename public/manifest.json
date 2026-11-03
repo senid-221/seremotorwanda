@@ -1,0 +1,19 @@
+{
+  "name": "SERE Moto — Transport na clients",
+  "short_name": "SERE Moto",
+  "description": "Shaka motari cyangwa taxi hafi yawe, wohereza demand kuri WhatsApp, wishyure kuri MTN MoMo cyangwa ikarita.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#1e3a8a",
+  "lang": "rw",
+  "categories": ["travel", "transportation"],
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,8 @@
+node_modules/
+# The SQLite file is runtime data; the division seeds are code — a deploy without them has no map.
+data/*
+!data/locations.json
+!data/division-coords.json
+*.log
+.env
+.vercel/

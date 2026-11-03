@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="rw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SERE Moto — Transport na clients</title>
+<meta name="description" content="Urubuga ruhuza aba motori n'ababenzi n'abakiriya: iyandikishe, ubone clients, wishyure kuri MTN MoMo cyangwa ikarita.">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SERE Moto">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23d97706'/><circle cx='10' cy='22' r='4' fill='white'/><circle cx='23' cy='22' r='4' fill='white'/><path d='M10 22l4-8h6l3 8' stroke='white' stroke-width='2.5' fill='none'/></svg>">
+<style>
+:root{
+  --navy:#1e3a8a; --navy-2:#172554; --navy-3:#1e40af;
+  --ink:#171717; --ink-soft:#475569; --line:#cbd5e1; --line-2:#e2e8f0;
+  --bg:#f8fafc; --card:#ffffff; --white:#ffffff;
+  --brand:#14532d; --brand-2:#15803d; --accent:#b45309;
+  --amber-bg:#fef3c7; --amber-line:#fcd34d; --amber-ink:#78350f;
+  --wa:#15803d; --danger:#b91c1c;
+  --r:14px; --r-s:11px; --shadow:0 1px 2px rgba(15,23,42,.05),0 6px 18px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-text-size-adjust:100%}
+.wrap{max-width:768px;margin:0 auto;padding:0 16px}
+a{color:var(--navy)}
+button{font:inherit;cursor:pointer}
+header{background:var(--navy);color:var(--white);position:sticky;top:0;z-index:40;box-shadow:0 1px 3px rgba(15,23,42,.24)}
+.hd{display:flex;align-items:center;gap:8px;min-height:52px;position:relative}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:-.2px}
+.logo svg{width:26px;height:26px;flex:none}
+.logo b{font-size:18px}
+.logo span{font-size:10px;opacity:.85;display:block;font-weight:600;letter-spacing:.4px}
+.nav{margin-left:auto;display:flex;align-items:center;gap:2px}
+.tab{background:transparent;border:0;color:#dbe4ff;padding:6px 9px;border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap;line-height:1.25}
+.tab:hover{background:var(--navy-2);color:var(--white)}
+.tab[aria-selected="true"]{color:var(--white);box-shadow:inset 0 -2px 0 var(--white)}
+.tab-icon{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;line-height:0}
+.tab-icon svg{width:20px;height:20px;display:block}
+a.tab{display:inline-flex;align-items:center;text-decoration:none}
+.tabbtn{display:inline-flex;align-items:center;background:transparent;border:0;border-radius:8px;padding:6px 9px;font-weight:700;font-size:13px;line-height:1.25;text-decoration:none;color:var(--navy)}
+.tabbtn:hover{background:var(--bg);color:var(--navy-3)}
+.tabbtn:focus-visible{outline:3px solid var(--navy-3);outline-offset:1px}
+.menu{position:absolute;top:calc(100% - 4px);right:0;z-index:46;width:min(268px,calc(100vw - 24px));max-height:calc(100vh - 74px);overflow:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);box-shadow:0 10px 28px rgba(15,23,42,.22);padding:5px;text-align:left;color:var(--ink)}
+.menu[hidden]{display:none}
+.menu h4{margin:7px 8px 3px;font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-soft)}
+.menu li{list-style:none}
+.menu .mrow{display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:0;border-radius:9px;padding:8px 9px;color:var(--ink);font-size:13px;font-weight:700;line-height:1.3;text-decoration:none;text-align:left;white-space:nowrap;overflow:hidden}
+.menu .mrow svg{width:17px;height:17px;flex:none;color:var(--navy)}
+.menu .mrow:hover{background:var(--bg)}
+.menu .mrow:focus-visible{outline:3px solid #bfdbfe;outline-offset:1px}
+.menu .mrow .val{margin-left:auto;font-size:11px;font-weight:800;color:var(--ink-soft);flex:none}
+.menu .mrow[aria-checked="true"] svg{color:var(--brand-2)}
+.menu .mrow[aria-checked="true"] .val{color:var(--brand)}
+.menu .install[disabled]{opacity:.55;cursor:default}
+.menu ul{margin:0;padding:0}
+.lang{display:flex;background:var(--navy-2);border-radius:7px;padding:2px;gap:1px;margin-left:auto}
+.lang button{border:0;background:transparent;color:#dbe4ff;font-size:10.5px;font-weight:800;padding:3px 0;flex:0 0 30px;text-align:center;border-radius:5px;line-height:1.2}
+.lang button[aria-pressed="true"]{background:var(--white);color:var(--navy)}
+.hero{background:var(--navy-2);color:var(--white);padding:13px 0 15px;text-align:center}
+.hero h1{margin:0 0 5px;font-size:clamp(21px,4.2vw,27px);line-height:1.15;font-weight:800;letter-spacing:-.5px}
+.hero p{margin:0 auto 10px;color:#dbe4ff;font-size:13.5px;max-width:48ch}
+.promise{display:inline-flex;align-items:center;gap:6px;background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber-ink);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;margin-bottom:11px}
+.promise svg{width:14px;height:14px;flex:none}
+.cta{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.btn{border:1px solid transparent;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13.5px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;justify-content:center;line-height:1.3}
+.btn-p{background:var(--navy);color:var(--white)}
+.btn-p:hover{background:var(--navy-3)}
+.hero .btn-p{border-color:#7f9ede}
+.hero .btn-p:hover{background:var(--navy-3);border-color:#a9bfe8}
+.btn-ghost{background:transparent;color:var(--navy);border-color:#c3d3f3}
+.btn-ghost:hover{background:#eef3fd;border-color:var(--navy-3)}
+.btn-s{border-radius:999px;padding:6px 12px;font-size:12.5px}
+.btn-xs{padding:4px 10px;font-size:11.5px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:3px 8px;flex:1 1 76px;min-width:0}
+.stat b{display:block;font-size:14px;line-height:1.25}
+.stat i{font-style:normal;font-size:9.5px;line-height:1.2;color:#dbe4ff;letter-spacing:.2px}
+main{padding:14px 0 30px}
+.card,section.card{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
+h2{margin:0 0 3px;font-size:17px;letter-spacing:-.3px}
+h3{margin:0 0 7px;font-size:14.5px}
+.sub{color:var(--ink-soft);font-size:13px;margin:0 0 10px}
+.bk-hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px}
+.bk-hd h2{margin:0}
+.bk-hd .sub{display:inline-flex;align-items:center;max-width:100%;margin:0;padding:3px 9px;background:#eff6ff;border:1px solid #dbeafe;color:var(--navy);border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:-.1px;word-spacing:-.4px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[hidden]{display:none !important}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.book .grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.f label{display:block;font-size:12px;font-weight:700;margin-bottom:4px;color:#1e293b}
+input,select,textarea{width:100%;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:#0f172a;font-size:16px;font-weight:500}
+input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset:1px;border-color:var(--navy-3);background:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.msg{font-size:13px;font-weight:700;margin-top:8px;border-radius:10px;padding:7px 10px}
+.msg-err{color:#fff;background:var(--danger)}
+.msg-ok{color:#fff;background:var(--brand)}
+.review{display:flex;gap:11px;align-items:flex-start;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 13px}
+.review svg{flex:none;width:22px;height:22px;color:#b45309}
+.review h2,.review p{margin:0}
+.review h2{font-size:14.5px;color:#78350f}
+.review p{font-size:12.5px;font-weight:600;color:#92400e;line-height:1.45;margin-top:3px}
+.review.rejected{background:#fef2f2;border-color:#fecaca}
+.review.rejected svg,.review.rejected h2{color:#991b1b}
+.review.rejected p{color:#b91c1c}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.bar input,.bar select{width:auto;min-width:150px;flex:1 1 160px}
+.search{flex:2 1 220px}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:7px}
+.steps li{display:flex;gap:7px;align-items:center;background:#f8fafc;border:1px solid var(--line-2);border-radius:9px;padding:7px 9px;font-size:12px;font-weight:700;color:#1e293b}
+.steps li span{flex:none;width:18px;height:18px;border-radius:50%;background:var(--navy);color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.steps li em{font-style:normal;color:var(--ink-soft);font-weight:600;margin-left:auto}
+.results{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:15px 0 9px}
+.results h2{margin:0}
+.list{display:grid;gap:9px}
+.d{border:1px solid var(--line-2);border-radius:var(--r);padding:11px;background:#fff;display:flex;flex-direction:column;gap:7px;min-width:0;box-shadow:0 1px 1px rgba(15,23,42,.04)}
+.d-top{display:flex;gap:9px;align-items:flex-start}
+.av{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;font-size:13.5px}
+.d-id{flex:1;min-width:0}
+.d-id b{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.d-id em{font-style:normal;font-size:12px;color:var(--ink-soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rate{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-soft);margin-top:1px}
+.rate b{color:var(--ink)}
+.badge{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;border-radius:5px;padding:2px 6px;white-space:nowrap}
+.b-on{background:#dcfce7;color:#14532d}
+.b-off{background:#e2e8f0;color:#334155}
+.b-moto{background:#fef3c7;color:#78350f}
+.b-car{background:#dbeafe;color:#1e3a8a}
+.b-busy{background:#ffedd5;color:#9a3412}
+.b-live{background:#0f172a;color:#fff;display:inline-flex;align-items:center;gap:4px}
+.b-live i{width:6px;height:6px;border-radius:50%;background:#4ade80;flex:none;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.b-live i,.track .spin,.track li[data-s="on"]::before{animation:none}}
+.dist{font-size:11.5px;font-weight:800;color:var(--brand);white-space:nowrap}
+.dwhere{font-size:11px;font-weight:700;color:var(--ink-soft);max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dvbox{margin:0 0 12px}
+.dvhd{margin:0 0 6px;font-size:12px;font-weight:700;color:#1e293b}
+.farebox{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:10px 12px;margin-top:12px}
+.farebox h4{margin:0 0 2px;font-size:19px;letter-spacing:-.4px;color:#14532d}
+.farebox p{margin:0;font-size:12px;font-weight:700;color:#166534}
+.farebox ul{margin:6px 0 0;padding:0 0 0 14px;font-size:11.5px;color:#166534;font-weight:600}
+.farebox small{display:block;margin-top:5px;font-size:10.5px;font-weight:700;color:#3f6212}
+.locbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#0f172a;color:#e2e8f0;border-radius:12px;padding:9px 11px;margin-bottom:10px;font-size:12px;font-weight:700}
+.locbar b{color:#fff}
+.locbar .btn{margin-left:auto}
+.nearbar{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:800;color:var(--ink)}
+.nearbar[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.track{border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);padding:11px 12px;margin:0 0 9px}
+.track .tk-hd{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--navy);letter-spacing:-.1px}
+.track .spin{width:15px;height:15px;flex:none;border-radius:50%;border:2.5px solid #c7d6f5;border-top-color:var(--navy);animation:spin 0.9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.track ol{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:5px}
+.track li{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:3px 8px}
+.track li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--line);flex:none}
+.track li[data-s="on"]{color:var(--navy);border-color:#bfdbfe;background:#eff6ff}
+.track li[data-s="on"]::before{background:var(--navy);animation:pulse 1s ease-in-out infinite}
+.track li[data-s="ok"]{color:#14532d;border-color:#bbf7d0;background:#f0fdf4}
+.track li[data-s="ok"]::before{background:#15803d}
+.track .tk-note{margin:7px 0 0;font-size:11.5px;font-weight:700;color:var(--ink-soft);line-height:1.4}
+.d-closest{border-color:var(--navy);box-shadow:0 0 0 2px rgba(30,58,138,.14)}
+.b-near{background:var(--navy);color:#fff}
+.nearline{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--navy)}
+.empty{margin:0;padding:13px 12px;border:1px dashed var(--line);border-radius:10px;text-align:center;font-size:12.5px;font-weight:700;color:var(--navy)}
+.d-meta{font-size:12px;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d-meta b{color:var(--ink);font-weight:700}
+.d-act{display:flex;gap:6px;margin-top:auto;align-items:center;flex-wrap:wrap}
+.d-act .btn{flex:0 0 auto}
+.d-act>span{min-width:0}
+.stars{color:var(--accent);letter-spacing:1px}
+.ratebtns{display:inline-flex;gap:1px;margin-left:4px;vertical-align:middle}
+.ratebtn{font-size:15px;line-height:1;padding:1px 2px;border:0;background:none;cursor:pointer;color:#64748b}
+.ratebtn:hover,.ratebtn:focus-visible{color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft)}
+.pill{font-size:10.5px;font-weight:800;border-radius:999px;padding:2px 8px;background:#eef2f7;color:#334155;white-space:nowrap;border:0}
+.pill-new{background:#fef3c7;color:#78350f}
+.pill-paid{background:#dcfce7;color:#14532d}
+.pill-fail{background:#fee2e2;color:#7f1d1d}
+.sheet{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:#fff;width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:14px;max-height:92vh;overflow:auto}
+footer{background:var(--navy);color:#dbe4ff;padding:12px 0;font-size:12.5px}
+footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-right:96px}
+footer a{color:#fff}
+.how{padding:12px 14px}
+.how h3{margin:0 0 6px;font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-soft)}
+.howsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+@media (min-width:600px){.howsteps{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.howsteps li{min-width:0}
+.howsteps a{display:flex;align-items:flex-start;gap:7px;border-radius:10px;padding:6px 9px;border:1px solid transparent;min-width:0;text-decoration:none}
+.howsteps a:hover{box-shadow:0 2px 8px rgba(15,23,42,.14)}
+.howsteps a:focus-visible{outline:3px solid #bfdbfe;outline-offset:2px}
+.howsteps a>div{min-width:0;display:flex;flex-direction:column;gap:1px}
+.howsteps b{font-size:11.5px;font-weight:800;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.howsteps i{font-style:normal;font-size:9.5px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.howsteps span{flex:none;width:17px;height:17px;margin-top:1px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.hs-1{background:#eff6ff;border-color:#dbeafe;color:#1e3a8a}.hs-1 span{background:#1e3a8a}
+.hs-2{background:#f0fdf4;border-color:#dcfce7;color:#14532d}.hs-2 span{background:#15803d}
+.hs-3{background:#fffbeb;border-color:#fde68a;color:#78350f}.hs-3 span{background:#b45309}
+.hs-4{background:#f5f3ff;border-color:#ddd6fe;color:#4c1d95}.hs-4 span{background:#6d28d9}
+.fab{position:fixed;right:16px;bottom:16px;z-index:45;width:48px;height:48px;border-radius:50%;background:var(--wa);color:#fff;display:flex;align-items:center;justify-content:center;border:0;box-shadow:0 6px 16px rgba(15,23,42,.3)}
+.fab svg{width:24px;height:24px}
+.fab:hover{background:var(--brand)}
+@media (max-width:640px){
+  .hd{flex-wrap:wrap;padding-top:7px;padding-bottom:7px}
+  .nav{width:100%;margin-left:0;justify-content:space-between}
+  .nav .lang{margin-left:0}
+  .tab{padding:6px 8px;font-size:12.5px}
+  .tab-icon{padding:4px 7px}
+  .book .grid{grid-template-columns:1fr 1fr}
+  footer .wrap{padding-right:16px;flex-direction:column;align-items:flex-start;gap:8px}
+}
+@media (max-width:430px){
+  .logo span{display:none}
+  .hero p{display:none}
+}
+@media (max-width:360px){
+  .nav{gap:1px}
+  .tab{padding:6px 5px;font-size:11.5px;line-height:1.4}
+  .tab-icon{padding:4px 5px;line-height:0}
+  .lang button{flex:0 0 27px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hd">
+    <div class="logo">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="10" cy="22" r="4.4" fill="#fff"/><circle cx="23" cy="22" r="4.4" fill="#fff"/><path d="M10 22l4-8h6l3 8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M14 14h7" stroke="#f6c17a" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <div><b>SERE Moto</b><span data-i18n="tagline">Transport &amp; clients</span></div>
+    </div>
+    <nav class="nav" role="tablist">
+      <button class="tab" role="tab" data-view="find" aria-selected="true" data-i18n="nav.find">Nshaka Motari</button>
+      <a class="tab" href="/signup" data-i18n="nav.join">Ndi Motari</a>
+      <a class="tab tab-icon" href="/passenger" data-i18n-title="nav.mine" title="Ibyange" aria-label="Ibyange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>
+      </a>
+      <button class="tab tab-icon" id="btnMenu" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu" data-i18n-title="nav.menu" title="Menu" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h11"/></svg>
+      </button>
+      <span class="lang" role="group" aria-label="Language">
+        <button data-lang="rw" aria-pressed="true">RW</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </span>
+    </nav>
+
+    <div class="menu" id="menu" role="group" aria-label="Menu" hidden>
+      <h4 data-i18n="menu.app">Porogaramu</h4>
+      <ul>
+        <li><a class="mrow" href="#v-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><span data-i18n="nav.find">Nshaka Motari</span></a></li>
+        <li><a class="mrow" href="/signup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M3 20.5a7 7 0 0 1 14 0"/><path d="M18 8.5v5M15.5 11h5"/></svg><span data-i18n="nav.join">Ndi Motari</span></a></li>
+        <li><a class="mrow" href="/passenger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg><span data-i18n="nav.mine">Ibyange</span></a></li>
+        <li><a class="mrow" href="/guide" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6.5A4 4 0 1 0 8.4 12"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="how">Uko bikora</span></a></li>
+        <li id="miAdmin" hidden><a class="mrow" href="/admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5 5 6v6c0 4 3 6.7 7 8.5 4-1.8 7-4.5 7-8.5V6Z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg><span data-i18n="menu.admin">Ubuyobozi</span></a></li>
+        <li id="miInstallWrap" hidden><button class="mrow" type="button" id="btnInstall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v10"/><path d="M8 11l4 3.5L16 11"/><path d="M5 19h14"/></svg><span data-i18n="menu.install">Shyira app kuri Phone</span></button></li>
+      </ul>
+      <h4 data-i18n="menu.settings">Igenamiterere</h4>
+      <ul>
+        <li><button class="mrow" type="button" id="miNear" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-i18n="menu.near">Hafi yanjye</span><span class="val" id="miNearVal" aria-hidden="true"></span></button></li>
+        <li><button class="mrow" type="button" id="miOnline" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 20v-7"/><path d="M6.5 12.5a7 7 0 1 1 11 0"/></svg><span data-i18n="menu.online">Bari online gusa</span><span class="val" id="miOnlineVal" aria-hidden="true"></span></button></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1 data-i18n="hero.title">Tumiza moto mu munota 1</h1>
+    <p data-i18n="hero.body">Hitamo zone yawe, ubone umumotari ugutwara cyangwa ukujyanira ibintu aho ushaka hose. Kwishyura biroroshye.</p>
+    <div class="promise">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      <span data-i18n="promise.text">Mu munota 1: bona motari</span>
+    </div>
+    <div class="cta">
+      <a class="btn btn-p btn-s" href="/signup" data-i18n="hero.cta2">Ndi Motari — iyandikishe</a>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section id="v-find">
+    <div class="card book">
+      <div class="bk-hd">
+        <h2 data-i18n="book.title">Tumiza urugendo</h2>
+        <p class="sub" data-i18n="book.sub">Aho uri, Aho ujya, Ikinyabiziga — kanda rimwe.</p>
+      </div>
+      <div class="dvbox">
+        <p class="dvhd" data-i18n="book.div">Aho uvuye — hitamo intara, akarere cyangwa umurenge</p>
+        <div id="divFrom"></div>
+      </div>
+      <div class="grid">
+        <div class="f"><label for="fTo" data-i18n="book.to">Ujyayo</label><input id="fTo" list="zones"></div>
+        <div class="f"><label for="fType" data-i18n="book.type">Ikinyabiziga</label>
+          <select id="fType" aria-label="Vehicle"><option value="" data-i18n="find.allTypes">Ibinyabiziga byose</option><option value="moto" data-i18n="t.moto">Moto</option><option value="car" data-i18n="t.car">Imodoka/Taksi</option></select></div>
+        <div class="f"><label for="fNeed" data-i18n="book.service">Icyo ushaka</label>
+          <select id="fNeed" aria-label="Service"><option value="" data-i18n="find.allNeeds">Serivise yose</option><option value="ride" data-i18n="n.ride">Gutwarwa</option><option value="delivery" data-i18n="n.delivery">Kohereza Imizigo (Derivari)</option></select></div>
+      </div>
+      <button class="btn btn-p btn-block" id="btnSearch" type="button" style="margin-top:12px"><span data-i18n="book.go">Nshaka Motari</span> <span data-i18n="book.sec">· 10s</span></button>
+      <ol class="steps" style="margin-top:12px">
+        <li><span>1</span><b data-i18n="step1">Hitamo aho uvuye n'ikinyabiziga</b> <em>10s</em></li>
+        <li><span>2</span><b data-i18n="step2">Kanda "Ntwara"</b> <em>25s</em></li>
+        <li><span>3</span><b data-i18n="step3">Diringa kuri WhatsApp</b> <em>15s</em></li>
+      </ol>
+    </div>
+    <div class="results">
+      <h2 data-i18n="results.title">Abashoferi bari hafi</h2>
+      <p class="sub" id="count" style="margin:0"></p>
+      <span class="badge b-live" id="liveTag" hidden><i></i><span id="liveCount"></span></span>
+      <label class="row" style="margin-left:auto;gap:6px;font-size:14px;font-weight:700"><input type="checkbox" id="fOnline" style="width:auto;min-width:0;flex:0;padding:0"> <span data-i18n="find.online">Bari online kandi bateguye</span></label>
+      <button class="nearbar" id="btnNear" type="button" aria-pressed="false" data-i18n="near.off">Koresha hafi yanjye</button>
+      <input id="q" class="search" type="search" data-i18n-ph="find.search" placeholder="Shaka site cyangwa plaque…" aria-label="Search" style="flex:1 1 200px">
+    </div>
+    <div class="track" id="track" role="status" aria-live="polite" hidden>
+      <div class="tk-hd"><span class="spin" aria-hidden="true"></span><span data-i18n="track.title">Gutegereza — turimo gushaka moto hafi yawe</span></div>
+      <ol>
+        <li data-step="geo"><span data-i18n="track.geo">Kumenya aho uri</span></li>
+        <li data-step="scan"><span data-i18n="track.scan">Kubara abamotari bari hafi</span></li>
+        <li data-step="sort"><span data-i18n="track.sort">Gutondeka ku ntera</span></li>
+      </ol>
+      <p class="tk-note" id="trackNote"></p>
+    </div>
+    <p class="nearline" id="whereLine" hidden></p>
+    <p class="nearline" id="nearLine" hidden></p>
+    <div class="list" id="drivers"></div>
+    <p class="msg msg-err" id="findErr" hidden></p>
+    <datalist id="zones"></datalist>
+  </section>
+
+  <div class="card how">
+    <h3 data-i18n="how">Uko bikora</h3>
+    <ol class="howsteps">
+      <li><a class="hs-1" href="/guide#register" target="_blank" rel="noopener" data-i18n-tip="how1"><span>1</span><div><b data-i18n="hs1">Iyandikishe</b><i data-i18n="hi1">Izina, ID, TIN, plaque</i></div></a></li>
+      <li><a class="hs-2" href="/guide#find" target="_blank" rel="noopener" data-i18n-tip="how2"><span>2</span><div><b data-i18n="hs2">Nshaka Motari</b><i data-i18n="hi2">Zone, ikinyabiziga, serivise</i></div></a></li>
+      <li><a class="hs-3" href="/guide#send" target="_blank" rel="noopener" data-i18n-tip="how3"><span>3</span><div><b data-i18n="hs3">Ohereza</b><i data-i18n="hi3">Kuri WhatsApp</i></div></a></li>
+      <li><a class="hs-4" href="/guide#pay" target="_blank" rel="noopener" data-i18n-tip="how4"><span>4</span><div><b data-i18n="hs4">Kwishyura</b><i data-i18n="hi4">MoMo cyangwa ikarita</i></div></a></li>
+    </ol>
+  </div>
+</main>
+
+<a class="fab" href="https://wa.me/250780000000" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 13.9c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.2-1.5-.5-3.1-1.7-4.2-3-.7-.9-1.2-1.9-1.3-2.5-.1-.7.1-1.3.5-1.7.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.4l.7 1.6c.1.2 0 .4-.1.6l-.4.5c-.2.2-.2.3-.1.5.4.7 1.5 1.8 2.3 2.1.2.1.4.1.5-.1l.6-.7c.2-.2.3-.2.6-.1l1.6.8c.3.2.3.3.3.5v.5Z"/></svg>
+</a>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" hidden>
+  <div>
+    <div class="row" style="justify-content:space-between"><h3 id="shT" style="margin:0" data-i18n="sh.title">Ohereza demand</h3><button class="btn btn-ghost btn-s" id="shX" data-i18n="sh.close">Funga</button></div>
+    <p class="sub" id="shWho"></p>
+    <form id="shForm">
+      <div class="grid">
+        <div class="f"><label for="cn" data-i18n="sh.name">Izina ryawe</label><input id="cn" required></div>
+        <div class="f"><label for="cp" data-i18n="sh.phone">Telefone</label><input id="cp" inputmode="tel" required></div>
+      </div>
+      <div class="f" style="margin-top:12px"><label data-i18n="sh.kind">Icyo ushaka</label>
+        <div class="chips" id="shKind">
+          <button type="button" class="chip" data-k="ride" aria-pressed="true" data-i18n="n.ride">Gutwarwa</button>
+          <button type="button" class="chip" data-k="delivery" aria-pressed="false" data-i18n="n.delivery">Kohereza Imizigo (Derivari)</button>
+        </div>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <div class="f"><label for="fr" data-i18n="sh.from">Uva</label><input id="fr" list="zones" required></div>
+        <div class="f"><label for="to" data-i18n="sh.to">Ujya</label><input id="to" list="zones" required></div>
+        <div class="f"><label for="wh" data-i18n="sh.when">Igihe</label><input id="wh" type="datetime-local"></div>
+        <div class="f"><label for="pz" data-i18n="sh.pax">Abantu / ibiro</label><input id="pz" type="number" min="1" max="8" value="1"></div>
+        <div class="f"><label for="km" data-i18n="sh.km">Intera (km)</label><input id="km" type="number" min="0.5" max="300" step="0.1"></div>
+      </div>
+      <div class="f" style="margin-top:12px"><label for="ms" data-i18n="sh.note">Ubutumwa</label><textarea id="ms" rows="2"></textarea></div>
+      <div class="farebox" id="fareBox" hidden>
+        <h4 id="fareAmount">—</h4>
+        <p id="fareDistance"></p>
+        <ul id="fareParts"></ul>
+        <small id="fareBasis"></small>
+      </div>
+      <p class="msg msg-err" id="shErr" hidden></p>
+      <div class="row" style="margin-top:14px">
+        <button class="btn btn-ghost btn-s btn-xs" type="submit" data-i18n="sh.send">Ntwara</button>
+        <a class="btn btn-ghost btn-s btn-xs" id="shCall" data-i18n="sh.call">Hamagara</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>© <span id="yr"></span> SERE Moto · Kigali, Rwanda</div>
+    <div class="row"><a href="https://wa.me/250780000000" data-i18n="foot.wa">WhatsApp support</a></div>
+  </div>
+</footer>
+
+<script src="/assets/divisions.js"></script>
+<script>
+var I18N = {
+  rw: {
+    tagline:"Transport & clients","nav.find":"Nshaka Motari","nav.join":"Ndi Motari","nav.mine":"Ibyange",
+    "nav.menu":"Menu","menu.app":"Porogaramu","menu.settings":"Igenamiterere","menu.admin":"Ubuyobozi","menu.near":"Hafi yanjye","menu.online":"Bari online gusa","menu.install":"Shyira app kuri Phone","menu.installed":"App imaze gushyirwa kuri Phone",
+    "hero.title":"Tumiza moto mu munota 1","hero.body":"Hitamo intara, akarere cyangwa umurenge wawe, ubone umumotari ugutwara cyangwa ukujyanira ibintu aho ushaka hose. Kwishyura biroroshye.",
+    "promise.text":"Mu munota 1: bona motari",
+    "hero.cta2":"Ndi Motari — iyandikishe",
+    "book.title":"Tumiza urugendo","book.sub":"Aho uri, Aho ujya, Ikinyabiziga — kanda rimwe.","book.div":"Aho uvuye — hitamo intara, akarere cyangwa umurenge","book.to":"Ujyayo","book.type":"Ikinyabiziga","book.service":"Icyo ushaka","book.go":"Nshaka Motari","book.sec":"· 10s",
+    "step1":"Hitamo aho uvuye n'ikinyabiziga","step2":"Kanda \"Ntwara\"","step3":"Diringa kuri WhatsApp",
+    "results.title":"Abamotari bari hafi",
+    "find.search":"Shaka site cyangwa plaque…","find.allTypes":"Ibinyabiziga byose","find.allNeeds":"Serivise yose","find.online":"Bari online kandi bateguye",
+    "t.moto":"Moto","t.car":"Imodoka/Taksi","n.ride":"Gutwarwa","n.delivery":"Kohereza Imizigo (Derivari)","n.both":"Gutwarwa + Kohereza Imizigo",
+    "loc.unsupported":"Iyi browser ntishobora gutanga location.",
+    "r.fare":"Amafaranga",
+    "how":"Uko bikora","hs1":"Iyandikishe","hs2":"Nshaka Motari","hs3":"Ohereza","hs4":"Kwishyura",
+    "hi1":"Izina, ID, TIN","hi2":"Aho uvuye · serivise","hi3":"WhatsApp","hi4":"MoMo · ikarita",
+    "how1":"Andikisha: amazina, ID, TIN, plaque na telefone — umuyobozi arakwemeza.","how2":"Shakisha ku ntara, akarere cyangwa umurenge, ikinyabiziga na serivise.","how3":"Demand ibikwa, ihita yerekeza kuri WhatsApp.","how4":"Nyuma y'urugendo wishyura kuri MoMo cyangwa ikarita.",
+    "sh.title":"Ohereza demand","sh.close":"Funga","sh.name":"Izina ryawe","sh.phone":"Telefone","sh.kind":"Icyo ushaka","sh.from":"Uva","sh.to":"Ujya","sh.when":"Igihe","sh.pax":"Abantu / ibiro","sh.km":"Intera (km) — niba map itabibonye","sh.note":"Ubutumwa","sh.send":"Ntwara","sh.call":"Hamagara",
+    "sh.fare":"Igiciro ntangere","sh.dist":"Intera","sh.fareKm":"{km} km ku muhanda nyawo","sh.fareLoading":"Turapima intera…","sh.fareNone":"Ubushe ntitubashije kubona intera — shyiramo km.","sh.fareBasis":"Igiciro kigenwa na RURA ku mapingu. Nta wushobora kucyihindurira.",
+    "fare.first":"{km} km zambere: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (harengeze {over} km)","fare.wait":"{min} min zo gutegereza × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
+    "fare.regulated":"Igiciro kigenwa na RURA","fare.driverRate":"Igiciro gishyirwaho n'umushoferi",
+    "near.off":"Koresha hafi yanjye","near.on":"Hafi yanjye · {km} km","near.none":"Nta motari igaragaza GPS mu ntera ya {km} km — izi ni izo mu gace kawe.","list.empty":"Nta motari iboneka ubu — ugerageze nyuma.","near.onHint":"Dukoresheje GPS yawe","near.offHint":"Kanda ukoresheshe location yawe",
+    "track.title":"Gutegereza — turimo gushaka moto hafi yawe","track.geo":"Kumenya aho uri","track.at":"Aho uri: ±{m} m","track.where":"Aho uri: {where}","track.scan":"Kubara abamotari bari hafi","track.sort":"Gutondeka ku ntera","track.found":"Abamotari {n} babonetse hafi ya {km} km","track.noFix":"Ntiwashoboye kumenya aho uri — kemera location wongere ugerageze","track.noLive":"Nta motari igaragaza GPS hafi yawe — turimo kureba mu gace kawe","c.closest":"Hafi cyane","near.line":"Iyi ni yo moto hafi yawe: {name} · {km}. Ni wowe uhitamo uwo utega.",
+    "where.line":"Aho uri: {where} · intera {km} km uvuye hagati",
+    "live.count":"{n} bari live hafi yawe","live.one":"{n} uri live hafi yawe",
+    "c.off":"offline","c.book":"Ntwara","c.call":"Hamagara","c.rate":"Shorta",
+    "c.available":"Nditeguye","c.busy":"Afite umugenzi","c.live":"LIVE","c.km":"{km} km","c.noGps":"Nta GPS",
+    "m.drivers":"Abamotari","m.online":"Bari online","m.areas":"Uturere",
+    "foot.wa":"WhatsApp support",
+    "err.network":"Server ntabwo yitabiriye — gerageza nyuma.","err.saved":"Byabitswe!","err.rated":"Murakoze! Ubushimishije bwabitswe.",
+    "err.invalidField":"Suzuma iyi ngereranyo: {field}.","err.unknownField":"{field} ntiyizwi.","err.server":"Ubusabe ntibushoboye kurangira."
+  },
+  en: {
+    tagline:"Transport & clients","nav.find":"Need a moto","nav.join":"I'm a rider","nav.mine":"My account",
+    "nav.menu":"Menu","menu.app":"App","menu.settings":"Settings","menu.admin":"Admin console","menu.near":"Near me","menu.online":"Online riders only","menu.install":"Install app on Phone","menu.installed":"App is on this Phone",
+    "hero.title":"Book a moto in 1 minute","hero.body":"Pick where you are in Rwanda — province, district or sector — and find a rider to take you or carry anything across town. Paying is easy.",
+    "promise.text":"1 minute: get a rider",
+    "book.title":"Book a ride","book.sub":"Where you are, where you are going, the vehicle — one tap.","book.div":"Where you start — pick province, district or sector","book.to":"Going to","book.type":"Vehicle","book.service":"Service","book.go":"Find a moto near me","book.sec":"· 10s",
+    "step1":"Pick your area and vehicle","step2":"Tap \"Drive me\"","step3":"Dealing on WhatsApp",
+    "results.title":"Moto riders near you",
+    "hero.cta2":"I'm a moto rider — register",
+    "find.search":"Search an area or plate…","find.allTypes":"All vehicles","find.allNeeds":"All services","find.online":"Online and ready",
+    "t.moto":"Moto","t.car":"Car/Taxi","n.ride":"Get a ride","n.delivery":"Send goods (Delivery)","n.both":"Ride + delivery",
+    "loc.unsupported":"This browser cannot share a location.",
+    "r.fare":"Fare",
+    "how":"How it works","hs1":"Register","hs2":"Find a rider","hs3":"Send","hs4":"Pay",
+    "hi1":"Name, ID, TIN","hi2":"Area · service","hi3":"WhatsApp","hi4":"MoMo · card",
+    "how1":"Register: names, national ID, TIN, plate and phone — an admin then approves you.","how2":"Search by province, district or sector, plus vehicle and service.","how3":"Your request is saved and sent on WhatsApp.","how4":"After the trip, pay by MoMo or card.",
+    "sh.title":"Send a request","sh.close":"Close","sh.name":"Your name","sh.phone":"Phone","sh.kind":"What you need","sh.from":"From","sh.to":"To","sh.when":"When","sh.pax":"People / kg","sh.km":"Distance (km) — only if the map misses it","sh.note":"Message","sh.send":"Drive me","sh.call":"Call",
+    "sh.fare":"Fare estimate","sh.dist":"Distance","sh.fareKm":"{km} km on real roads","sh.fareLoading":"Measuring the distance…","sh.fareNone":"We could not find that route — enter the distance.","sh.fareBasis":"Motorcycle fares are set by RURA. Nobody can change them.",
+    "fare.first":"First {km} km: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (over {over} km)","fare.wait":"{min} waiting minutes × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
+    "fare.regulated":"Fare set by RURA","fare.driverRate":"Rate set by the driver",
+    "near.off":"Use my location","near.on":"Near me · {km} km","near.none":"No rider shares a GPS fix within {km} km — these are the riders in your area.","list.empty":"No riders available right now — try again later.","near.onHint":"Using your GPS position","near.offHint":"Tap to share your position",
+    "track.title":"Please wait — looking for a moto near you","track.geo":"Getting your position","track.at":"Your position: ±{m} m","track.where":"You are around {where}","track.scan":"Counting riders close by","track.sort":"Sorting by distance","track.found":"{n} riders found within {km} km","track.noFix":"We could not get your position — allow location and try again","track.noLive":"No rider shares GPS near you — looking in your area instead","c.closest":"Closest","near.line":"This moto is closest to you: {name} · {km}. You still choose who to wait for.",
+    "where.line":"You are around {where} · {km} km from its centre",
+    "live.count":"{n} riders live near you","live.one":"{n} rider live near you",
+    "c.off":"offline","c.book":"Drive me","c.call":"Call","c.rate":"Rate",
+    "c.available":"Ready","c.busy":"Has a passenger","c.live":"LIVE","c.km":"{km} km","c.noGps":"No GPS",
+    "m.drivers":"Riders","m.online":"Online now","m.areas":"Districts",
+    "foot.wa":"WhatsApp support",
+    "err.network":"The server did not respond — try again.","err.saved":"Saved!","err.rated":"Thanks — your rating was saved.",
+    "err.invalidField":"Check this field: {field}.","err.unknownField":"{field} is not recognised.","err.server":"The request could not be completed."
+  }
+};
+
+var T = {
+  rw: {
+    invalid_phone:"Telefone ntabwo ari yo (urugero: 0788123456)", phone_taken:"Iyi telefone isanzwe ifite konti — koresha Injira.",
+    plate_taken:"Iyi plaque isanzwe iyanditswe.", id_number_taken:"Iyi ndangamuntu isanzwe iyanditswe.", tin_number_taken:"Iyi TIN isanzwe iyanditswe.",
+    invalid_id_number:"Indangamuntu igira imibare 16.", invalid_tin_number:"TIN igira imibare 9.", invalid_names:"Andika amazina yawe yombi.",
+    invalid_code:"Andika code y'imibare 6.", otp_invalid:"Iyi code si yo.", otp_expired:"Iyi code yarakoreshejwe cyangwa yarangiye — usabe indi.", otp_rate_limited:"Codes nyinshi — tegereza gato.", otp_attempts_exceeded:"Wagerageje inshuro nyinshi — usabe code nshya.",
+    invalid_verify_token:"Emeza telefone yawe mbere yo kwandikisha.", phone_not_verified:"Code wakoresheje si iyo iyi telefone.",
+    account_pending:"Umuyobozi wa SERE MOTO arasuzuma umusaba wawe.", already_reviewed:"Uyu musaba wasuzumwe kera.", incomplete_profile:"Zone na serivise birakenewe (imodoka zisaba n'igiciro kuri km).", profile_incomplete:"Banza ushyiraho zone na serivise (imodoka zisaba n'igiciro kuri km) mbere yo kuba online.", admin_only:"Ibi ni ku muyobozi gusa.", driver_unavailable:"Uyu mushoferi ntaboneka kuri SERE MOTO.", google_not_configured:"Kwinjira na Google ntikirategurwa.", invalid_action:"Hitamo emerera cyangwa wanse.",
+    invalid_price_per_km:"Igiciro kibe hagati ya 100 na 2000 RWF/km.", invalid_plate:"Plaque ibe nka RAB 123 A.", invalid_vehicle_type:"Hitamo Moto cyangwa Imodoka.",
+    division_not_found:"Iyi place ntigaragara mu turere tw'u Rwanda — hitamo mu dropdown.", divisions_unavailable:"Nta turere rubatswe kuri iyi server — gerageza nyuma.", divisions_unmapped:"Ntidushoboye kumenya akagari kiri hafi yawe — koresha dropdown.", invalid_location_code:"Hitamo place muri dropdown y'intara/akarere/umurenge.",
+    driver_offline:"Uwo mushoferi nta online ubu — hitamo undi.", driver_busy:"Uwo motari afite umugenzi — hitamo undi cyangwa umutegereze.", service_not_offered:"Uwo mushoferi ntagutanga iyo serivise.", capacity_exceeded:"Iyo modoka cyangwa moto ntishobora gutwara abo bantu bose.",
+    place_not_found:"Map ntiyabonye aho hantu — shyiramo intera (km) wenyine.", invalid_near:"Ntibyakunze ko tubona aho uherereye — koresha zone.",
+    driver_not_found:"Umushoferi ntaboneka.", authentication_required:"Injira mbere.", not_payable:"Kwishyura bishoboka nyuma yo kwemerwa cyangwa kurangiza trip.", invalid_email:"Andika email nyayo kugira ngo wishyure ukoresheje ikarita.",
+    paystack_not_configured:"Kwishyura ukoresheje ikarita ntibiratangira — koresha MoMo cyangwa ugerageze nyuma.", momo_not_configured:"Kwishyura kuri MTN MoMo ntibiratangira — gerageza nyuma.",
+    provider_unreachable:"Serivise y'amafaranga ntiyasubije — gerageza nyuma.", paystack_rejected:"Paystack yanze ubu busabe.", momo_rejected:"MoMo yanze ubu busabe.", momo_auth_failed:"MoMo ntiyemeye udufunguzo.",
+    invalid_status_change:"Imimerere ntishobora guhinduka gutya.", empty_update:"Ohereza nibura ikintu kimwe.", invalid_json:"Amakuru yoherejwe si JSON.", server_error:"Ikibazo kuri server.",
+    unknown_provider:"Uburyo bwo kwishyura butazwi.",
+    forbidden:"Ntibyemewe kuri konti yawe.", request_not_found:"Iyi demand ntiaboneka.", payment_not_found:"Iyi payment ntiaboneka.",
+    missing_reference:"Umubare wa payment ubuze.", bad_webhook_signature:"Ubutumwa bwa provider ntibwemewe."
+  },
+  en: {
+    invalid_phone:"That phone number is not valid (e.g. 0788123456)", phone_taken:"This phone already has an account — use Log in.",
+    plate_taken:"This plate is already registered.", id_number_taken:"This national ID is already registered.", tin_number_taken:"This TIN is already registered.",
+    invalid_id_number:"The national ID has 16 digits.", invalid_tin_number:"The TIN has 9 digits.", invalid_names:"Please write your full names.",
+    invalid_code:"Enter the 6-digit code.", otp_invalid:"That code is not correct.", otp_expired:"That code was used or has expired — request a new one.", otp_rate_limited:"Too many codes requested — wait a moment.", otp_attempts_exceeded:"Too many wrong attempts — request a new code.",
+    invalid_verify_token:"Verify your phone before registering.", phone_not_verified:"That code belongs to a different phone number.",
+    account_pending:"A SERE MOTO admin is still reviewing your application.", already_reviewed:"That application was already reviewed.", incomplete_profile:"Zone and services are required (cars also need a price per km).", profile_incomplete:"Add your zone and services (cars also need a price per km) before going online.", admin_only:"Admin access only.", driver_unavailable:"That driver is not active on SERE MOTO.", google_not_configured:"Google sign-in is not set up yet.", invalid_action:"Choose approve or reject.",
+    invalid_price_per_km:"Price must be between 100 and 2000 RWF/km.", invalid_plate:"Plate must look like RAB 123 A.", invalid_vehicle_type:"Choose Moto or Car.",
+    division_not_found:"That place is not one of Rwanda's divisions — pick it from the dropdown.", divisions_unavailable:"This server has no division list loaded — try again later.", divisions_unmapped:"We could not match your position to a Rwandan area — use the dropdown.", invalid_location_code:"Pick the place from the province / district / sector dropdown.",
+    driver_offline:"That driver is offline right now — pick another.", driver_busy:"That rider already has a passenger — choose another or wait a moment.", service_not_offered:"That driver does not offer this service.", capacity_exceeded:"The vehicle cannot carry that many people.",
+    place_not_found:"The map could not find those places — enter the distance (km) yourself.", invalid_near:"We could not use your position — search by zone instead.",
+    driver_not_found:"Driver not found.", authentication_required:"Please log in.", not_payable:"Payment is possible after the trip is accepted or completed.", invalid_email:"Enter a valid email to pay by card.",
+    paystack_not_configured:"Card payments are not live yet — use Mobile Money or try again later.", momo_not_configured:"MTN MoMo payments are not live yet — try again later.",
+    provider_unreachable:"The payment service did not respond — try again.", paystack_rejected:"Paystack refused this request.", momo_rejected:"MoMo refused this request.", momo_auth_failed:"MoMo rejected the credentials.",
+    invalid_status_change:"That status change is not allowed.", empty_update:"Send at least one field.", invalid_json:"The request body was not valid JSON.", server_error:"Server error.",
+    unknown_provider:"Unknown payment provider.",
+    forbidden:"That action is not allowed for your account.", request_not_found:"That request was not found.", payment_not_found:"That payment was not found.",
+    missing_reference:"The payment reference is missing.", bad_webhook_signature:"The provider notification was not verified."
+  }
+};
+
+var lang = localStorage.getItem("sere_lang") || "rw";
+var token = localStorage.getItem("sere_token") || "";
+var session = { kind: null };
+var health = {};
+var sheetDriver = null;
+var clientPos = null;
+var nearOn = false;
+var fareQuote = null;
+var cascadeFrom = null;
+var wherePoint = null;
+
+function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
+function emsg(code){ return (T[lang] && T[lang][code]) || T.en[code] || null; }
+function errText(json, status){
+  var code = (json && json.error) || "";
+  var known = emsg(code);
+  if (known) return known;
+  var m = /^invalid_(.+)$/.exec(code);
+  if (m) return t("err.invalidField").replace("{field}", m[1].replace(/_/g, " "));
+  var m2 = /^unknown_(.+)$/.exec(code);
+  if (m2) return t("err.unknownField").replace("{field}", m2[1].replace(/_/g, " "));
+  if (json && json.message) return json.message;
+  return t("err.server") + " (" + status + ")";
+}
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function digits(p){ var d=String(p||"").replace(/[^0-9]/g,""); if(d.length===10&&d[0]==="0") d="250"+d.slice(1); return d; }
+function initials(n){ var p=String(n||"?").trim().split(/\s+/); return ((p[0]||"?")[0]+(p[1]?p[1][0]:"")).toUpperCase(); }
+function stars(r){ var f=Math.round(r||0); return '<span class="stars">'+"★★★★★".slice(0,f)+"☆☆☆☆☆".slice(0,5-f)+'</span>'; }
+function money(v){ return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " RWF"; }
+function kmLabel(km){ return (Math.round(km*10)/10).toFixed(1); }
+
+// One shot at the browser GPS; a null answer means the rider list falls back to zones.
+function geoFix(options){
+  return new Promise(function(resolve){
+    if (!navigator.geolocation) return resolve(null);
+    var settled = false;
+    var finish = function(value){ if (!settled) { settled = true; resolve(value); } };
+    navigator.geolocation.getCurrentPosition(function(p){
+      finish({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy });
+    }, function(){ finish(null); }, Object.assign({ timeout: 9000, maximumAge: 60000, enableHighAccuracy: true }, options || {}));
+  });
+}
+function nearParam(){ return clientPos ? clientPos.lat.toFixed(4) + "," + clientPos.lng.toFixed(4) : ""; }
+
+// The deepest division the rider picked, or — while "near me" is on — the one their own GPS fix falls in.
+function pickedDivision(){ return cascadeFrom ? cascadeFrom.value() : null; }
+function divisionFilter(useGpsArea){
+  var picked = pickedDivision();
+  if (picked) return picked.code;
+  return useGpsArea && nearOn && wherePoint ? wherePoint.code : "";
+}
+
+/* Which Rwandan area a rider answers for: the division they picked beats the old free-text zone. */
+function areaText(d){
+  var parts = [];
+  if (d.area && d.area.label) parts.push(d.area.label);
+  else if (d.zone) parts.push(d.zone);
+  (d.zones || []).forEach(function(extra){ if (extra && parts.indexOf(extra) < 0) parts.push(extra); });
+  return parts.join(" · ");
+}
+
+/* One call turns the GPS fix into "Kacyiru, Gasabo", so the tracker and the division tree agree. */
+async function loadWhere(){
+  if (!clientPos || !window.SERE_DIVISIONS) { wherePoint = null; renderWhere(); return; }
+  try {
+    wherePoint = await SERE_DIVISIONS.point(clientPos.lat.toFixed(4), clientPos.lng.toFixed(4));
+  } catch (error) {
+    wherePoint = null;
+  }
+  renderWhere();
+  if (trackStage) setTrack(trackStage);
+}
+
+function renderWhere(){
+  var el = document.getElementById("whereLine");
+  if (!wherePoint) { el.hidden = true; el.textContent = ""; return; }
+  el.hidden = false;
+  el.textContent = t("where.line")
+    .replace("{where}", wherePoint.label || wherePoint.name)
+    .replace("{km}", kmLabel(wherePoint.distance_to_centre_km));
+}
+
+function componentLine(c){
+  if (c.type === "first_band") return t("fare.first").replace("{km}", kmLabel(c.km)).replace("{amt}", c.amountRwf);
+  if (c.type === "wait") return t("fare.wait").replace("{min}", c.minutes).replace("{rate}", c.rateRwf);
+  if (c.type === "long_band") return t("fare.long").replace("{km}", kmLabel(c.km)).replace("{rate}", c.rateRwf).replace("{over}", c.overKm);
+  if (c.type === "driver_rate") return t("fare.rate").replace("{km}", kmLabel(c.km)).replace("{rate}", c.rateRwf);
+  return t("fare.mid").replace("{km}", kmLabel(c.km)).replace("{rate}", c.rateRwf);
+}
+
+async function api(path, opts){
+  opts = opts || {};
+  var headers = {};
+  if (opts.body !== undefined) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = "Bearer " + token;
+  var response;
+  try {
+    response = await fetch(path, { method: opts.method || "GET", headers, body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined });
+  } catch (networkError) {
+    throw new Error(emsg("err.network"));
+  }
+  var json = await response.json().catch(function(){ return {}; });
+  if (!response.ok) throw new Error(errText(json, response.status));
+  return json;
+}
+
+function showMsg(id, text, ok){
+  var el = document.getElementById(id);
+  el.textContent = text;
+  el.className = "msg " + (ok ? "msg-ok" : "msg-err");
+  el.hidden = !text;
+}
+
+function applyLang(){
+  document.documentElement.lang = lang;
+  localStorage.setItem("sere_lang", lang);
+  [].forEach.call(document.querySelectorAll("[data-i18n]"), function(el){ el.textContent = t(el.getAttribute("data-i18n")); });
+  [].forEach.call(document.querySelectorAll("[data-i18n-ph]"), function(el){ el.placeholder = t(el.getAttribute("data-i18n-ph")); });
+  [].forEach.call(document.querySelectorAll("[data-i18n-title]"), function(el){
+    var s = t(el.getAttribute("data-i18n-title"));
+    el.setAttribute("title", s);
+    el.setAttribute("aria-label", s);
+  });
+  [].forEach.call(document.querySelectorAll("[data-i18n-tip]"), function(el){ el.setAttribute("title", t(el.getAttribute("data-i18n-tip"))); });
+  [].forEach.call(document.querySelectorAll(".lang button"), function(b){ b.setAttribute("aria-pressed", String(b.dataset.lang === lang)); });
+  if (window.SERE_DIVISIONS) SERE_DIVISIONS.setLang(lang);
+  setNear(nearOn);
+  if (trackStage) setTrack(trackStage);
+  renderDrivers(); renderStats(); renderMenu(); renderWhere();
+  if (clientPos) loadWhere();
+}
+
+/* The rider rows carry Kinyarwanda or English division names from the server, so a language switch has
+   to re-read them — repainting the copy alone would leave the previous language on the screen. */
+[].forEach.call(document.querySelectorAll(".lang button"), function(b){ b.onclick = function(){ lang = b.dataset.lang; applyLang(); loadDrivers(); }; });
+
+var menuOpen = false;
+var deferredInstall = null;
+
+function isStandalone(){
+  return Boolean(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+}
+
+function renderInstall(){
+  var btn = document.getElementById("btnInstall");
+  var wrap = document.getElementById("miInstallWrap");
+  if (!btn || !wrap) return;
+  if (isStandalone()) {
+    btn.querySelector("span").textContent = t("menu.installed");
+    btn.disabled = true;
+    wrap.hidden = false;
+    return;
+  }
+  btn.querySelector("span").textContent = t("menu.install");
+  btn.disabled = false;
+  wrap.hidden = !deferredInstall;
+}
+
+function renderMenu(){
+  document.getElementById("miAdmin").hidden = !(session.kind === "driver" && session.driver.isAdmin);
+  document.getElementById("miNear").setAttribute("aria-checked", String(nearOn));
+  document.getElementById("miNearVal").textContent = nearOn ? "✓" : "";
+  var onlineOnly = document.getElementById("fOnline").checked;
+  document.getElementById("miOnline").setAttribute("aria-checked", String(onlineOnly));
+  document.getElementById("miOnlineVal").textContent = onlineOnly ? "✓" : "";
+  renderInstall();
+}
+
+function setMenu(open){
+  menuOpen = open;
+  document.getElementById("menu").hidden = !open;
+  document.getElementById("btnMenu").setAttribute("aria-expanded", String(open));
+  if (open){
+    renderMenu();
+    var m = document.getElementById("menu");
+    m.style.maxHeight = Math.max(180, window.innerHeight - m.getBoundingClientRect().top - 8) + "px";
+  }
+}
+document.getElementById("btnMenu").onclick = function(){ setMenu(!menuOpen); };
+document.addEventListener("click", function(e){
+  if (!menuOpen) return;
+  if (!e.isTrusted) return;
+  if (e.target.closest("#menu") || e.target.closest("#btnMenu")) return;
+  setMenu(false);
+});
+[].forEach.call(document.querySelectorAll("#menu .mrow"), function(el){
+  el.addEventListener("click", function(){
+    if (el.id === "btnInstall") return;
+    if (el.tagName === "A") { setMenu(false); return; }
+    if (el.id === "miNear") document.getElementById("btnNear").click();
+    if (el.id === "miOnline") {
+      var box = document.getElementById("fOnline");
+      box.checked = !box.checked;
+      box.dispatchEvent(new Event("change"));
+    }
+    renderMenu();
+  });
+});
+window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferredInstall = e; renderInstall(); });
+window.addEventListener("appinstalled", function(){ deferredInstall = null; renderInstall(); });
+document.getElementById("btnInstall").onclick = function(){
+  if (!deferredInstall) return;
+  var prompt = deferredInstall;
+  this.disabled = true;
+  prompt.prompt().catch(function(){}).then(function(){ return prompt.userChoice; }).catch(function(){}).then(function(){
+    deferredInstall = null;
+    renderInstall();
+  });
+};
+
+function renderStats(){
+  var areas = health.divisions && health.divisions.levels ? health.divisions.levels.district : "…";
+  var items = [
+    [health.drivers != null ? health.drivers : "…", t("m.drivers")],
+    [document.querySelectorAll('#drivers .d [data-on="1"]').length || (health.drivers ? "" : "…"), t("m.online")],
+    [areas, t("m.areas")]
+  ];
+  document.getElementById("stats").innerHTML = items.map(function(i){
+    return '<div class="stat"><b>'+esc(i[0])+'</b><i>'+esc(i[1])+'</i></div>';
+  }).join("");
+}
+
+var drivers = [];
+var nearFallback = false;
+var NEAR_KM = 25;
+async function fetchDrivers(extra, gpsArea){
+  var params = new URLSearchParams();
+  params.set("lang", lang);
+  if (document.getElementById("q").value.trim()) params.set("q", document.getElementById("q").value.trim());
+  if (document.getElementById("fType").value) params.set("vehicle_type", document.getElementById("fType").value);
+  var code = divisionFilter(gpsArea);
+  if (code) params.set("division", code);
+  if (document.getElementById("fNeed").value) params.set("service", document.getElementById("fNeed").value);
+  if (document.getElementById("fOnline").checked) params.set("available", "1");
+  (extra || []).forEach(function(pair){ params.set(pair[0], pair[1]); });
+  var data = await api("/api/drivers?" + params.toString());
+  return data.drivers;
+}
+
+async function loadDrivers(){
+  nearFallback = false;
+  var tracking = nearOn && !!clientPos;
+  var t0 = Date.now();
+  trackInfo.riders = null;
+  if (tracking) setTrack("scan");
+  try {
+    if (tracking) {
+      /* The top block is genuinely nearby *and* free; the area directory below keeps the rest visible. */
+      var live = await fetchDrivers([["near", nearParam()], ["max_km", String(NEAR_KM)], ["available", "1"]]);
+      trackInfo.riders = live.length;
+      setTrack("scan");
+      var rest = await fetchDrivers([], true);
+      if (!rest.length && !pickedDivision() && divisionFilter(true)) rest = await fetchDrivers();
+      var seen = {};
+      live.forEach(function(d){ seen[d.id] = 1; });
+      drivers = live.concat(rest.filter(function(d){ return !seen[d.id]; }));
+      nearFallback = live.length === 0;
+      if (nearFallback) { trackInfo.riders = null; setTrack("sort", t("track.noLive")); }
+      else setTrack("sort");
+    } else {
+      drivers = await fetchDrivers([], true);
+    }
+    showMsg("findErr", nearFallback ? t("near.none").replace("{km}", NEAR_KM) : "", !nearFallback);
+  } catch (error) {
+    drivers = [];
+    showMsg("findErr", error.message, false);
+  }
+  renderDrivers();
+  renderStats();
+  if (tracking) {
+    var left = 600 - (Date.now() - t0);
+    if (left > 0) await new Promise(function(r){ setTimeout(r, left); });
+    setTrack(null);
+  }
+}
+
+var TRACK_STEPS = ["geo", "scan", "sort"];
+var trackStage = null;
+var trackInfo = { accuracy: null, riders: null };
+function trackNote(){
+  var bits = [];
+  if (trackInfo.accuracy != null) bits.push(t("track.at").replace("{m}", Math.round(trackInfo.accuracy)));
+  if (wherePoint) bits.push(t("track.where").replace("{where}", wherePoint.label || wherePoint.name));
+  if (trackInfo.riders != null) bits.push(t("track.found").replace("{n}", trackInfo.riders).replace("{km}", NEAR_KM));
+  return bits.join(" · ");
+}
+function setTrack(stage, note){
+  var box = document.getElementById("track");
+  trackStage = stage || null;
+  if (!stage) { box.hidden = true; document.getElementById("trackNote").textContent = ""; return; }
+  box.hidden = false;
+  var done = TRACK_STEPS.indexOf(stage);
+  [].forEach.call(box.querySelectorAll("[data-step]"), function(li, i){
+    li.setAttribute("data-s", i < done ? "ok" : i === done ? "on" : "");
+  });
+  document.getElementById("trackNote").textContent = note || trackNote();
+}
+
+function renderDrivers(){
+  var box = document.getElementById("drivers");
+  var liveCount = drivers.filter(function(d){ return d.live; }).length;
+  document.getElementById("count").textContent = drivers.length + " · " + t("m.drivers");
+  var tag = document.getElementById("liveTag");
+  tag.hidden = liveCount === 0;
+  document.getElementById("liveCount").textContent = t(liveCount === 1 ? "live.one" : "live.count").replace("{n}", liveCount);
+  var nearest = null;
+  if (nearOn && !nearFallback) {
+    var pool = drivers.filter(function(d){ return d.live && d.state === "available" && d.distanceKm != null; });
+    if (!pool.length) pool = drivers.filter(function(d){ return d.distanceKm != null; });
+    pool.sort(function(a, b){ return a.distanceKm - b.distanceKm; });
+    nearest = pool.length ? pool[0] : null;
+  }
+  var line = document.getElementById("nearLine");
+  line.hidden = !nearest;
+  if (nearest) {
+    line.textContent = t("near.line").replace("{name}", nearest.name)
+      .replace("{km}", t("c.km").replace("{km}", kmLabel(nearest.distanceKm)));
+  }
+  box.innerHTML = drivers.length ? drivers.map(function(d){
+    var zonesTxt = areaText(d);
+    var price = d.vehicleType === "car" && d.pricePerKm ? '<b>'+esc(d.pricePerKm)+' RWF/km</b>' : '<b>'+t("fare.regulated")+'</b>';
+    var facts = price + ' · ' + t(d.services==="both"?"n.both":d.services==="ride"?"n.ride":"n.delivery") + ' · ' + esc(zonesTxt);
+    var stateKey = d.state === "with_passenger" ? "c.busy" : d.state === "available" ? "c.available" : "c.off";
+    var stateClass = d.state === "with_passenger" ? "b-busy" : d.state === "available" ? "b-on" : "b-off";
+    var where = d.distanceKm != null
+      ? '<span class="dist">'+t("c.km").replace("{km}", kmLabel(d.distanceKm))+'</span>' + (d.live ? ' <span class="badge b-live"><i></i>'+t("c.live")+'</span>' : '')
+        + (d.live && d.around ? '<span class="dwhere" title="'+esc(d.around.label)+'">'+esc(d.around.name)+'</span>' : '')
+        + (nearest && d.id === nearest.id ? ' <span class="badge b-near">'+t("c.closest")+'</span>' : '')
+      : '<span class="badge b-off">'+t("c.noGps")+'</span>';
+    var disabled = d.state === "with_passenger";
+    var bookAttr = disabled ? ' disabled title="' + esc(t("c.busy")) + '"' : '';
+    return '<article class="d' + (nearest && d.id === nearest.id ? ' d-closest' : '') + '">'
+      + '<div class="d-top"><div class="av" aria-hidden="true">'+esc(initials(d.name))+'</div>'
+      + '<div class="d-id"><b>'+esc(d.name)+'</b><em>'+esc(d.plate)+' · <span class="badge '+(d.vehicleType==="car"?"b-car":"b-moto")+'">'+t(d.vehicleType==="car"?"t.car":"t.moto")+'</span></em>'
+      + '<div class="rate">'+stars(d.rating)+' <b>'+esc((d.rating||0).toFixed(1))+'</b> ('+esc(d.trips)+')'
+      + '<span class="ratebtns" role="group" aria-label="'+esc(t("c.rate"))+'">'
+      + [1,2,3,4,5].map(function(n){ return '<button type="button" class="ratebtn" data-rate="'+d.id+'" data-s="'+n+'" aria-label="'+esc(t("c.rate"))+' '+n+'">&#9733;</button>'; }).join("")
+      + '</span></div></div>'
+      + '<span class="badge '+stateClass+'" data-on="'+(d.online?1:0)+'">'+t(stateKey)+'</span></div>'
+      + '<div class="d-meta" title="'+esc(zonesTxt)+'">'+facts+'</div>'
+      + '<div class="d-act">'+where
+      + '<button class="btn btn-ghost btn-s btn-xs" data-book="'+d.id+'"'+bookAttr+'>'+t("c.book")+'</button>'
+      + '<a class="btn btn-ghost btn-s btn-xs" href="tel:+'+digits(d.phone)+'">'+t("c.call")+'</a></div>'
+      + '</article>';
+  }).join("") : '<p class="empty">' + esc(t("list.empty")) + '</p>';
+  [].forEach.call(box.querySelectorAll("[data-book]"), function(b){ b.onclick = function(){ openSheet(b.dataset.book); }; });
+  [].forEach.call(box.querySelectorAll("[data-rate]"), function(b){
+    b.onclick = async function(){
+      b.disabled = true;
+      try {
+        await api("/api/drivers/" + b.dataset.rate + "/rating", { method:"POST", body: { stars: Number(b.dataset.s) } });
+        await loadDrivers();
+        showMsg("findErr", t("err.rated"), true);
+      } catch (error) {
+        showMsg("findErr", error.message, false);
+        b.disabled = false;
+      }
+    };
+  });
+}
+
+["q","fType","fNeed","fOnline"].forEach(function(id){
+  var el = document.getElementById(id);
+  el.addEventListener(id==="q"?"input":"change", function(){ clearTimeout(el.timer); el.timer = setTimeout(loadDrivers, id==="q"?250:0); });
+});
+
+function setNear(on){
+  nearOn = on;
+  var btn = document.getElementById("btnNear");
+  btn.setAttribute("aria-pressed", String(on));
+  btn.textContent = on ? t("near.on").replace("{km}", NEAR_KM) : t("near.off");
+  btn.title = on ? t("near.onHint") : t("near.offHint");
+  if (menuOpen) renderMenu();
+}
+
+document.getElementById("btnNear").onclick = async function(){
+  if (!navigator.geolocation) { showMsg("findErr", t("loc.unsupported"), false); return; }
+  if (!clientPos) {
+    this.disabled = true;
+    setTrack("geo");
+    clientPos = await geoFix();
+    this.disabled = false;
+    if (!clientPos) { trackInfo.accuracy = null; setTrack(null); showMsg("findErr", t("track.noFix"), false); return; }
+    trackInfo.accuracy = clientPos.accuracy;
+    setTrack("geo");
+    if (!wherePoint) await loadWhere();
+  }
+  setNear(!nearOn);
+  loadDrivers();
+};
+
+// A rider who already granted permission should not have to tap again to see who is close.
+async function autoNear(){
+  if (!navigator.permissions || !navigator.geolocation) return;
+  var status;
+  try { status = await navigator.permissions.query({ name: "geolocation" }); }
+  catch (error) { return; }
+  if (status.state !== "granted") return;
+  clientPos = await geoFix({ timeout: 5000 });
+  if (!clientPos) return;
+  trackInfo.accuracy = clientPos.accuracy;
+  setNear(true);
+  await loadWhere();
+  await loadDrivers();
+}
+
+document.getElementById("btnSearch").onclick = function(){
+  loadDrivers();
+  document.querySelector(".results").scrollIntoView({ behavior:"smooth", block:"start" });
+};
+
+function openSheet(id){
+  var d = drivers.filter(function(x){ return String(x.id) === String(id); })[0];
+  if (!d) return;
+  sheetDriver = d;
+  document.getElementById("shWho").innerHTML = '<b>'+esc(d.name)+'</b> · '+esc(d.plate)+' · '+esc(areaText(d))+' · '+(d.vehicleType==="car"&&d.pricePerKm ? esc(d.pricePerKm)+' RWF/km' : t("fare.regulated"));
+  document.getElementById("shCall").href = "tel:+" + digits(d.phone);
+  var who = JSON.parse(localStorage.getItem("sere_client") || "null");
+  if (who) { document.getElementById("cn").value = who.name || ""; document.getElementById("cp").value = who.phone || ""; }
+  // The leaf name only — "Kacyiru" geocodes, "Kacyiru, Gasabo, Umujyi wa Kigali" does not.
+  var start = pickedDivision();
+  var fromName = start ? start.name : (wherePoint ? wherePoint.name : "");
+  if (!document.getElementById("fr").value) document.getElementById("fr").value = fromName;
+  if (!document.getElementById("to").value) document.getElementById("to").value = document.getElementById("fTo").value || "";
+  showMsg("shErr", "", true);
+  document.getElementById("sheet").hidden = false;
+  refreshFare();
+  (document.getElementById("cn").value ? document.getElementById("cp") : document.getElementById("cn")).focus();
+}
+
+var fareTimer;
+function queueFare(){ clearTimeout(fareTimer); fareTimer = setTimeout(refreshFare, 450); }
+
+async function refreshFare(){
+  if (!sheetDriver) return;
+  var from = document.getElementById("fr").value.trim();
+  var to = document.getElementById("to").value.trim();
+  var manual = document.getElementById("km").value;
+  var params = new URLSearchParams();
+  params.set("vehicle", sheetDriver.vehicleType);
+  if (sheetDriver.vehicleType === "car" && sheetDriver.pricePerKm) params.set("price_per_km", sheetDriver.pricePerKm);
+  if (manual) params.set("distance_km", manual);
+  else if (from && to) {
+    params.set("from", from);
+    params.set("to", to);
+    if (clientPos) params.set("near", nearParam());
+  } else {
+    fareQuote = null;
+    document.getElementById("fareBox").hidden = true;
+    return;
+  }
+  fareQuote = null;
+  document.getElementById("fareBox").hidden = false;
+  document.getElementById("fareAmount").textContent = t("sh.fareLoading");
+  document.getElementById("fareDistance").textContent = "";
+  document.getElementById("fareParts").innerHTML = "";
+  document.getElementById("fareBasis").textContent = "";
+  try {
+    fareQuote = await api("/api/fare?" + params.toString());
+    renderFare();
+  } catch (error) {
+    document.getElementById("fareAmount").textContent = t("sh.fare");
+    document.getElementById("fareDistance").textContent = error.message;
+    document.getElementById("fareBasis").textContent = t("sh.fareBasis");
+  }
+}
+
+function renderFare(){
+  if (!fareQuote || !sheetDriver) return;
+  document.getElementById("fareAmount").textContent = fareQuote.fare_rwf == null ? t("sh.fareNone") : money(fareQuote.fare_rwf);
+  document.getElementById("fareDistance").textContent = t("sh.fareKm").replace("{km}", kmLabel(fareQuote.distance_km));
+  document.getElementById("fareParts").innerHTML = (fareQuote.components || []).map(function(c){
+    return "<li>" + esc(componentLine(c)) + "</li>";
+  }).join("");
+  document.getElementById("fareBasis").textContent = fareQuote.basis === "driver_rate" ? t("fare.driverRate") : fareQuote.basis;
+}
+["fr","to","km"].forEach(function(id){ document.getElementById(id).addEventListener("input", queueFare); });
+function closeSheet(){ document.getElementById("sheet").hidden = true; sheetDriver = null; }
+document.getElementById("shX").onclick = closeSheet;
+document.getElementById("sheet").addEventListener("click", function(e){ if (e.target === this) closeSheet(); });
+[].forEach.call(document.querySelectorAll("#shKind .chip"), function(c){
+  c.onclick = function(){ [].forEach.call(document.querySelectorAll("#shKind .chip"), function(o){ o.setAttribute("aria-pressed", String(o===c)); }); };
+});
+document.getElementById("shForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  if (!sheetDriver) return;
+  var body = {
+    driver_id: sheetDriver.id,
+    client_name: document.getElementById("cn").value,
+    client_phone: document.getElementById("cp").value,
+    kind: document.querySelector('#shKind .chip[aria-pressed="true"]').dataset.k,
+    origin: document.getElementById("fr").value,
+    destination: document.getElementById("to").value,
+    scheduled_at: document.getElementById("wh").value || null,
+    passengers: Number(document.getElementById("pz").value || 1),
+    note: document.getElementById("ms").value || null,
+    distance_km: document.getElementById("km").value ? Number(document.getElementById("km").value) : null,
+    near: clientPos ? nearParam() : null
+  };
+  var button = this.querySelector('button[type="submit"]');
+  button.disabled = true;
+  try {
+    var data = await api("/api/requests", { method:"POST", body: body });
+    var req = data.request;
+    var whenTxt = req.scheduledAt ? new Date(req.scheduledAt).toLocaleString() : "—";
+    var msg = "SERE MOTO · " + t(req.kind==="delivery"?"n.delivery":"n.ride")
+      + "\n" + t("sh.name") + ": " + req.clientName + " (" + req.clientPhone + ")"
+      + "\n" + t("sh.from") + ": " + req.origin + " -> " + t("sh.to") + ": " + req.destination
+      + "\n" + t("sh.when") + ": " + whenTxt + " · " + t("sh.pax") + ": " + req.passengers
+      + (req.distanceKm ? "\n" + t("sh.dist") + ": " + t("c.km").replace("{km}", kmLabel(req.distanceKm)) : "")
+      + (req.fareRwf ? "\n" + t("r.fare") + ": " + money(req.fareRwf) : "")
+      + (req.note ? "\n" + t("sh.note") + ": " + req.note : "")
+      + "\n#" + req.id;
+    window.open("https://wa.me/" + digits(sheetDriver.phone) + "?text=" + encodeURIComponent(msg), "_blank", "noopener");
+    localStorage.setItem("sere_client", JSON.stringify({ name: body.client_name, phone: body.client_phone }));
+    this.reset();
+    closeSheet();
+    await loadDrivers();
+    showMsg("findErr", t("err.saved"), true);
+  } catch (error) {
+    showMsg("shErr", error.message, false);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function boot(){
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  if (window.SERE_DIVISIONS) {
+    cascadeFrom = SERE_DIVISIONS.mount(document.getElementById("divFrom"), { depth: 3, onChange: function(){ loadDrivers(); } });
+  }
+  try { health = await api("/api/health"); } catch (error) { showMsg("findErr", error.message, false); }
+  try {
+    var zones = (await api("/api/zones")).zones;
+    document.getElementById("zones").innerHTML = zones.map(function(z){ return '<option value="'+esc(z)+'">'; }).join("");
+  } catch (error) { /* the old free-text zone names still help the from/to boxes autocomplete */ }
+  try { session = await api("/api/auth/session"); }
+  catch (error) { /* the finder works without a session */ }
+  await loadDrivers();
+  applyLang();
+  if (new URLSearchParams(location.search).get("view") === "mine") location.replace("/passenger");
+  autoNear();
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function(){});
+}
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") { setMenu(false); closeSheet(); } });
+boot();
+</script>
+</body>
+</html>

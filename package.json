@@ -1,0 +1,29 @@
+{
+  "name": "seremoto-server",
+  "version": "1.0.0",
+  "description": "SERE Moto backend: driver directory, ride/delivery requests, MoMo and card payments",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node test/smoke.js",
+    "test:i18n": "node scripts/check-i18n.js",
+    "test:dashboards": "node test/dashboards.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1161.0",
+    "@aws-sdk/s3-request-presigner": "^3.1161.0",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.14",
+    "@electric-sql/pglite-socket": "^0.2.17"
+  }
+}
