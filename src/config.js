@@ -70,10 +70,13 @@ export const config = {
   },
   /* numverify (apilayer.com) checks a number against the international numbering plan: it says
      whether +250 7x xxx xxxx is a real Rwandan mobile range at all, before an SMS credit goes out.
-     It is not an HLR probe, so a "valid" verdict never means somebody answered the phone. */
+     It is not an HLR probe, so a "valid" verdict never means somebody answered the phone.
+     The key is served over two hosts — https://apilayer.net/api (the numverify plan-check host)
+     and https://api.apilayer.com/number_verification (their gateway); the old
+     api.apilayer.com/numverify route was withdrawn and answers 404. */
   numverify: {
     key: process.env.NUMVERIFY_ACCESS_KEY || '',
-    baseUrl: (process.env.NUMVERIFY_BASE_URL || 'https://api.apilayer.com/numverify').replace(/\/+$/, ''),
+    baseUrl: (process.env.NUMVERIFY_BASE_URL || 'https://apilayer.net/api').replace(/\/+$/, ''),
     timeoutMs: num(process.env.NUMVERIFY_TIMEOUT_MS, 10000),
   },
   /* The booking conversation. Any OpenAI-compatible chat endpoint: the key stays on the server and

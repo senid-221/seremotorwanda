@@ -1,6 +1,7 @@
-/* A tiny in-memory numverify endpoint for the test suites. It answers the same JSON shape the real
-   api.apilayer.com/numverify service does, so the phone screening can be exercised end to end — pass,
-   fail, outage and an unreadable body — without a key, a quota or the network. */
+/* A tiny in-memory numverify endpoint for the test suites. It answers the same JSON shape the live
+   apilayer hosts do and accepts the key the way both of them do — the access_key parameter or the
+   apikey header — so the phone screening can be exercised end to end (pass, fail, outage and an
+   unreadable body) without a key, a quota or the network. */
 import http from 'node:http';
 
 export const NUMVERIFY_TEST_KEY = 'scratch-numverify-key';
@@ -20,14 +21,15 @@ export async function startFakeNumverify() {
     }
 
     const number = url.searchParams.get('number') || '';
-    calls.push({ number, key: url.searchParams.get('access_key') || '' });
+    const key = url.searchParams.get('access_key') || req.headers.apikey || '';
+    calls.push({ number, key });
 
     if (url.pathname !== '/validate') {
       res.statusCode = 404;
       res.end(JSON.stringify({ success: false, errors: { code: 303, info: 'no such endpoint' } }));
       return undefined;
     }
-    if (url.searchParams.get('access_key') !== NUMVERIFY_TEST_KEY) {
+    if (key !== NUMVERIFY_TEST_KEY) {
       res.statusCode = 401;
       res.end(JSON.stringify({ success: false, errors: { code: 104, info: 'Access key is invalid or has been revoked' } }));
       return undefined;
@@ -35,6 +37,13 @@ export async function startFakeNumverify() {
     if (mode === 'down') {
       res.statusCode = 500;
       res.end(JSON.stringify({ success: false, errors: { code: 105, info: 'Your quota is exhausted' } }));
+      return undefined;
+    }
+    /* The api.apilayer.com gateway refuses a bad key in its own shape: one bare message, no
+       success/error envelope. */
+    if (mode === 'gateway_refusal') {
+      res.statusCode = 401;
+      res.end(JSON.stringify({ message: 'Invalid authentication credentials' }));
       return undefined;
     }
     if (mode === 'gibberish') {

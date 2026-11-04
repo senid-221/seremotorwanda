@@ -278,14 +278,15 @@ const invalidPhone = (source) => new ApiError(
 );
 
 /* numverify answers with {"success":false,"errors":{...}} or {"error":{...}} when the key is
-   wrong or the quota is spent — an outage on our side, never a verdict about the passenger. */
+   wrong or the quota is spent, and the api.apilayer.com gateway answers a bare {"message":…}
+   instead — an outage on our side either way, never a verdict about the passenger. */
 function numverifyFault(body) {
   if (!body || typeof body !== 'object') return null;
   const errors = body.errors || body.error || null;
-  if (body.success === false || errors) {
+  if (body.success === false || errors || body.message) {
     const info = errors && typeof errors === 'object'
       ? (errors.info || errors.message || errors.type || JSON.stringify(errors))
-      : String(errors || 'rejected');
+      : String(errors || body.message || 'rejected');
     return `numverify refused the request: ${String(info).slice(0, 160)}`;
   }
   return null;
@@ -297,7 +298,14 @@ async function queryNumverify(phone) {
   url.searchParams.set('number', `+250${phone.slice(1)}`);
   let response;
   try {
-    response = await request(url, { method: 'GET', timeoutMs: config.numverify.timeoutMs });
+    /* The two hosts that serve a numverify key read it differently — apilayer.net wants the
+       access_key parameter, the api.apilayer.com gateway wants the apikey header — so the key
+       goes both ways and NUMVERIFY_BASE_URL alone decides which host answers. */
+    response = await request(url, {
+      method: 'GET',
+      headers: { apikey: config.numverify.key },
+      timeoutMs: config.numverify.timeoutMs,
+    });
   } catch (error) {
     throw new ApiError(502, 'phone_check_unavailable', `numverify did not answer: ${error.message}`);
   }

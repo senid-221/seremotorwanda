@@ -440,9 +440,9 @@ ID_MATCH_FIELD=
 ID_NAME_FIELD=
 ID_TIMEOUT_MS=10000
 
-# Phone number check — numverify (apilayer.com) is the first-choice provider
-NUMVERIFY_ACCESS_KEY=          # one key from the apilayer dashboard; nothing else is needed
-NUMVERIFY_BASE_URL=https://api.apilayer.com/numverify   # legacy free keys: http://apilayer.net/api
+# Phone number check — numverify (numverify.com, run by apilayer) is the first-choice provider
+NUMVERIFY_ACCESS_KEY=          # one key from your numverify dashboard; nothing else is needed
+NUMVERIFY_BASE_URL=https://apilayer.net/api   # or https://api.apilayer.com/number_verification
 NUMVERIFY_TIMEOUT_MS=10000
 
 # …or any live-number / HLR endpoint you are handed (used only when NUMVERIFY_ACCESS_KEY is empty)
@@ -461,14 +461,20 @@ it returns `502 tin_check_unavailable` naming the keys the body actually contain
 a pinned field, because "0" means success in some government dialects and failure in others.
 
 **numverify is the one register with a self-serve key**, so it is wired as a first-class provider rather than a
-generic contract: `GET {base}/validate?access_key=…&number=+25078xxxxxxx` returns `{valid, country_code,
-carrier, line_type}` and nothing else is configured. `POST /api/auth/otp/send` screens the digits with it
+generic contract: `GET {base}/validate?access_key=…&number=+25078xxxxxxx` (the key also travels in the
+`apikey` header, because the two hosts read it differently) returns `{valid, country_code, carrier,
+line_type}` and nothing else is configured. `POST /api/auth/otp/send` screens the digits with it
 *before* an SMS goes out, so a number that cannot exist never spends aggregator credit — `422 phone_invalid`.
 What it proves is the numbering plan, not a live handset: the verdict is stored as `source = numverify` with
-the carrier and line type beside it, and the SMS code stays the only proof that somebody owns the number. A
-`{"success":false,"errors":{…}}` body (wrong key, spent quota, 401/500) is recorded as
-`phone_check_unavailable` and the code still goes out — an outage on our side must never be shown to a
-rider as "your number is wrong" — unless `KYC_STRICT=1`. The verdict is cached for 24 hours (30 minutes when
+the carrier and line type beside it, and the SMS code stays the only proof that somebody owns the number.
+A refusal — `{"success":false,"errors":{…}}`, `{"error":{…}}`, or the `api.apilayer.com` gateway's bare
+`{"message":"Invalid authentication credentials"}` — is recorded as `phone_check_unavailable` naming that
+reason, and the code still goes out: an outage on our side must never be shown to a rider as "your number
+is wrong" — unless `KYC_STRICT=1`. `numverify.com` itself serves no API (its `/api` path is the website, and
+`api.numverify.com`, which the documentation quotes, does not resolve in DNS), and the retired
+`api.apilayer.com/numverify` route answers `404 no Route matched with those values`, so a stale
+`NUMVERIFY_BASE_URL` shows up as an outage carrying those exact words rather than as a silent skip.
+The verdict is cached for 24 hours (30 minutes when
 it is a fail) in `phone_checks`, so the same digits are looked up once, not once per code.
 
 With **no** `RRA_*`/`ID_*`/`NUMVERIFY_ACCESS_KEY`/`PHONE_CHECK_*` keys the app still ships: the three digit laws

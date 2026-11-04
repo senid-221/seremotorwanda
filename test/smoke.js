@@ -341,6 +341,8 @@ await check('a number the phone service rejects never spends an SMS code', async
   assert.equal(json.error, 'phone_invalid');
   assert.ok(scratchNumverify.calls.some((call) => call.number === `+250${dead.slice(1)}`),
     'the digits must be sent to the phone service in international form');
+  assert.ok(scratchNumverify.calls.every((call) => call.key === NUMVERIFY_TEST_KEY),
+    'every lookup must carry the access key — in the query or in the apikey header');
 });
 
 await check('a screened number is cached, so the same digits are not looked up twice', async () => {
@@ -358,7 +360,8 @@ await check('a screened number is cached, so the same digits are not looked up t
 await check('a phone service that cannot answer is an outage, never a verdict about the number', async () => {
   const health = (await api('/api/health')).json;
   if (!scratchNumverify || health.kyc.phoneCheck !== 'numverify') throw new Error('__SKIP__');
-  for (const [mode, phone] of [['down', `078${tag}42`], ['gibberish', `078${tag}43`]]) {
+  for (const [mode, phone] of [['down', `078${tag}42`], ['gibberish', `078${tag}43`],
+    ['gateway_refusal', `078${tag}44`]]) {
     await scratchNumverify.setMode(mode);
     const { status, json } = await api('/api/auth/otp/send', { method: 'POST', body: { phone } });
     assert.notEqual(json.error, 'phone_invalid', `${mode}: an unreadable service must not call the number wrong`);
