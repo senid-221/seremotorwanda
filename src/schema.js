@@ -91,6 +91,14 @@ CREATE TABLE IF NOT EXISTS drivers (
   CONSTRAINT drivers_email_key UNIQUE (email)
 );
 
+/* A database created before email sign-in has no credential column at all, and CREATE TABLE IF NOT
+   EXISTS will not add one to the table it skips. These two come before everything else that names
+   email — the login index and the UNIQUE constraint below — because Postgres refuses a statement
+   over a column that is not there, and a throw here fails the import of src/db.js, which turns every
+   single /api call into a 500. A current database already has both, so these are no-ops. */
+ALTER TABLE drivers ADD COLUMN IF NOT EXISTS email         TEXT;
+ALTER TABLE drivers ADD COLUMN IF NOT EXISTS password_hash TEXT;
+
 CREATE INDEX IF NOT EXISTS idx_drivers_online ON drivers (is_online, zone);
 CREATE INDEX IF NOT EXISTS idx_drivers_type   ON drivers (vehicle_type, services);
 CREATE INDEX IF NOT EXISTS idx_drivers_status ON drivers (status, created_at);
@@ -100,14 +108,15 @@ CREATE INDEX IF NOT EXISTS idx_drivers_live ON drivers (live_code, is_online);
 /* An account exists as soon as an email is claimed, so the login lookup needs it indexed. */
 CREATE INDEX IF NOT EXISTS idx_drivers_email ON drivers (email);
 
-/* The shape a database created before email sign-in has to be loosened into. Every statement here
-   is a no-op on a database that already looks like the CREATE TABLE above, so booting against the
-   live Neon database changes it once and never again — except for the two CHECKs, which Postgres
-   only lets you replace, so they are dropped and re-added with the same name. */
+/* The rest of the shape a database created before email sign-in has to be loosened into. Every
+   statement here is a no-op on a database that already looks like the CREATE TABLE above, so booting
+   against the live Neon database changes it once and never again — except for the two CHECKs, which
+   Postgres only lets you replace, so they are dropped and re-added with the same name. */
 ALTER TABLE drivers ALTER COLUMN phone DROP NOT NULL;
 ALTER TABLE drivers ALTER COLUMN name  DROP NOT NULL;
 ALTER TABLE drivers ALTER COLUMN plate  DROP NOT NULL;
 ALTER TABLE drivers ALTER COLUMN vehicle_type SET DEFAULT 'moto';
+ALTER TABLE drivers ALTER COLUMN status SET DEFAULT 'draft';
 ALTER TABLE drivers DROP CONSTRAINT IF EXISTS drivers_status_check;
 ALTER TABLE drivers ADD CONSTRAINT drivers_status_check
         CHECK (status IN ('draft','pending','approved','rejected'));

@@ -139,10 +139,10 @@ const bootstrap = async () => {
   await pool.query(SCHEMA_SQL);
 
   await ensureColumns('drivers', [
-    /* The credential a rider signs in with. email/password_hash are empty only on a row that was
-       created before sign-in moved off the phone number. */
-    ['email', 'TEXT'],
-    ['password_hash', 'TEXT'],
+    /* email and password_hash are NOT listed here: they are added inside the schema's own upgrade
+       block, because the UNIQUE constraint over `email` is applied in that same block and Postgres
+       refuses a constraint on a column that does not exist yet. Anything added after this call is
+       one statement too late for it. */
     ['lat', 'DOUBLE PRECISION'],
     ['lng', 'DOUBLE PRECISION'],
     ['loc_at', 'TEXT'],
