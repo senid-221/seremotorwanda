@@ -198,6 +198,15 @@ fires on every step — the page searches as the passenger answers, but the
 are owned by the file and checked by `scripts/check-i18n.js` like every other dictionary; the page's RW/EN
 toggle calls `setLang()`.
 
+**The destination box has no dropdowns either.** *Ikinyabiziga* (Moto / Imodoka-Taksi) and *Icyo ushaka*
+(Gutwarwa / Kohereza Imizigo) are two-row lists in the same hairline idiom (`.choice` / `.choice-opt` /
+`.choice-dot`), each a `role="radiogroup"` labelled by its own title, and the choice lives in one `choice`
+object rather than in `<select>` elements — so `fetchDrivers()` sends `vehicle_type` / `service` only when a row
+is picked, and tapping the picked row again clears that filter. Nothing is selected before the passenger picks,
+which is the "no All vehicles first option" rule carried over from the dropdowns. The area readout that used to
+sit under the loader (*Aho uri: … · intera 1,7 km uvuye hagati*) is gone: `wherePoint` still drives the GPS-area
+filter and the trip's origin name, it is just no longer printed as its own line.
+
 **Language is a parameter, not a guess.** Division names are built by the server, and
 `src/validate.js:language()` answers English when `lang` is missing. `SERE.api()` therefore appends
 `lang=<current>` to every call that does not already carry one, and each dashboard reloads its panel on the

@@ -93,7 +93,18 @@ h3{margin:0 0 8px;font-size:17.5px}
 [hidden]{display:none !important}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .book .grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-.f label{display:block;text-align:center;font-size:14.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px;color:#1e293b}
+.book .grid-1{grid-template-columns:1fr}
+/* Two named options, asked as a plain list — the same idiom as the interview rows, never a dropdown or a button. */
+.choice{border-top:1px solid var(--line)}
+.choice-opt{display:flex;align-items:center;gap:10px;min-height:46px;padding:8px 4px;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-size:16px;font-weight:700;line-height:1.25;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.choice-opt:last-child{border-bottom:0}
+.choice-opt:hover{background:#f5f8ff}
+.choice-opt.on{background:#eff6ff;color:var(--navy)}
+.choice-dot{flex:none;width:19px;height:19px;min-height:19px;padding:0;border:0;border-radius:50%;accent-color:var(--navy);background:#fff;cursor:pointer}
+.choice-dot:focus{outline:0}
+.choice-opt:focus-within{outline:3px solid #bfdbfe;outline-offset:2px}
+.choice-name{text-transform:uppercase;letter-spacing:.2px}
+.f > label{display:block;text-align:center;font-size:14.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px;color:#1e293b}
 input,select,textarea{width:100%;min-width:0;padding:12px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:#0f172a;font-size:17px;font-weight:500;min-height:46px}
 input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset:1px;border-color:var(--navy-3);background:#fff}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
@@ -116,9 +127,9 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .search{flex:2 1 220px;padding-left:36px;background-repeat:no-repeat;background-position:10px center;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4 4'/%3E%3C/svg%3E")}
 .askbox{margin:0 0 12px}
-.ask{display:flex;flex-direction:column;gap:9px}
-.ask-head{display:flex;align-items:center;justify-content:center;gap:8px}
-.ask-q{margin:0;font-size:20px;font-weight:800;letter-spacing:-.2px;line-height:1.2;text-align:center;text-transform:uppercase;color:var(--navy)}
+.ask{display:flex;flex-direction:column;gap:6px}
+.ask-head{display:flex;align-items:center;justify-content:flex-start;gap:8px}
+.ask-q{margin:0;font-size:20px;font-weight:800;letter-spacing:-.2px;line-height:1.2;text-align:left;text-transform:uppercase;color:var(--navy)}
 .ask-n{flex:none;font-size:13px;font-weight:800;color:var(--ink-soft);background:#eef2f7;border-radius:999px;padding:3px 9px}
 .ask-opts{display:grid;max-height:340px;overflow:auto;overscroll-behavior:contain;border-top:1px solid var(--line)}
 .ask-opt{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-size:17px;font-weight:700;line-height:1.25;text-align:left;overflow-wrap:anywhere;cursor:pointer}
@@ -131,12 +142,12 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .ask-opt:focus-within,.ask-back:focus-visible,.ask-edit:focus-visible{outline:3px solid #bfdbfe;outline-offset:2px}
 .ask-act{display:flex;align-items:center;min-height:48px;padding:10px 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--navy);font-size:16px;font-weight:800;line-height:1.25;text-align:left;text-transform:uppercase}
 .ask-act:hover{background:#f5f8ff}
-.ask-load,.ask-err{grid-column:1/-1;margin:0;padding:8px 0;text-align:center;font-size:15px;font-weight:700}
+.ask-load,.ask-err{grid-column:1/-1;margin:0;padding:8px 0;text-align:left;font-size:15px;font-weight:700}
 .ask-load{color:var(--ink-soft)}
 .ask-err{color:var(--accent)}
-.ask-back,.ask-edit{align-self:center;background:none;border:0;color:var(--navy);font-size:15px;font-weight:800;text-decoration:underline;padding:5px 10px;text-transform:uppercase;letter-spacing:.2px}
-.ask-done{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:#eff6ff;border:1.5px solid #dbeafe;border-radius:12px;padding:11px 12px}
-.ask-path{margin:0;font-size:17px;font-weight:800;line-height:1.3;text-align:center;color:var(--navy)}
+.ask-back,.ask-edit{align-self:flex-start;background:none;border:0;color:var(--navy);font-size:15px;font-weight:800;text-decoration:underline;padding:5px 4px;text-transform:uppercase;letter-spacing:.2px}
+.ask-done{display:flex;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:wrap;background:#eff6ff;border:1.5px solid #dbeafe;border-radius:12px;padding:11px 12px}
+.ask-path{margin:0;font-size:17px;font-weight:800;line-height:1.3;text-align:left;color:var(--navy)}
 .dest{display:flex;flex-direction:column;gap:12px}
 .results{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:15px 0 9px}
 .results h2{margin:0}
@@ -160,7 +171,7 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .b-live{background:#0f172a;color:#fff;display:inline-flex;align-items:center;gap:4px}
 .b-live i{width:6px;height:6px;border-radius:50%;background:#4ade80;flex:none;animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@media (prefers-reduced-motion:reduce){.b-live i,.track .spin,.track li[data-s="on"]::before{animation:none}}
+@media (prefers-reduced-motion:reduce){.b-live i,.load-bar i{animation:none;width:100%}}
 .dist{font-size:14px;font-weight:800;color:var(--brand);white-space:nowrap}
 .dwhere{font-size:13px;font-weight:700;color:var(--ink-soft);max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .farebox{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:11px 13px;margin-top:12px}
@@ -172,22 +183,16 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .locbar b{color:#fff}
 .locbar .btn{margin-left:auto;background:var(--white);color:var(--navy);border-color:var(--white)}
 .locbar .btn:hover{background:#dbeafe;border-color:#dbeafe;color:var(--navy-2)}
-.track{border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);padding:12px 13px;margin:0 0 9px}
-.track .tk-hd{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.2px;line-height:1.3}
-.track .spin{width:18px;height:18px;flex:none;border-radius:50%;border:3px solid #c7d6f5;border-top-color:var(--navy);animation:spin 0.9s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.track ol{list-style:none;margin:9px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.track li{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
-.track li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--line);flex:none}
-.track li[data-s="on"]{color:var(--navy);border-color:#bfdbfe;background:#eff6ff}
-.track li[data-s="on"]::before{background:var(--navy);animation:pulse 1s ease-in-out infinite}
-.track li[data-s="ok"]{color:#14532d;border-color:#bbf7d0;background:#f0fdf4}
-.track li[data-s="ok"]::before{background:#15803d}
-.track .tk-note{margin:8px 0 0;font-size:14px;font-weight:700;color:var(--ink-soft);line-height:1.45}
+.load{background:#eff6ff;border-radius:var(--r);padding:13px 14px;margin:0 0 9px}
+.load-bar{display:block;height:3px;border-radius:999px;background:#c7d6f5;overflow:hidden}
+.load-bar i{display:block;width:38%;height:100%;border-radius:999px;background:var(--navy);animation:sweep 1.2s cubic-bezier(.55,0,.45,1) infinite}
+@keyframes sweep{0%{transform:translateX(-105%)}100%{transform:translateX(265%)}}
+.load p{margin:9px 0 0;font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.1px;line-height:1.35}
 .d-closest{border-color:var(--navy);box-shadow:0 0 0 2px rgba(30,58,138,.14)}
 .b-near{background:var(--navy);color:#fff}
 .nearline{margin:0 0 8px;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.4}
-.empty{margin:0;padding:15px 13px;border:1px dashed var(--line);border-radius:10px;text-align:center;font-size:16px;font-weight:700;color:var(--navy);line-height:1.4}
+.empty{margin:0;padding:13px 12px;border:1px dashed var(--line);border-radius:10px;text-align:center;font-size:15px;font-weight:800;color:var(--navy);line-height:1.35}
+.empty small{display:block;margin-top:3px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-soft)}
 .d-meta{font-size:14px;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .d-meta b{color:var(--ink);font-weight:700}
 .d-act{display:flex;gap:7px;margin-top:auto;align-items:center;flex-wrap:wrap}
@@ -299,11 +304,21 @@ footer a{color:#fff}
       <div class="askbox" id="ask"></div>
       <div class="dest" id="destBox" hidden>
         <div class="f"><label for="fTo" data-i18n="book.where">Noneho ushaka kujya hehe?</label><input id="fTo" list="zones"></div>
-        <div class="grid">
-          <div class="f"><label for="fType" data-i18n="book.type">Ikinyabiziga</label>
-            <select id="fType" aria-label="Vehicle"><option value=""></option><option value="moto" data-i18n="t.moto">Moto</option><option value="car" data-i18n="t.car">Imodoka/Taksi</option></select></div>
-          <div class="f"><label for="fNeed" data-i18n="book.service">Icyo ushaka</label>
-            <select id="fNeed" aria-label="Service"><option value=""></option><option value="ride" data-i18n="n.ride">Gutwarwa</option><option value="delivery" data-i18n="n.delivery">Kohereza Imizigo (Derivari)</option></select></div>
+        <div class="grid grid-1">
+          <div class="f">
+            <label id="lblType" data-i18n="book.type">Ikinyabiziga</label>
+            <div class="choice" role="radiogroup" aria-labelledby="lblType">
+              <label class="choice-opt"><input class="choice-dot" type="radio" name="fType" value="moto"><span class="choice-name" data-i18n="t.moto">Moto</span></label>
+              <label class="choice-opt"><input class="choice-dot" type="radio" name="fType" value="car"><span class="choice-name" data-i18n="t.car">Imodoka/Taksi</span></label>
+            </div>
+          </div>
+          <div class="f">
+            <label id="lblNeed" data-i18n="book.service">Icyo ushaka</label>
+            <div class="choice" role="radiogroup" aria-labelledby="lblNeed">
+              <label class="choice-opt"><input class="choice-dot" type="radio" name="fNeed" value="ride"><span class="choice-name" data-i18n="n.ride">Gutwarwa</span></label>
+              <label class="choice-opt"><input class="choice-dot" type="radio" name="fNeed" value="delivery"><span class="choice-name" data-i18n="n.delivery">Kohereza Imizigo (Derivari)</span></label>
+            </div>
+          </div>
         </div>
         <button class="btn btn-p btn-block" id="btnSearch" type="button"><span data-i18n="book.go">Nshaka Motari</span></button>
       </div>
@@ -318,15 +333,10 @@ footer a{color:#fff}
       <span id="locText" data-i18n="loc.waiting">Turimo kumenya aho uri…</span>
       <button class="btn btn-s btn-ghost" id="btnLoc" type="button" hidden data-i18n="loc.retry">Ongera ugerageze</button>
     </div>
-    <div class="track" id="track" role="status" aria-live="polite" hidden>
-      <div class="tk-hd"><span class="spin" aria-hidden="true"></span><span data-i18n="track.title">Gutegereza — turimo gushaka moto hafi yawe</span></div>
-      <ol>
-        <li data-step="scan"><span data-i18n="track.scan">Kubara abamotari bari hafi</span></li>
-        <li data-step="sort"><span data-i18n="track.sort">Gutondeka ku ntera</span></li>
-      </ol>
-      <p class="tk-note" id="trackNote"></p>
+    <div class="load" id="track" role="status" aria-live="polite" hidden>
+      <span class="load-bar" aria-hidden="true"><i></i></span>
+      <p id="trackNote" data-i18n="track.title">Turimo gushaka moto hafi yawe…</p>
     </div>
-    <p class="nearline" id="whereLine" hidden></p>
     <p class="nearline" id="nearLine" hidden></p>
     <div class="list" id="drivers"></div>
     <p class="msg msg-err" id="findErr" hidden></p>
@@ -411,9 +421,8 @@ var I18N = {
     "sh.fare":"Igiciro ntangere","sh.dist":"Intera","sh.fareKm":"{km} km ku muhanda nyawo","sh.fareLoading":"Turapima intera…","sh.fareNone":"Ubushe ntitubashije kubona intera — shyiramo km.","sh.fareBasis":"Igiciro kigenwa na RURA ku mapingu. Nta wushobora kucyihindurira.",
     "fare.first":"{km} km zambere: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (harengeze {over} km)","fare.wait":"{min} min zo gutegereza × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
     "fare.regulated":"Igiciro kigenwa na RURA","fare.driverRate":"Igiciro gishyirwaho n'umushoferi",
-    "near.none":"Nta motari igaragaza GPS mu ntera ya {km} km — izi ni izo mu gace kawe.","list.empty":"Nta motari iboneka ubu — ugerageze nyuma.",
-    "track.title":"Gutegereza — turimo gushaka moto hafi yawe","track.at":"Aho uri: ±{m} m","track.where":"Aho uri: {where}","track.scan":"Kubara abamotari bari hafi","track.sort":"Gutondeka ku ntera","track.found":"Abamotari {n} babonetse hafi ya {km} km","track.noLive":"Nta motari igaragaza GPS hafi yawe — turimo kureba mu gace kawe","c.closest":"Hafi cyane","near.line":"Iyi ni yo moto hafi yawe: {name} · {km}. Ni wowe uhitamo uwo utega.",
-    "where.line":"Aho uri: {where} · intera {km} km uvuye hagati",
+    "near.none":"Nta motari igaragaza GPS mu ntera ya {km} km — izi ni izo mu gace kawe.","list.empty":"Nta Moto Ibonetse","list.emptySub":"Wongere mukanya",
+    "track.title":"Turimo gushaka moto hafi yawe…","track.noLive":"Nta motari igaragaza GPS hafi yawe — turimo kureba mu gace kawe","c.closest":"Hafi cyane","near.line":"Iyi ni yo moto hafi yawe: {name} · {km}. Ni wowe uhitamo uwo utega.",
     "c.off":"offline","c.book":"Ntwara","c.call":"Hamagara","c.rate":"Shorta",
     "c.available":"Nditeguye","c.busy":"Afite umugenzi","c.live":"LIVE","c.km":"{km} km","c.noGps":"Nta GPS",
     "m.drivers":"Abamotari","m.online":"Abiteguye","m.carried":"Abatwaye",
@@ -438,9 +447,8 @@ var I18N = {
     "sh.fare":"Fare estimate","sh.dist":"Distance","sh.fareKm":"{km} km on real roads","sh.fareLoading":"Measuring the distance…","sh.fareNone":"We could not find that route — enter the distance.","sh.fareBasis":"Motorcycle fares are set by RURA. Nobody can change them.",
     "fare.first":"First {km} km: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (over {over} km)","fare.wait":"{min} waiting minutes × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
     "fare.regulated":"Fare set by RURA","fare.driverRate":"Rate set by the driver",
-    "near.none":"No rider shares a GPS fix within {km} km — these are the riders in your area.","list.empty":"No riders available right now — try again later.",
-    "track.title":"Please wait — looking for a moto near you","track.at":"Your position: ±{m} m","track.where":"You are around {where}","track.scan":"Counting riders close by","track.sort":"Sorting by distance","track.found":"{n} riders found within {km} km","track.noLive":"No rider shares GPS near you — looking in your area instead","c.closest":"Closest","near.line":"This moto is closest to you: {name} · {km}. You still choose who to wait for.",
-    "where.line":"You are around {where} · {km} km from its centre",
+    "near.none":"No rider shares a GPS fix within {km} km — these are the riders in your area.","list.empty":"No moto found","list.emptySub":"Try again in a moment",
+    "track.title":"Finding a moto near you…","track.noLive":"No rider shares GPS near you — looking in your area instead","c.closest":"Closest","near.line":"This moto is closest to you: {name} · {km}. You still choose who to wait for.",
     "c.off":"offline","c.book":"Drive me","c.call":"Call","c.rate":"Rate",
     "c.available":"Ready","c.busy":"Has a passenger","c.live":"LIVE","c.km":"{km} km","c.noGps":"No GPS",
     "m.drivers":"Riders","m.online":"Ready","m.carried":"Carried",
@@ -553,25 +561,15 @@ function areaText(d){
   return parts.join(" · ");
 }
 
-/* One call turns the GPS fix into "Kacyiru, Gasabo", so the tracker and the division tree agree. */
+/* One call turns the GPS fix into the division the tracker searches by, so the tree and the map agree. */
 async function loadWhere(){
-  if (!clientPos || !window.SERE_DIVISIONS) { wherePoint = null; renderWhere(); return; }
+  if (!clientPos || !window.SERE_DIVISIONS) { wherePoint = null; return; }
   try {
     wherePoint = await SERE_DIVISIONS.point(clientPos.lat.toFixed(4), clientPos.lng.toFixed(4));
   } catch (error) {
     wherePoint = null;
   }
-  renderWhere();
   if (trackStage) setTrack(trackStage);
-}
-
-function renderWhere(){
-  var el = document.getElementById("whereLine");
-  if (!wherePoint) { el.hidden = true; el.textContent = ""; return; }
-  el.hidden = false;
-  el.textContent = t("where.line")
-    .replace("{where}", wherePoint.label || wherePoint.name)
-    .replace("{km}", kmLabel(wherePoint.distance_to_centre_km));
 }
 
 function componentLine(c){
@@ -621,7 +619,7 @@ function applyLang(){
   if (window.SERE_INTERVIEW) SERE_INTERVIEW.setLang(lang);
   setLocStage(locStage);
   if (trackStage) setTrack(trackStage);
-  renderDrivers(); renderStats(); renderMenu(); renderWhere();
+  renderDrivers(); renderStats(); renderMenu();
   if (clientPos) loadWhere();
 }
 
@@ -713,10 +711,10 @@ async function fetchDrivers(extra, gpsArea){
   var params = new URLSearchParams();
   params.set("lang", lang);
   if (document.getElementById("q").value.trim()) params.set("q", document.getElementById("q").value.trim());
-  if (document.getElementById("fType").value) params.set("vehicle_type", document.getElementById("fType").value);
+  if (choice.fType) params.set("vehicle_type", choice.fType);
   var code = divisionFilter(gpsArea);
   if (code) params.set("division", code);
-  if (document.getElementById("fNeed").value) params.set("service", document.getElementById("fNeed").value);
+  if (choice.fNeed) params.set("service", choice.fNeed);
   if (availableOnly) params.set("available", "1");
   (extra || []).forEach(function(pair){ params.set(pair[0], pair[1]); });
   var data = await api("/api/drivers?" + params.toString());
@@ -727,22 +725,18 @@ async function loadDrivers(){
   nearFallback = false;
   var tracking = !!clientPos;
   var t0 = Date.now();
-  trackInfo.riders = null;
   if (tracking) setTrack("scan");
   try {
     if (tracking) {
       /* The top block is genuinely nearby *and* free; the area directory below keeps the rest visible. */
       var live = await fetchDrivers([["near", nearParam()], ["max_km", String(NEAR_KM)], ["available", "1"]]);
-      trackInfo.riders = live.length;
-      setTrack("scan");
       var rest = await fetchDrivers([], true);
       if (!rest.length && !pickedDivision() && divisionFilter(true)) rest = await fetchDrivers();
       var seen = {};
       live.forEach(function(d){ seen[d.id] = 1; });
       drivers = live.concat(rest.filter(function(d){ return !seen[d.id]; }));
       nearFallback = live.length === 0;
-      if (nearFallback) { trackInfo.riders = null; setTrack("sort", t("track.noLive")); }
-      else setTrack("sort");
+      if (nearFallback) setTrack("scan", t("track.noLive"));
     } else {
       drivers = await fetchDrivers([], true);
     }
@@ -753,33 +747,24 @@ async function loadDrivers(){
   }
   renderDrivers();
   renderStats();
-  if (tracking) {
+  if (loaderOn()) {
     var left = 600 - (Date.now() - t0);
     if (left > 0) await new Promise(function(r){ setTimeout(r, left); });
-    setTrack(null);
   }
+  setTrack(null);
 }
 
-var TRACK_STEPS = ["scan", "sort"];
+var destRevealed = false;
 var trackStage = null;
-var trackInfo = { accuracy: null, riders: null };
-function trackNote(){
-  var bits = [];
-  if (trackInfo.accuracy != null) bits.push(t("track.at").replace("{m}", Math.round(trackInfo.accuracy)));
-  if (wherePoint) bits.push(t("track.where").replace("{where}", wherePoint.label || wherePoint.name));
-  if (trackInfo.riders != null) bits.push(t("track.found").replace("{n}", trackInfo.riders).replace("{km}", NEAR_KM));
-  return bits.join(" · ");
-}
+/* One bar, one line — and it only belongs on screen once the passenger has been shown where they are
+   going. While the interview is still asking, the list underneath refreshes without any theatre. */
+function loaderOn(){ return destRevealed && !!clientPos; }
 function setTrack(stage, note){
   var box = document.getElementById("track");
   trackStage = stage || null;
-  if (!stage) { box.hidden = true; document.getElementById("trackNote").textContent = ""; return; }
+  if (!stage || !loaderOn()) { box.hidden = true; document.getElementById("trackNote").textContent = ""; return; }
   box.hidden = false;
-  var done = TRACK_STEPS.indexOf(stage);
-  [].forEach.call(box.querySelectorAll("[data-step]"), function(li, i){
-    li.setAttribute("data-s", i < done ? "ok" : i === done ? "on" : "");
-  });
-  document.getElementById("trackNote").textContent = note || trackNote();
+  document.getElementById("trackNote").textContent = note || t("track.title");
 }
 
 function renderDrivers(){
@@ -832,7 +817,7 @@ function renderDrivers(){
       + '<button class="btn btn-ghost btn-s btn-xs" data-book="'+d.id+'"'+bookAttr+'>'+t("c.book")+'</button>'
       + '<a class="btn btn-ghost btn-s btn-xs" href="tel:+'+digits(d.phone)+'">'+t("c.call")+'</a></div>'
       + '</article>';
-  }).join("") : '<p class="empty">' + esc(t("list.empty")) + '</p>';
+  }).join("") : '<p class="empty">' + esc(t("list.empty")) + '<small>' + esc(t("list.emptySub")) + '</small></p>';
   [].forEach.call(box.querySelectorAll("[data-book]"), function(b){ b.onclick = function(){ openSheet(b.dataset.book); }; });
   [].forEach.call(box.querySelectorAll("[data-rate]"), function(b){
     b.onclick = async function(){
@@ -849,10 +834,35 @@ function renderDrivers(){
   });
 }
 
-["q","fType","fNeed"].forEach(function(id){
-  var el = document.getElementById(id);
-  el.addEventListener(id==="q"?"input":"change", function(){ clearTimeout(el.timer); el.timer = setTimeout(loadDrivers, id==="q"?250:0); });
+/* A or B, never a dropdown: one tap picks the row, and a second tap on the same row drops the filter
+   again — the empty default is "show every vehicle and every service", exactly as the selects did. */
+var choice = { fType: "", fNeed: "" };
+var searchTimer = null;
+function syncChoice(name){
+  [].forEach.call(document.querySelectorAll('input[name="' + name + '"]'), function(el){
+    var on = el.value === choice[name];
+    el.checked = on;
+    el.parentNode.className = "choice-opt" + (on ? " on" : "");
+  });
+}
+function bindChoice(name){
+  var dots = [].slice.call(document.querySelectorAll('input[name="' + name + '"]'));
+  dots.forEach(function(el){
+    el.addEventListener("click", function(){
+      choice[name] = choice[name] === el.value ? "" : el.value;
+      syncChoice(name);
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(loadDrivers, 0);
+    });
+  });
+  syncChoice(name);
+}
+document.getElementById("q").addEventListener("input", function(){
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(loadDrivers, 250);
 });
+bindChoice("fType");
+bindChoice("fNeed");
 
 /* Position is not an opt-in here: the page is a "who is closest" page, so the browser is asked the
    moment the app opens, and a passenger who tapped "not now" gets one chip to ask again. */
@@ -875,7 +885,6 @@ async function requireLocation(){
   setLocStage("wait");
   clientPos = await geoFix();
   if (!clientPos) { setLocStage("deny"); return; }
-  trackInfo.accuracy = clientPos.accuracy;
   setLocStage("fix");
   await loadWhere();
   await loadDrivers();
@@ -1003,9 +1012,10 @@ document.getElementById("shForm").addEventListener("submit", async function(e){
 });
 
 /* Every answer re-runs the search, so the list is already on screen by the time the
-   destination question appears under the interview. */
+   destination question appears under the interview. The loader waits for that moment. */
 function onAnswer(){
   var finished = !!interview && interview.done();
+  destRevealed = finished;
   document.getElementById("destBox").hidden = !finished;
   document.getElementById("congrats").hidden = !finished;
   loadDrivers();
