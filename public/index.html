@@ -65,7 +65,6 @@ a.tab{display:inline-flex;align-items:center;text-decoration:none}
 .hero p{margin:0 auto 12px;color:#dbe4ff;font-size:16px;line-height:1.45;max-width:42ch}
 .promise{display:inline-flex;align-items:center;gap:6px;background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber-ink);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:800;margin-bottom:12px}
 .promise svg{width:16px;height:16px;flex:none}
-.cta{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .btn{border:1px solid transparent;border-radius:11px;padding:12px 16px;font-weight:700;font-size:16px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;justify-content:center;line-height:1.3;min-height:46px}
 .btn-p{background:var(--navy);color:var(--white)}
 .btn-p:hover{background:var(--navy-3)}
@@ -199,6 +198,9 @@ th{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink
 .pill-fail{background:#fee2e2;color:#7f1d1d}
 .sheet{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:50;display:flex;align-items:flex-end;justify-content:center}
 .sheet>div{background:#fff;width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:14px;max-height:92vh;overflow:auto}
+.pop{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:55;display:flex;align-items:center;justify-content:center;padding:18px}
+.popbox{background:#fff;width:100%;max-width:340px;border-radius:16px;padding:20px 18px;text-align:center}
+.pop-hd{margin:0 0 14px;font-size:20px;font-weight:800;line-height:1.35;color:var(--navy)}
 footer{background:var(--navy);color:#dbe4ff;padding:12px 0;font-size:14.5px}
 footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-right:96px}
 footer a{color:#fff}
@@ -278,9 +280,6 @@ footer a{color:#fff}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
       <span data-i18n="promise.text">Mu munota 1: bona motari</span>
     </div>
-    <div class="cta">
-      <a class="btn btn-p btn-s" href="/signup" data-i18n="hero.cta2">Ndi Motari — iyandikishe</a>
-    </div>
     <div class="stats" id="stats"></div>
   </div>
 </div>
@@ -293,7 +292,7 @@ footer a{color:#fff}
       </div>
       <div class="askbox" id="ask"></div>
       <div class="dest" id="destBox" hidden>
-        <div class="f"><label for="fTo" data-i18n="book.where">Nono ushaka kujya hehe?</label><input id="fTo" list="zones"></div>
+        <div class="f"><label for="fTo" data-i18n="book.where">Noneho ushaka kujya hehe?</label><input id="fTo" list="zones"></div>
         <div class="grid">
           <div class="f"><label for="fType" data-i18n="book.type">Ikinyabiziga</label>
             <select id="fType" aria-label="Vehicle"><option value=""></option><option value="moto" data-i18n="t.moto">Moto</option><option value="car" data-i18n="t.car">Imodoka/Taksi</option></select></div>
@@ -332,6 +331,13 @@ footer a{color:#fff}
 <a class="fab" href="https://wa.me/250780000000" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 13.9c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.2-1.5-.5-3.1-1.7-4.2-3-.7-.9-1.2-1.9-1.3-2.5-.1-.7.1-1.3.5-1.7.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.4l.7 1.6c.1.2 0 .4-.1.6l-.4.5c-.2.2-.2.3-.1.5.4.7 1.5 1.8 2.3 2.1.2.1.4.1.5-.1l.6-.7c.2-.2.3-.2.6-.1l1.6.8c.3.2.3.3.3.5v.5Z"/></svg>
 </a>
+
+<div class="pop" id="congrats" role="dialog" aria-modal="true" aria-labelledby="cgText" hidden>
+  <div class="popbox">
+    <p class="pop-hd" id="cgText" data-i18n="congrats.t">Woow! Twamaze kumenya aho uri.</p>
+    <button class="btn btn-p btn-block" id="cgGo" type="button"><span data-i18n="congrats.go">Komeza</span></button>
+  </div>
+</div>
 
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" hidden>
   <div>
@@ -387,8 +393,8 @@ var I18N = {
     "nav.menu":"Menu","menu.app":"Porogaramu","menu.settings":"Igenamiterere","menu.admin":"Ubuyobozi","menu.online":"Bari online gusa","menu.install":"Shyira app kuri Phone","menu.installed":"App imaze gushyirwa kuri Phone",
     "hero.title":"Tumiza moto mu munota 1","hero.body":"Hitamo intara, akarere cyangwa umurenge wawe, ubone umumotari ugutwara cyangwa ukujyanira ibintu aho ushaka hose. Kwishyura biroroshye.",
     "promise.text":"Mu munota 1: bona motari",
-    "hero.cta2":"Ndi Motari — iyandikishe",
-    "book.title":"Tumiza urugendo","book.where":"Nono ushaka kujya hehe?","book.type":"Ikinyabiziga","book.service":"Icyo ushaka","book.go":"Nshaka Motari",
+    "congrats.t":"Woow! Twamaze kumenya aho uri.","congrats.go":"Komeza",
+    "book.title":"Tumiza urugendo","book.where":"Noneho ushaka kujya hehe?","book.type":"Ikinyabiziga","book.service":"Icyo ushaka","book.go":"Nshaka Motari",
     "results.title":"Abamotari bari hafi","pick.title":"Hitamo umumotari",
     "find.ready":"bateguye",
     "t.moto":"Moto","t.car":"Imodoka/Taksi","n.ride":"Gutwarwa","n.delivery":"Kohereza Imizigo (Derivari)","n.both":"Gutwarwa + Kohereza Imizigo",
@@ -414,9 +420,9 @@ var I18N = {
     "nav.menu":"Menu","menu.app":"App","menu.settings":"Settings","menu.admin":"Admin console","menu.online":"Online riders only","menu.install":"Install app on Phone","menu.installed":"App is on this Phone",
     "hero.title":"Book a moto in 1 minute","hero.body":"Pick where you are in Rwanda — province, district or sector — and find a rider to take you or carry anything across town. Paying is easy.",
     "promise.text":"1 minute: get a rider",
+    "congrats.t":"Woow! We know where you are.","congrats.go":"Continue",
     "book.title":"Book a ride","book.where":"And where do you want to go?","book.type":"Vehicle","book.service":"Service","book.go":"Find a moto near me",
     "results.title":"Moto riders near you","pick.title":"PICK A RIDER",
-    "hero.cta2":"I'm a moto rider — register",
     "find.ready":"ready",
     "t.moto":"Moto","t.car":"Car/Taxi","n.ride":"Get a ride","n.delivery":"Send goods (Delivery)","n.both":"Ride + delivery",
     "loc.unsupported":"This browser cannot share a location.","loc.waiting":"Finding your position…","loc.deny":"This app works best when Location is on — allow location and try again.","loc.retry":"Try again",
@@ -993,10 +999,24 @@ document.getElementById("shForm").addEventListener("submit", async function(e){
 
 /* Every answer re-runs the search, so the list is already on screen by the time the
    destination question appears under the interview. */
-function onAnswer(value){
-  document.getElementById("destBox").hidden = !value;
+function onAnswer(){
+  var finished = !!interview && interview.done();
+  document.getElementById("destBox").hidden = !finished;
+  document.getElementById("congrats").hidden = !finished;
   loadDrivers();
 }
+
+function closeCongrats(){
+  var pop = document.getElementById("congrats");
+  if (pop.hidden) return;
+  pop.hidden = true;
+  var to = document.getElementById("fTo");
+  to.focus({ preventScroll: true });
+  to.scrollIntoView({ block: "nearest" });
+}
+
+document.getElementById("cgGo").onclick = closeCongrats;
+document.getElementById("congrats").addEventListener("click", function(e){ if (e.target === this) closeCongrats(); });
 
 async function boot(){
   document.getElementById("yr").textContent = new Date().getFullYear();
@@ -1016,7 +1036,7 @@ async function boot(){
   requireLocation();
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function(){});
 }
-document.addEventListener("keydown", function(e){ if (e.key === "Escape") { setMenu(false); closeSheet(); } });
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") { setMenu(false); closeSheet(); closeCongrats(); } });
 boot();
 </script>
 </body>

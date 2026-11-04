@@ -185,9 +185,12 @@ switch only refetches what is still on screen.
 register one question at a time: *Intara yawe?* → *Akarere kawe?* → *Umurenge wawe?* → *Akagari kawe?* →
 *Umudugudu wawe?*. Each screen is a list of big chips for the rows `list()` returns for the previous answer,
 plus a Back chip; the last two levels carry *Komeza* / *Continue*, because a search matches at any level and a
-sector answer is already a complete one. `value()` is the deepest answer picked, and `onChange` fires on every
-step so the host can search as soon as the ladder ends. Its twelve `ask.*` strings are owned by the file and
-checked by `scripts/check-i18n.js` like every other dictionary; the page's RW/EN toggle calls `setLang()`.
+sector answer is already a complete one. `value()` is the deepest answer picked, `done()` is true only when the
+ladder has ended, and `onChange` fires on every step — the page searches as the passenger answers, but the
+*Noneho ushaka kujya hehe?* destination box stays hidden until `done()`, and the first time it opens a
+*Woow! Twamaze kumenya aho uri.* popup (`#congrats`) sits over it until tapped away. Its twelve `ask.*` strings
+are owned by the file and checked by `scripts/check-i18n.js` like every other dictionary; the page's RW/EN
+toggle calls `setLang()`.
 
 **Language is a parameter, not a guess.** Division names are built by the server, and
 `src/validate.js:language()` answers English when `lang` is missing. `SERE.api()` therefore appends
