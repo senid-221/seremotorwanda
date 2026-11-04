@@ -24,7 +24,7 @@
       'c.loading': 'Biracyategereza…',
       'c.home': 'Ahabanza',
       'ab.tagline': 'Transport & clients',
-      'ab.find': 'Nshaka Motari', 'ab.join': 'Ndi Motari', 'ab.mine': 'Ibyange', 'ab.menu': 'Menu',
+      'ab.find': 'Passenger', 'ab.join': 'Rider', 'ab.mine': 'Ibyange', 'ab.menu': 'Menu',
       'ab.app': 'Porogaramu', 'ab.guide': 'Uko bikora', 'ab.admin': 'Ubuyobozi',
       'ab.rider': 'Urubuga rw\'umumotari',
       'ab.install': 'Shyira app kuri Phone', 'ab.installed': 'App imaze gushyirwa kuri Phone',
@@ -413,7 +413,7 @@
       'c.loading': 'Loading…',
       'c.home': 'Home',
       'ab.tagline': 'Transport & clients',
-      'ab.find': 'Need a moto', 'ab.join': "I'm a rider", 'ab.mine': 'My account', 'ab.menu': 'Menu',
+      'ab.find': 'Passenger', 'ab.join': 'Rider', 'ab.mine': 'My account', 'ab.menu': 'Menu',
       'ab.app': 'App', 'ab.guide': 'How it works', 'ab.admin': 'Admin console',
       'ab.rider': 'Driver dashboard',
       'ab.install': 'Install app on Phone', 'ab.installed': 'App is on this Phone',
@@ -2269,8 +2269,8 @@
   };
 
   var AB_LINKS = [
-    ['/', 'ab.find', 'Nshaka Motari', 'find'],
-    ['/signup', 'ab.join', 'Ndi Motari', 'join'],
+    ['/', 'ab.find', 'Passenger', 'find'],
+    ['/signup', 'ab.join', 'Rider', 'join'],
     ['/passenger', 'ab.mine', 'Ibyange', 'mine'],
     ['/rider', 'ab.rider', 'Urubuga rw\'umumotari', 'account'],
     ['/guide', 'ab.guide', 'Uko bikora', 'guide']

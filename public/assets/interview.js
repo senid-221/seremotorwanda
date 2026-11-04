@@ -3,9 +3,10 @@
    the next question with that one's children, so a phone only ever downloads the list it is looking at.
 
    A five-level dropdown asks somebody standing on the roadside to understand the Rwandan administrative
-   ladder before they can book a ride. A question does not. One decision per screen, big tap targets, a
-   Back chip, and "Komeza" on the last two levels for the passenger who cannot name their village — the
-   search ranks riders at any level, so a sector answer is a complete answer.
+   ladder before they can book a ride. A question does not. One decision per screen, a radio row per place
+   (the circle shows which answer is picked; the whole row is tappable), a Back link, and "Komeza" on the
+   last two levels for the passenger who cannot name their village — the search ranks riders at any level,
+   so a sector answer is a complete answer.
 
    Vanilla ES5, no dependencies. Rows come from SERE_DIVISIONS.list() and the host page pushes its
    language in through setLang, the same way it does for the dropdown library. */
@@ -19,7 +20,7 @@
       'ask.sector': 'Umurenge wawe?',
       'ask.cell': 'Akagari kawe?',
       'ask.village': 'Umudugudu wawe?',
-      'ask.back': 'Sosoma',
+      'ask.back': 'Subira inyuma',
       'ask.continue': 'Komeza',
       'ask.change': 'Hindura',
       'ask.loading': 'Turimo…',
@@ -84,6 +85,8 @@
     this.onChange = (settings && settings.onChange) || null;
     this.answers = [null, null, null, null, null];
     this.stage = 0;
+    this.locked = false;
+    this.timer = null;
     this.id = 'ask' + (seq += 1);
     this.shell = node('div', 'ask');
     this.shell.setAttribute('data-testid', 'division-interview');
@@ -138,7 +141,7 @@
     this.shell.appendChild(head);
 
     var box = node('div', 'ask-opts');
-    box.setAttribute('role', 'group');
+    box.setAttribute('role', 'radiogroup');
     box.setAttribute('aria-labelledby', qid);
     this.shell.appendChild(box);
     this.paint(box, null);
@@ -174,7 +177,7 @@
     box.innerHTML = '';
     if (failed) {
       box.appendChild(node('p', 'ask-err', esc(t('ask.failed'))));
-      var again = node('button', 'ask-opt', esc(t('ask.retry')));
+      var again = node('button', 'ask-act', esc(t('ask.retry')));
       again.type = 'button';
       again.onclick = function () { self.load(box); };
       box.appendChild(again);
@@ -190,32 +193,66 @@
       box.appendChild(this.place(rows[i], chosen && chosen.code === rows[i].code));
     }
     if (SKIPPABLE[ORDER[stage]] || !rows.length) {
-      var next = node('button', 'ask-opt ask-next', esc(t('ask.continue')));
+      var next = node('button', 'ask-act', esc(t('ask.continue')));
       next.type = 'button';
       next.onclick = function () { self.go(ORDER.length); };
       box.appendChild(next);
     }
   };
 
+  /* One row per place: a real radio input inside the label, so tapping anywhere on the row answers it. */
   Ask.prototype.place = function (row, pressed) {
     var self = this;
     var stage = this.stage;
-    var b = node('button', 'ask-opt' + (pressed ? ' on' : ''), esc(row.name));
-    b.type = 'button';
-    b.onclick = function () {
-      self.answers[stage] = {
-        code: row.code,
-        name: row.name,
-        label: row.label || row.name,
-        levelKey: ORDER[stage]
-      };
-      for (var deeper = stage + 1; deeper < ORDER.length; deeper += 1) self.answers[deeper] = null;
-      self.go(stage + 1 >= ORDER.length ? ORDER.length : stage + 1);
+    var label = node('label', 'ask-opt' + (pressed ? ' on' : ''));
+    label.setAttribute('data-code', String(row.code));
+    var dot = document.createElement('input');
+    dot.type = 'radio';
+    dot.className = 'ask-dot';
+    dot.name = this.id + '-' + stage;
+    dot.value = String(row.code);
+    dot.checked = !!pressed;
+    dot.onchange = function () { self.pick(stage, row); };
+    label.appendChild(dot);
+    label.appendChild(node('span', 'ask-name', esc(row.name)));
+    return label;
+  };
+
+  /* Fill the circle the passenger picked and let them see it for a beat before the next question. */
+  Ask.prototype.mark = function (code) {
+    var rows = this.shell.querySelectorAll('.ask-opt');
+    for (var i = 0; i < rows.length; i += 1) {
+      var on = rows[i].getAttribute('data-code') === String(code);
+      rows[i].className = 'ask-opt' + (on ? ' on' : '');
+      var dot = rows[i].querySelector('input');
+      if (dot) dot.checked = on;
+    }
+  };
+
+  Ask.prototype.pick = function (stage, row) {
+    var self = this;
+    if (this.locked) return;
+    this.locked = true;
+    this.answers[stage] = {
+      code: row.code,
+      name: row.name,
+      label: row.label || row.name,
+      levelKey: ORDER[stage]
     };
-    return b;
+    for (var deeper = stage + 1; deeper < ORDER.length; deeper += 1) this.answers[deeper] = null;
+    this.mark(row.code);
+    this.timer = setTimeout(function () {
+      self.timer = null;
+      self.go(stage + 1 >= ORDER.length ? ORDER.length : stage + 1);
+    }, 220);
   };
 
   Ask.prototype.go = function (stage) {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    this.locked = false;
     this.stage = stage;
     this.render();
     if (this.onChange) this.onChange(this.value());

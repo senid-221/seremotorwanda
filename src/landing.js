@@ -41,8 +41,8 @@ header{background:var(--navy);color:var(--white);position:sticky;top:0;z-index:4
 .tab{background:transparent;border:0;color:#dbe4ff;padding:7px 10px;border-radius:8px;font-weight:700;font-size:14.5px;white-space:nowrap;line-height:1.25}
 .tab:hover{background:var(--navy-2);color:var(--white)}
 .tab[aria-selected="true"]{color:var(--white);box-shadow:inset 0 -2px 0 var(--white)}
-.tab-icon{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;line-height:0}
-.tab-icon svg{width:22px;height:22px;display:block}
+.tab-icon{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;line-height:0}
+.tab-icon svg{width:26px;height:26px;display:block}
 a.tab{display:inline-flex;align-items:center;text-decoration:none}
 .tabbtn{display:inline-flex;align-items:center;background:transparent;border:0;border-radius:8px;padding:7px 10px;font-weight:700;font-size:15px;line-height:1.25;text-decoration:none;color:var(--navy)}
 .tabbtn:hover{background:var(--bg);color:var(--navy-3)}
@@ -120,16 +120,21 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .ask-head{display:flex;align-items:center;justify-content:center;gap:8px}
 .ask-q{margin:0;font-size:20px;font-weight:800;letter-spacing:-.2px;line-height:1.2;text-align:center;text-transform:uppercase;color:var(--navy)}
 .ask-n{flex:none;font-size:13px;font-weight:800;color:var(--ink-soft);background:#eef2f7;border-radius:999px;padding:3px 9px}
-.ask-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px;max-height:296px;overflow:auto;overscroll-behavior:contain;padding:2px}
-.ask-opt{min-height:54px;padding:9px 11px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-size:17px;font-weight:700;line-height:1.25;text-align:center;overflow-wrap:anywhere}
-.ask-opt:hover{border-color:var(--navy-3);background:#f5f8ff}
-.ask-opt.on{background:var(--navy);border-color:var(--navy);color:var(--white)}
-.ask-opt:focus-visible,.ask-back:focus-visible,.ask-edit:focus-visible{outline:3px solid #bfdbfe;outline-offset:2px}
-.ask-next{border-style:dashed;background:#f8fafc;color:var(--navy)}
+.ask-opts{display:grid;max-height:340px;overflow:auto;overscroll-behavior:contain;border-top:1px solid var(--line)}
+.ask-opt{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-size:17px;font-weight:700;line-height:1.25;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.ask-opt:hover{background:#f5f8ff}
+.ask-opt.on{background:#eff6ff;color:var(--navy)}
+.ask-opts>:last-child{border-bottom:0}
+.ask-dot{flex:none;width:20px;height:20px;min-height:20px;padding:0;border-radius:50%;accent-color:var(--navy);background:#fff;cursor:pointer}
+.ask-dot:focus{outline:0}
+.ask-name{text-transform:uppercase;letter-spacing:.2px}
+.ask-opt:focus-within,.ask-back:focus-visible,.ask-edit:focus-visible{outline:3px solid #bfdbfe;outline-offset:2px}
+.ask-act{display:flex;align-items:center;min-height:48px;padding:10px 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--navy);font-size:16px;font-weight:800;line-height:1.25;text-align:left;text-transform:uppercase}
+.ask-act:hover{background:#f5f8ff}
 .ask-load,.ask-err{grid-column:1/-1;margin:0;padding:8px 0;text-align:center;font-size:15px;font-weight:700}
 .ask-load{color:var(--ink-soft)}
 .ask-err{color:var(--accent)}
-.ask-back,.ask-edit{align-self:center;background:none;border:0;color:var(--navy);font-size:15px;font-weight:800;text-decoration:underline;padding:5px 10px}
+.ask-back,.ask-edit{align-self:center;background:none;border:0;color:var(--navy);font-size:15px;font-weight:800;text-decoration:underline;padding:5px 10px;text-transform:uppercase;letter-spacing:.2px}
 .ask-done{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:#eff6ff;border:1.5px solid #dbeafe;border-radius:12px;padding:11px 12px}
 .ask-path{margin:0;font-size:17px;font-weight:800;line-height:1.3;text-align:center;color:var(--navy)}
 .dest{display:flex;flex-direction:column;gap:12px}
@@ -215,23 +220,21 @@ footer a{color:#fff}
   .nav{width:100%;margin-left:0;justify-content:space-between}
   .nav .lang{margin-left:0}
   .tab{padding:7px 9px;font-size:14px}
-  .tab-icon{padding:5px 8px}
+  .tab-icon{padding:4px 6px}
   .book .grid{grid-template-columns:1fr}
-  .ask-opts{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
   footer .wrap{padding-right:16px;flex-direction:column;align-items:flex-start;gap:8px}
 }
 @media (max-width:430px){
   .logo span{display:none}
   .hero p{display:none}
-  .ask-opts{max-height:252px}
+  .ask-opts{max-height:288px}
 }
 @media (max-width:360px){
   .nav{gap:1px}
   .tab{padding:6px 5px;font-size:13px;line-height:1.4}
-  .tab-icon{padding:5px 5px;line-height:0}
+  .tab-icon{padding:4px 3px;line-height:0}
   .lang button{flex:0 0 29px;font-size:11px}
   .ask-q{font-size:18px}
-  .ask-opts{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -243,8 +246,8 @@ footer a{color:#fff}
       <div><b>SERE Moto</b><span data-i18n="tagline">Transport &amp; clients</span></div>
     </div>
     <nav class="nav" role="tablist">
-      <button class="tab" role="tab" data-view="find" aria-selected="true" data-i18n="nav.find">Nshaka Motari</button>
-      <a class="tab" href="/signup" data-i18n="nav.join">Ndi Motari</a>
+      <button class="tab" role="tab" data-view="find" aria-selected="true" data-i18n="nav.find">Passenger</button>
+      <a class="tab" href="/signup" data-i18n="nav.join">Rider</a>
       <a class="tab tab-icon" href="/passenger" data-i18n-title="nav.mine" title="Ibyange" aria-label="Ibyange">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>
       </a>
@@ -260,8 +263,8 @@ footer a{color:#fff}
     <div class="menu" id="menu" role="group" aria-label="Menu" hidden>
       <h4 data-i18n="menu.app">Porogaramu</h4>
       <ul>
-        <li><a class="mrow" href="#v-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><span data-i18n="nav.find">Nshaka Motari</span></a></li>
-        <li><a class="mrow" href="/signup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M3 20.5a7 7 0 0 1 14 0"/><path d="M18 8.5v5M15.5 11h5"/></svg><span data-i18n="nav.join">Ndi Motari</span></a></li>
+        <li><a class="mrow" href="#v-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><span data-i18n="nav.find">Passenger</span></a></li>
+        <li><a class="mrow" href="/signup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M3 20.5a7 7 0 0 1 14 0"/><path d="M18 8.5v5M15.5 11h5"/></svg><span data-i18n="nav.join">Rider</span></a></li>
         <li><a class="mrow" href="/passenger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg><span data-i18n="nav.mine">Ibyange</span></a></li>
         <li><a class="mrow" href="/guide" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6.5A4 4 0 1 0 8.4 12"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="how">Uko bikora</span></a></li>
         <li id="miAdmin" hidden><a class="mrow" href="/admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5 5 6v6c0 4 3 6.7 7 8.5 4-1.8 7-4.5 7-8.5V6Z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg><span data-i18n="menu.admin">Ubuyobozi</span></a></li>
@@ -392,7 +395,7 @@ footer a{color:#fff}
 <script>
 var I18N = {
   rw: {
-    tagline:"Transport & clients","nav.find":"Nshaka Motari","nav.join":"Ndi Motari","nav.mine":"Ibyange",
+    tagline:"Transport & clients","nav.find":"Passenger","nav.join":"Rider","nav.mine":"Ibyange",
     "nav.menu":"Menu","menu.app":"Porogaramu","menu.settings":"Igenamiterere","menu.admin":"Ubuyobozi","menu.online":"Bari online gusa","menu.install":"Shyira app kuri Phone","menu.installed":"App imaze gushyirwa kuri Phone",
     "hero.title":"Tumiza moto mu munota 1","hero.body":"Hitamo intara, akarere cyangwa umurenge wawe, ubone umumotari ugutwara cyangwa ukujyanira ibintu aho ushaka hose. Kwishyura biroroshye.",
     "promise.text":"Mu munota 1: bona motari",
@@ -413,13 +416,13 @@ var I18N = {
     "where.line":"Aho uri: {where} · intera {km} km uvuye hagati",
     "c.off":"offline","c.book":"Ntwara","c.call":"Hamagara","c.rate":"Shorta",
     "c.available":"Nditeguye","c.busy":"Afite umugenzi","c.live":"LIVE","c.km":"{km} km","c.noGps":"Nta GPS",
-    "m.drivers":"Abamotari","m.online":"Bari online","m.areas":"Uturere",
+    "m.drivers":"Abamotari","m.online":"Abiteguye","m.carried":"Abatwaye",
     "foot.wa":"WhatsApp support",
     "err.network":"Server ntabwo yitabiriye — gerageza nyuma.","err.saved":"Byabitswe!","err.rated":"Murakoze! Ubushimishije bwabitswe.",
     "err.invalidField":"Suzuma iyi ngereranyo: {field}.","err.unknownField":"{field} ntiyizwi.","err.server":"Ubusabe ntibushoboye kurangira."
   },
   en: {
-    tagline:"Transport & clients","nav.find":"Need a moto","nav.join":"I'm a rider","nav.mine":"My account",
+    tagline:"Transport & clients","nav.find":"Passenger","nav.join":"Rider","nav.mine":"My account",
     "nav.menu":"Menu","menu.app":"App","menu.settings":"Settings","menu.admin":"Admin console","menu.online":"Online riders only","menu.install":"Install app on Phone","menu.installed":"App is on this Phone",
     "hero.title":"Book a moto in 1 minute","hero.body":"Pick where you are in Rwanda — province, district or sector — and find a rider to take you or carry anything across town. Paying is easy.",
     "promise.text":"1 minute: get a rider",
@@ -440,7 +443,7 @@ var I18N = {
     "where.line":"You are around {where} · {km} km from its centre",
     "c.off":"offline","c.book":"Drive me","c.call":"Call","c.rate":"Rate",
     "c.available":"Ready","c.busy":"Has a passenger","c.live":"LIVE","c.km":"{km} km","c.noGps":"No GPS",
-    "m.drivers":"Riders","m.online":"Online now","m.areas":"Districts",
+    "m.drivers":"Riders","m.online":"Ready","m.carried":"Carried",
     "foot.wa":"WhatsApp support",
     "err.network":"The server did not respond — try again.","err.saved":"Saved!","err.rated":"Thanks — your rating was saved.",
     "err.invalidField":"Check this field: {field}.","err.unknownField":"{field} is not recognised.","err.server":"The request could not be completed."
@@ -693,11 +696,10 @@ document.getElementById("btnInstall").onclick = function(){
 };
 
 function renderStats(){
-  var areas = health.divisions && health.divisions.levels ? health.divisions.levels.district : "…";
   var items = [
     [health.drivers != null ? health.drivers : "…", t("m.drivers")],
     [document.querySelectorAll('#drivers .d [data-on="1"]').length || (health.drivers ? "" : "…"), t("m.online")],
-    [areas, t("m.areas")]
+    [health.tripsCompleted != null ? health.tripsCompleted : "…", t("m.carried")]
   ];
   document.getElementById("stats").innerHTML = items.map(function(i){
     return '<div class="stat"><b>'+esc(i[0])+'</b><i>'+esc(i[1])+'</i></div>';

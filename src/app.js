@@ -38,6 +38,7 @@ app.get('/api/health', async (_req, res) => {
     tables,
     drivers: (await get('SELECT COUNT(*) AS count FROM drivers')).count,
     requests: (await get('SELECT COUNT(*) AS count FROM ride_requests')).count,
+    tripsCompleted: (await get(`SELECT COUNT(*) AS count FROM ride_requests WHERE status = 'completed'`)).count,
     payments: (await get('SELECT COUNT(*) AS count FROM payments')).count,
     providers: providerHealth(),
     kyc: kycHealth(),
