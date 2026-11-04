@@ -14,6 +14,7 @@ import paymentsRouter from './routes/payments.js';
 import webhooksRouter from './routes/webhooks.js';
 import kycRouter from './routes/kyc.js';
 import locationsRouter from './routes/locations.js';
+import assistantRouter, { assistantHealth } from './routes/assistant.js';
 import { divisionHealth, ensureSeeded } from './locations.js';
 import { storageHealth } from './storage.js';
 import { LANDING_HTML } from './landing.js';
@@ -42,6 +43,7 @@ app.get('/api/health', async (_req, res) => {
     payments: (await get('SELECT COUNT(*) AS count FROM payments')).count,
     providers: providerHealth(),
     kyc: kycHealth(),
+    assistant: assistantHealth(),
     divisions: divisionHealth(),
     storage: storageHealth(),
     adminConfigured: Boolean(config.adminPhone),
@@ -54,7 +56,7 @@ app.get('/api/health', async (_req, res) => {
    One code path, so the test suite exercises the copy a customer actually gets. */
 app.get('/', (_req, res) => res.type('html').send(LANDING_HTML));
 app.use(express.static(path.join(import.meta.dirname, '..', 'public'), { extensions: ['html'] }));
-app.use(authRouter, driversRouter, fareRouter, adminRouter, passengerRouter, requestsRouter, paymentsRouter, webhooksRouter, kycRouter, locationsRouter);
+app.use(authRouter, driversRouter, fareRouter, adminRouter, passengerRouter, requestsRouter, paymentsRouter, webhooksRouter, kycRouter, locationsRouter, assistantRouter);
 
 app.use((_req, res) => res.status(404).json({ error: 'not_found' }));
 

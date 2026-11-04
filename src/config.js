@@ -35,7 +35,7 @@ export const config = {
     url: process.env.SMS_PROVIDER_URL || '',
     key: process.env.SMS_PROVIDER_KEY || '',
     username: process.env.SMS_USERNAME || '',
-    sender: process.env.SMS_SENDER_ID || 'SEREMOTO',
+    sender: process.env.SMS_SENDER_ID || '',
     accountSid: process.env.SMS_TWILIO_ACCOUNT_SID || '',
     timeoutMs: num(process.env.SMS_TIMEOUT_MS, 10000),
   },
@@ -75,6 +75,14 @@ export const config = {
     key: process.env.NUMVERIFY_ACCESS_KEY || '',
     baseUrl: (process.env.NUMVERIFY_BASE_URL || 'https://api.apilayer.com/numverify').replace(/\/+$/, ''),
     timeoutMs: num(process.env.NUMVERIFY_TIMEOUT_MS, 10000),
+  },
+  /* The booking conversation. Any OpenAI-compatible chat endpoint: the key stays on the server and
+     the model is only ever asked for wording, never for a price, a place or a count. */
+  ai: {
+    baseUrl: (process.env.AI_BASE_URL || 'https://api.openai.com/v1').replace(/\/+$/, ''),
+    apiKey: process.env.AI_API_KEY || '',
+    model: process.env.AI_MODEL || 'gpt-4o',
+    timeoutMs: num(process.env.AI_TIMEOUT_MS, 12000),
   },
   /* With 1 every configured check must return a verdict before a signup is accepted. */
   kycStrict: process.env.KYC_STRICT === '1',
@@ -137,6 +145,8 @@ export const storageConfigured = () => Boolean(
   config.storage.bucket && config.storage.accessKeyId && config.storage.secretAccessKey,
 );
 
+export const aiConfigured = () => Boolean(config.ai.apiKey);
+
 /* Names the vars the selected provider is actually missing, so the boot log cannot send an
    Africa's Talking user off to configure a URL they never use. */
 function smsSetupHint() {
@@ -167,6 +177,7 @@ export const missingConfig = () => {
     problems.push('NUMVERIFY_ACCESS_KEY (Rwandan phone numbers are format-checked only, never looked up)');
   }
   if (!config.google.clientId) problems.push('GOOGLE_CLIENT_ID (Google sign-in returns 503)');
+  if (!aiConfigured()) problems.push('AI_API_KEY (the booking interview keeps its scripted questions and answers none)');
   if (!config.adminPhone) problems.push('ADMIN_PHONE (no account can become an admin)');
   if (!storageConfigured()) problems.push('S3_BUCKET + S3_ACCESS_KEY_ID + S3_SECRET_ACCESS_KEY (rider documents cannot be uploaded)');
   return problems;

@@ -83,6 +83,12 @@
     this.host = host;
     this.api = (settings && settings.api) || null;
     this.onChange = (settings && settings.onChange) || null;
+    /* phrase(stage, pickedCodes) → {ask, note} | null. When the host supplies it, the question the
+       passenger reads is worded by the model the server is talking to; the scripted label below it
+       stays as the answer when that wording does not arrive. */
+    this.phrase = (settings && settings.phrase) || null;
+    this.onNote = (settings && settings.onNote) || null;
+    this.wording = 0;
     this.answers = [null, null, null, null, null];
     this.stage = 0;
     this.locked = false;
@@ -109,6 +115,15 @@
       if (this.answers[i]) return this.answers[i];
     }
     return null;
+  };
+
+  /* Every place named so far, shallowest first — what the assistant needs to ask about the next one. */
+  Ask.prototype.codes = function () {
+    var out = [];
+    for (var i = 0; i < this.answers.length; i += 1) {
+      if (this.answers[i]) out.push(this.answers[i].code);
+    }
+    return out;
   };
 
   Ask.prototype.render = function () {
@@ -139,6 +154,7 @@
     head.appendChild(q);
     head.appendChild(node('span', 'ask-n', (this.stage + 1) + '/' + ORDER.length));
     this.shell.appendChild(head);
+    this.word(q);
 
     var box = node('div', 'ask-opts');
     box.setAttribute('role', 'radiogroup');
@@ -153,6 +169,24 @@
       this.shell.appendChild(back);
     }
     this.load(box);
+  };
+
+  /* The scripted label is already on screen, so the model's wording only ever replaces it — a slow,
+     failed or unconfigured answer leaves the question the app knows how to ask by itself. */
+  Ask.prototype.word = function (q) {
+    var self = this;
+    if (!this.phrase) return;
+    var stage = this.stage;
+    var token = (this.wording += 1);
+    var picked = [];
+    for (var i = 0; i < this.answers.length; i += 1) {
+      if (this.answers[i]) picked.push(this.answers[i].code);
+    }
+    Promise.resolve(this.phrase(this.levelKey(), picked)).then(function (wording) {
+      if (token !== self.wording || self.stage !== stage || !wording) return;
+      if (wording.ask) q.textContent = wording.ask;
+      if (wording.note && self.onNote) self.onNote(wording.note);
+    }).catch(function () { /* keep the scripted question */ });
   };
 
   Ask.prototype.load = function (box) {

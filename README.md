@@ -113,7 +113,9 @@ server applies them. The rule is binding, not advisory:
 Attribution: distances and place names are © OpenStreetMap contributors (OSRM / Nominatim).
 
 **Live rider proximity.** A rider's browser posts its own position to `POST /api/drivers/me/location` as long
-as the app is open (a web page cannot track in the background). `GET /api/drivers?near=<lat,lng>&max_km=25`
+as the app is open (a web page cannot track in the background). The booking page asks for a moto within
+**2 km** (`NEAR_KM`, `GET /api/drivers?near=<lat,lng>&max_km=2`) — a roadside passenger wants whoever can reach
+them now, and when that ring is empty the area directory below it still fills the screen. The endpoint
 returns approved drivers with `distanceKm`, `locAgeSeconds`, `live` and `state`:
 
 * `live` is only true inside `LIVE_LOCATION_SECONDS` (default 180). A stale fix is demoted below fresh ones and
@@ -305,7 +307,7 @@ LIVE_LOCATION_SECONDS=180
 generic agent gets the shared instance to throttle you. Set `LIVE_LOCATION_SECONDS` higher only if riders
 keep the app open between fixes — it is the age at which a position stops being advertised as live.
 
-Leave `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `SMS_PROVIDER_KEY`, `GOOGLE_CLIENT_ID`, every
+Leave `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `SMS_PROVIDER_KEY`, `GOOGLE_CLIENT_ID`, `AI_API_KEY`, every
 `RRA_*` / `ID_*` / `NUMVERIFY_*` / `PHONE_CHECK_*` value and the `S3_*` block empty until you have real credentials — a
 half-filled block is worse than an empty one because requests then fail with network errors instead of a
 clear "not configured". At boot the server prints every gap it found (`missing configuration:
@@ -391,11 +393,21 @@ OTP_MAX_PER_HOUR=8
 
 An HTTP 200 is not proof of delivery — Africa's Talking and Twilio both return per-recipient or per-message
 status inside a 2xx body — so the adapter reads that status and only calls the message sent when the provider
-says `success`/`sent`/`queued`/`accepted`/`delivered`. Anything else returns `502 sms_send_failed` with the
-provider's own words in the message, and the OTP is never stored as delivered. The provider's message id is
-saved on the challenge (`otp_challenges.provider`, `otp_challenges.sms_ref`) so a "I never got the code"
-dispute can be opened with something the provider recognises. The number is stored in local `07…` format and
-dialled as `+250…`.
+says `success`/`submitted`/`buffered`/`sent`/`queued`/`accepted`/`delivered` (Africa's Talking puts the words
+inside `SMSMessageData.Recipients[0].status`, beside a numeric `statusCode` where 101 means taken), or answers
+with a 1xx/2xx code of its own. Anything else returns `502 sms_send_failed`, and the OTP is never stored as
+delivered. The provider's message id is saved on the challenge (`otp_challenges.provider`,
+`otp_challenges.sms_ref`) so a "I never got the code" dispute can be opened with something the provider
+recognises. The number is stored in local `07…` format and dialled as `+250…`.
+
+Two refusals are worth reading on the way to the dashboard: a bad API key comes back as **plain text**
+(`HTTP 401: The supplied authentication is invalid`), not JSON, and an unregistered `SMS_SENDER_ID` comes back
+as HTTP 201 with `status: "Rejected"` on the recipient — so both are passed through in the message the API
+returns instead of being flattened into a bare status code. `SMS_SENDER_ID` left empty means the `from` field
+is not sent at all, which lets the account's default short code answer (an empty `from=` is itself refused).
+`npm run test:sms` boots a server against a gateway that speaks those exact dialects — accepted, rejected
+sender, empty recipient list, HTML body, gateway down, revoked key — and fails if the code that reads them
+drifts; that suite is what caught the wrong field name.
 
 ### Rider credential checks (RRA TIN, NIDA ID, live phone)
 
@@ -491,6 +503,39 @@ Set `KYC_STRICT=1` when the contracts are live and you want the opposite rule: a
 too. `/signup` shows a live verdict line per field once the phone is verified; `/admin` shows the three pills
 plus the evidence the register gave (taxpayer name, matched name, operator).
 
+### Booking assistant (language model)
+
+The interview that asks *Intara yawe? → Akarere kawe? → …* can be worded by a real model instead of the
+scripted strings, and a question the passenger types gets an answer line under the booking card. The key is
+held by the server and never sent to the browser; the page only ever calls `POST /api/assistant`.
+
+| Variable | Value to paste | What it does |
+| --- | --- | --- |
+| `AI_API_KEY` | your key from platform.openai.com → **API keys** (starts `sk-`) | The only switch. Empty ⇒ the booking page keeps its own scripted questions. |
+| `AI_MODEL` | `gpt-4o` | Sent as `model`. Any OpenAI-compatible chat model works. |
+| `AI_BASE_URL` | `https://api.openai.com/v1` | The adapter posts `<AI_BASE_URL>/chat/completions`. Point it elsewhere for another vendor. |
+| `AI_TIMEOUT_MS` | `12000` | A model that answers slower than this is abandoned; the scripted question stays on screen. |
+
+**The model never decides what is true.** Before every call the server computes the facts and hands them over
+as data: the places on offer come from `locations` (the same register the tappable rows are read from), the
+rider count comes from the same 2 km online-nearby search the list on screen runs, and the price comes from the
+RURA table in `src/fares.js`. A reply is only shown if it passes the gates in `src/routes/assistant.js`: the
+`stage` must be one of `province|district|sector|cell|village|ready` (`422 invalid_stage`, checked **before**
+any model call, so a probe costs nothing), the question must fit the 90-character slot and the answer the
+200-character one, and anything carrying `{ } < > \`` or a URL is dropped. A reply that cannot be read answers
+`502 ai_unavailable` with the provider's own reason, and the page then keeps the question it already knew how
+to ask — nothing is ever painted from a reply the server could not verify.
+
+Wording, not layout: the answer reuses the footnote line that was already under the rider list, so no element
+is added, moved or resized. `/api/health` reports `assistant: {configured, model, stages}`, and `/` fires
+**zero** assistant requests when `configured` is false — a phone on a bundle pays nothing for a feature that
+is not switched on. One short call per question (max 300 tokens, 700 ms debounce on typed text).
+
+`npm run test:assistant` boots this server against a local stand-in that answers the way an
+OpenAI-compatible endpoint does — including the refusals (prose instead of JSON, a 400-char question, a link
+in the reply, HTTP 500, a revoked key, a body that is not JSON) — and asserts the facts in the prompt are the
+ones this database holds.
+
 ### Google sign-in
 
 1. Google Cloud Console → **APIs & Services → Credentials → Create credentials → OAuth client ID → Web
@@ -544,11 +589,13 @@ MOMO_CALLBACK_BASE=https://your-domain.rw
 
 ```bash
 npm test                                       # seeds + boots its own server on a scratch database
+npm run test:sms                               # the OTP adapter against a fake Africa's Talking gateway
 npm run test:dashboards                        # rider / passenger / admin contracts, same idea
+npm run test:assistant                         # the booking interview against a fake chat gateway
 npm run test:i18n                              # Kinyarwanda ↔ English key parity
 ```
 
-Both API suites boot their own server on an ephemeral port against a throwaway Postgres instance, then shut
+The API suites boot their own server on an ephemeral port against a throwaway Postgres instance, then shut
 it down and discard it — so `npm test` can approve a rider, complete and rate trips, or suspend an account
 without ever touching the Neon database in `.env`. The scratch database is a real Postgres (`@electric-sql/pglite`
 behind a TCP socket), which is why the suites catch Postgres-only mistakes such as an out-of-order foreign
@@ -578,6 +625,21 @@ was built from (per-level counts, cascading children, the `lang` parameter, sear
 that admits its distance, `location_code` on the rider profile and the `division` filter matching where a rider
 works *or* where they were last seen), and — when keys are set — that payment attempts really leave
 the process and a provider rejection surfaces as `502`, never as a fake success.
+
+`npm run test:sms` is the one that runs the server with a provider *configured* — the other two boot in dev
+mode with `OTP_ECHO=1`, so the adapter that reads the gateway's reply was never reached. It points
+`SMS_PROVIDER_URL` at a local gateway that answers in Africa's Talking's exact shape and asserts the send is
+reported as sent only when the recipient really was accepted, that `otp_challenges.provider`/`sms_ref` hold the
+gateway's own message id, and that a `Rejected` recipient, an empty recipient list, an HTML body, a gateway 500
+and a revoked-key plain-text 401 each surface as `502` with the provider's reason attached.
+
+`npm run test:assistant` does the same for the booking interview: `AI_BASE_URL` points at a local gateway that
+answers in an OpenAI-compatible shape, and the suite checks that the question the passenger sees really came
+over that API with the server's own key, that the prompt carries the five provinces and the seeded rider *this*
+database holds, and that every unreadable reply — prose, 400 characters, a link, a gateway 500, a revoked key,
+a body that is not JSON — is answered `502 ai_unavailable` instead of being painted into the question slot. It
+boots the same binary a second time with `AI_API_KEY` removed on another port and asserts `/api/health`
+reports `assistant.configured: false`, `POST /api/assistant` answers `503` and the gateway is never touched.
 
 `npm run test:dashboards` covers every endpoint the three dashboards call: the rider inbox scopes,
 `/stats` periods and `can_go_online` blockers, `NDITEGUYE`, the passenger sign-in/claim-trips round trip,
@@ -660,7 +722,8 @@ the row shows the installed state in place.
 | GET | `/api/drivers/me/stats` | Bearer + approved | Trips/gross/payout per today-week-month, distance, unbilled total, rating distribution, `can_go_online` blockers |
 | GET | `/api/drivers/me/ratings` | Bearer + approved | Latest comments with the star histogram |
 | POST | `/api/drivers/:id/rating` | – | Rate an approved driver, `stars` 1–5 |
-| GET | `/api/fare` | – | Quote a trip: `from`/`to` (optionally `near`), or `distance_km`, plus `vehicle`, `wait_minutes` |
+| GET | `/api/fare` | – | Quote a trip: `from`/`to` (optionally `near`), or `distance_km`, plus `vehicle`, `wait_minutes`
+| POST | `/api/assistant` | – | Word one interview step: `stage` (province/district/sector/cell/village/ready), `locale`, optional `picked` codes, `near`, `question`, `destination` + `distance_km`. Answers `{ask, note, stage, locale, model, facts}`; `422 invalid_stage` before any model call, `503 ai_not_configured` with no `AI_API_KEY`, `502 ai_unavailable` when the provider refuses or replies unreadably | |
 | POST | `/api/requests` | – | Client sends a request (gates: not approved, offline, service, capacity). Returns `fare_components` |
 | GET | `/api/requests/me` | Bearer + approved | Driver inbox |
 | GET | `/api/requests/:id` | Bearer + approved | One request (owner only) |
@@ -694,7 +757,7 @@ the row shows the installed state in place.
 | POST | `/api/webhooks/paystack` | signature | Provider callback |
 | POST | `/api/webhooks/mtn-momo` | checksum | Provider callback |
 | GET | `/api/health` | – | Table counts plus `drivers`, `requests` and `tripsCompleted` (the three numbers the booking page shows as *Abamotari* / *Abiteguye* / *Abatwaye*), payment provider readiness, the `kyc` block (`smsProvider`, `rra`, `idProvider`, `phoneCheck` — `false`,
-`"numverify"` or `"generic"`, so the reader learns *which* service answers for a phone number, `strict`), the `storage` block (`configured`, `bucket`, `maxUploadBytes`), the `divisions` block (rows loaded, per-level counts, mapped centroids, seed file), `adminConfigured` |
+`"numverify"` or `"generic"`, so the reader learns *which* service answers for a phone number, `strict`), the `assistant` block (`configured`, `model`, `stages` — the booking page only asks the model when it is `true`), the `storage` block (`configured`, `bucket`, `maxUploadBytes`), the `divisions` block (rows loaded, per-level counts, mapped centroids, seed file), `adminConfigured` |
 
 Errors are `{"error": "<code>", "message": "<english detail>"}`. The UI translates the code, so the code
 names are part of the contract: `invalid_phone`, `invalid_code`, `otp_invalid`, `otp_expired`,
@@ -795,7 +858,7 @@ HOST=0.0.0.0 PORT=3000 PUBLIC_URL=https://your-domain.rw npm start
   secrets (never in code), including `DATABASE_URL` — the database lives in Neon, not on the container, so a
   redeploy or a scale-to-zero does not touch a byte of data.
 * Set `DATABASE_URL`, `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `SMS_PROVIDER_KEY` (plus `SMS_USERNAME` or
-  `SMS_TWILIO_ACCOUNT_SID`, whichever `SMS_PROVIDER` you chose), `GOOGLE_CLIENT_ID`, the `RRA_*` /
+  `SMS_TWILIO_ACCOUNT_SID`, whichever `SMS_PROVIDER` you chose), `GOOGLE_CLIENT_ID`, `AI_API_KEY`, the `RRA_*` /
   `ID_*` / `PHONE_CHECK_*` values and the `S3_*` block in the platform's secret store, then load them with the
   real domain: `DATABASE_URL=postgresql://…?sslmode=require`,
   `PAYSTACK_SECRET_KEY=sk_live_...`,

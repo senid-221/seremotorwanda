@@ -6,12 +6,12 @@ export const LANDING_HTML = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SERE Moto — Transport na clients</title>
+<title>SEREMOTO — Transport na clients</title>
 <meta name="description" content="Urubuga ruhuza aba motori n'ababenzi n'abakiriya: iyandikishe, ubone clients, wishyure kuri MTN MoMo cyangwa ikarita.">
 <meta name="theme-color" content="#1e3a8a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SERE Moto">
+<meta name="apple-mobile-web-app-title" content="SEREMOTO">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23d97706'/><circle cx='10' cy='22' r='4' fill='white'/><circle cx='23' cy='22' r='4' fill='white'/><path d='M10 22l4-8h6l3 8' stroke='white' stroke-width='2.5' fill='none'/></svg>">
@@ -34,15 +34,15 @@ button{font:inherit;cursor:pointer}
 header{background:var(--navy);color:var(--white);position:sticky;top:0;z-index:40;box-shadow:0 1px 3px rgba(15,23,42,.24)}
 .hd{display:flex;align-items:center;gap:8px;min-height:56px;position:relative}
 .logo{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:-.2px}
-.logo svg{width:28px;height:28px;flex:none}
-.logo b{font-size:20px}
-.logo span{font-size:11.5px;opacity:.85;display:block;font-weight:600;letter-spacing:.4px}
-.nav{margin-left:auto;display:flex;align-items:center;gap:2px}
-.tab{background:transparent;border:0;color:#dbe4ff;padding:7px 10px;border-radius:8px;font-weight:700;font-size:14.5px;white-space:nowrap;line-height:1.25}
+.logo svg{width:24px;height:24px;flex:none}
+.logo b{font-size:15px;letter-spacing:.6px;text-transform:uppercase}
+.logo span{font-size:11px;opacity:.85;display:block;font-weight:600;letter-spacing:.4px}
+.nav{margin-left:auto;display:flex;align-items:center;gap:4px}
+.tab{background:transparent;border:0;color:#dbe4ff;padding:9px 13px;border-radius:9px;font-weight:700;font-size:16.5px;white-space:nowrap;line-height:1.25}
 .tab:hover{background:var(--navy-2);color:var(--white)}
 .tab[aria-selected="true"]{color:var(--white);box-shadow:inset 0 -2px 0 var(--white)}
-.tab-icon{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;line-height:0}
-.tab-icon svg{width:26px;height:26px;display:block}
+.tab-icon{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;line-height:0}
+.tab-icon svg{width:30px;height:30px;display:block}
 a.tab{display:inline-flex;align-items:center;text-decoration:none}
 .tabbtn{display:inline-flex;align-items:center;background:transparent;border:0;border-radius:8px;padding:7px 10px;font-weight:700;font-size:15px;line-height:1.25;text-decoration:none;color:var(--navy)}
 .tabbtn:hover{background:var(--bg);color:var(--navy-3)}
@@ -114,6 +114,9 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .msg{font-size:15px;font-weight:700;margin-top:8px;border-radius:10px;padding:9px 12px;line-height:1.4}
 .msg-err{color:#fff;background:var(--danger)}
 .msg-ok{color:#fff;background:var(--brand)}
+/* The "nobody in this ring reports GPS" line is a fact about the list below it, not a failure, so it
+   reads as a footnote rather than a red block. */
+.msg-note{font-size:11px;font-weight:700;line-height:1.4;color:var(--ink-soft);background:transparent;padding:4px 0}
 .review{display:flex;gap:11px;align-items:flex-start;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 13px}
 .review svg{flex:none;width:22px;height:22px;color:#b45309}
 .review h2,.review p{margin:0}
@@ -132,7 +135,7 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .ask-q{margin:0;font-size:20px;font-weight:800;letter-spacing:-.2px;line-height:1.2;text-align:left;text-transform:uppercase;color:var(--navy)}
 .ask-n{flex:none;font-size:13px;font-weight:800;color:var(--ink-soft);background:#eef2f7;border-radius:999px;padding:3px 9px}
 .ask-opts{display:grid;max-height:340px;overflow:auto;overscroll-behavior:contain;border-top:1px solid var(--line)}
-.ask-opt{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-size:17px;font-weight:700;line-height:1.25;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.ask-opt{display:flex;align-items:center;gap:12px;min-height:46px;padding:8px 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-size:14px;font-weight:700;line-height:1.25;text-align:left;overflow-wrap:anywhere;cursor:pointer}
 .ask-opt:hover{background:#f5f8ff}
 .ask-opt.on{background:#eff6ff;color:var(--navy)}
 .ask-opts>:last-child{border-bottom:0}
@@ -224,8 +227,8 @@ footer a{color:#fff}
   .hd{flex-wrap:wrap;padding-top:7px;padding-bottom:7px}
   .nav{width:100%;margin-left:0;justify-content:space-between}
   .nav .lang{margin-left:0}
-  .tab{padding:7px 9px;font-size:14px}
-  .tab-icon{padding:4px 6px}
+  .tab{padding:8px 11px;font-size:16px}
+  .tab-icon{padding:5px 8px}
   .book .grid{grid-template-columns:1fr}
   footer .wrap{padding-right:16px;flex-direction:column;align-items:flex-start;gap:8px}
 }
@@ -235,9 +238,10 @@ footer a{color:#fff}
   .ask-opts{max-height:288px}
 }
 @media (max-width:360px){
-  .nav{gap:1px}
-  .tab{padding:6px 5px;font-size:13px;line-height:1.4}
-  .tab-icon{padding:4px 3px;line-height:0}
+  .nav{gap:2px}
+  .tab{padding:7px 7px;font-size:15px;line-height:1.3}
+  .tab-icon{padding:5px 5px;line-height:0}
+  .tab-icon svg{width:28px;height:28px}
   .lang button{flex:0 0 29px;font-size:11px}
   .ask-q{font-size:18px}
 }
@@ -248,7 +252,7 @@ footer a{color:#fff}
   <div class="wrap hd">
     <div class="logo">
       <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="10" cy="22" r="4.4" fill="#fff"/><circle cx="23" cy="22" r="4.4" fill="#fff"/><path d="M10 22l4-8h6l3 8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M14 14h7" stroke="#f6c17a" stroke-width="2.6" stroke-linecap="round"/></svg>
-      <div><b>SERE Moto</b><span data-i18n="tagline">Transport &amp; clients</span></div>
+      <div><b>SEREMOTO</b><span data-i18n="tagline">Transport &amp; clients</span></div>
     </div>
     <nav class="nav" role="tablist">
       <button class="tab" role="tab" data-view="find" aria-selected="true" data-i18n="nav.find">Passenger</button>
@@ -396,7 +400,6 @@ footer a{color:#fff}
 <footer>
   <div class="wrap">
     <div>© <span id="yr"></span> SERE Moto · Kigali, Rwanda</div>
-    <div class="row"><a href="https://wa.me/250780000000" data-i18n="foot.wa">WhatsApp support</a></div>
   </div>
 </footer>
 
@@ -421,12 +424,11 @@ var I18N = {
     "sh.fare":"Igiciro ntangere","sh.dist":"Intera","sh.fareKm":"{km} km ku muhanda nyawo","sh.fareLoading":"Turapima intera…","sh.fareNone":"Ubushe ntitubashije kubona intera — shyiramo km.","sh.fareBasis":"Igiciro kigenwa na RURA ku mapingu. Nta wushobora kucyihindurira.",
     "fare.first":"{km} km zambere: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (harengeze {over} km)","fare.wait":"{min} min zo gutegereza × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
     "fare.regulated":"Igiciro kigenwa na RURA","fare.driverRate":"Igiciro gishyirwaho n'umushoferi",
-    "near.none":"Nta motari igaragaza GPS mu ntera ya {km} km — izi ni izo mu gace kawe.","list.empty":"Nta Moto Ibonetse","list.emptySub":"Wongere mukanya",
+    "near.none":"Nta motari igaragaza GPS mu ntera ya {km} km — izi ni izo mu gace kawe.","list.empty":"Nta Moto","list.emptySub":"Ongera",
     "track.title":"Turimo gushaka moto hafi yawe…","track.noLive":"Nta motari igaragaza GPS hafi yawe — turimo kureba mu gace kawe","c.closest":"Hafi cyane","near.line":"Iyi ni yo moto hafi yawe: {name} · {km}. Ni wowe uhitamo uwo utega.",
     "c.off":"offline","c.book":"Ntwara","c.call":"Hamagara","c.rate":"Shorta",
     "c.available":"Nditeguye","c.busy":"Afite umugenzi","c.live":"LIVE","c.km":"{km} km","c.noGps":"Nta GPS",
     "m.drivers":"Abamotari","m.online":"Abiteguye","m.carried":"Abatwaye",
-    "foot.wa":"WhatsApp support",
     "err.network":"Server ntabwo yitabiriye — gerageza nyuma.","err.saved":"Byabitswe!","err.rated":"Murakoze! Ubushimishije bwabitswe.",
     "err.invalidField":"Suzuma iyi ngereranyo: {field}.","err.unknownField":"{field} ntiyizwi.","err.server":"Ubusabe ntibushoboye kurangira."
   },
@@ -447,12 +449,11 @@ var I18N = {
     "sh.fare":"Fare estimate","sh.dist":"Distance","sh.fareKm":"{km} km on real roads","sh.fareLoading":"Measuring the distance…","sh.fareNone":"We could not find that route — enter the distance.","sh.fareBasis":"Motorcycle fares are set by RURA. Nobody can change them.",
     "fare.first":"First {km} km: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (over {over} km)","fare.wait":"{min} waiting minutes × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
     "fare.regulated":"Fare set by RURA","fare.driverRate":"Rate set by the driver",
-    "near.none":"No rider shares a GPS fix within {km} km — these are the riders in your area.","list.empty":"No moto found","list.emptySub":"Try again in a moment",
+    "near.none":"No rider shares a GPS fix within {km} km — these are the riders in your area.","list.empty":"No moto","list.emptySub":"Try again",
     "track.title":"Finding a moto near you…","track.noLive":"No rider shares GPS near you — looking in your area instead","c.closest":"Closest","near.line":"This moto is closest to you: {name} · {km}. You still choose who to wait for.",
     "c.off":"offline","c.book":"Drive me","c.call":"Call","c.rate":"Rate",
     "c.available":"Ready","c.busy":"Has a passenger","c.live":"LIVE","c.km":"{km} km","c.noGps":"No GPS",
     "m.drivers":"Riders","m.online":"Ready","m.carried":"Carried",
-    "foot.wa":"WhatsApp support",
     "err.network":"The server did not respond — try again.","err.saved":"Saved!","err.rated":"Thanks — your rating was saved.",
     "err.invalidField":"Check this field: {field}.","err.unknownField":"{field} is not recognised.","err.server":"The request could not be completed."
   }
@@ -596,10 +597,10 @@ async function api(path, opts){
   return json;
 }
 
-function showMsg(id, text, ok){
+function showMsg(id, text, ok, kind){
   var el = document.getElementById(id);
   el.textContent = text;
-  el.className = "msg " + (ok ? "msg-ok" : "msg-err");
+  el.className = "msg " + (kind || (ok ? "msg-ok" : "msg-err"));
   el.hidden = !text;
 }
 
@@ -706,7 +707,8 @@ function renderStats(){
 
 var drivers = [];
 var nearFallback = false;
-var NEAR_KM = 25;
+/* A roadside passenger wants the moto that can reach them now, not one across the province. */
+var NEAR_KM = 2;
 async function fetchDrivers(extra, gpsArea){
   var params = new URLSearchParams();
   params.set("lang", lang);
@@ -740,7 +742,7 @@ async function loadDrivers(){
     } else {
       drivers = await fetchDrivers([], true);
     }
-    showMsg("findErr", nearFallback ? t("near.none").replace("{km}", NEAR_KM) : "", !nearFallback);
+    paintNote();
   } catch (error) {
     drivers = [];
     showMsg("findErr", error.message, false);
@@ -861,6 +863,9 @@ document.getElementById("q").addEventListener("input", function(){
   clearTimeout(searchTimer);
   searchTimer = setTimeout(loadDrivers, 250);
 });
+/* The destination box is also where a passenger types what they actually want to know, so the
+   assistant is asked about the same text the booking search will later route. */
+document.getElementById("fTo").addEventListener("input", askAssistant);
 bindChoice("fType");
 bindChoice("fNeed");
 
@@ -1021,6 +1026,47 @@ function onAnswer(){
   loadDrivers();
 }
 
+/* The interview asks its own five place questions by default. When the server reports a real language
+   model behind it, those same questions are worded for this passenger — in their language, taking the
+   places they just named into account — and whatever they type is answered in the footnote line the
+   nearby search already uses. Nothing new is drawn: the words change, the layout does not, and a model
+   that is slow, refused or simply not configured leaves the scripted question standing. */
+var aiOn = false;
+var aiNote = "";
+function assistantCall(body){
+  if (!aiOn) return Promise.resolve(null);
+  return api("/api/assistant", { method: "POST", body: body }).catch(function(){ return null; });
+}
+function assistantPhrase(stage, picked){
+  return assistantCall({
+    locale: lang,
+    stage: stage,
+    picked: (picked || []).map(function(code){ return { code: code }; }),
+    near: nearParam() || null,
+  }).then(function(r){ return r && (r.ask || r.note) ? { ask: r.ask, note: r.note } : null; });
+}
+function paintNote(){
+  if (nearFallback) { showMsg("findErr", t("near.none").replace("{km}", NEAR_KM), true, "msg-note"); return; }
+  showMsg("findErr", aiNote, true, "msg-note");
+}
+function assistantNote(text){ aiNote = text || ""; paintNote(); }
+
+var askTimer = null;
+function askAssistant(){
+  var typed = document.getElementById("fTo").value.trim();
+  clearTimeout(askTimer);
+  if (typed.length < 3) return;
+  askTimer = setTimeout(function(){
+    assistantCall({
+      locale: lang,
+      stage: "ready",
+      picked: interview ? interview.codes() : [],
+      near: nearParam() || null,
+      question: typed,
+    }).then(function(r){ if (r && r.note) assistantNote(r.note); });
+  }, 700);
+}
+
 function closeCongrats(){
   var pop = document.getElementById("congrats");
   if (pop.hidden) return;
@@ -1036,9 +1082,14 @@ document.getElementById("congrats").addEventListener("click", function(e){ if (e
 async function boot(){
   document.getElementById("yr").textContent = new Date().getFullYear();
   if (window.SERE_DIVISIONS && window.SERE_INTERVIEW) {
-    interview = SERE_INTERVIEW.mount(document.getElementById("ask"), { onChange: onAnswer });
+    interview = SERE_INTERVIEW.mount(document.getElementById("ask"), {
+      onChange: onAnswer, phrase: assistantPhrase, onNote: assistantNote,
+    });
   }
   try { health = await api("/api/health"); } catch (error) { showMsg("findErr", error.message, false); }
+  /* applyLang() at the end of boot re-renders the interview, so that is the first pass the assistant
+     gets — asking here too would spend a second call on a cheap phone for the same question. */
+  aiOn = !!(health.assistant && health.assistant.configured);
   try {
     var zones = (await api("/api/zones")).zones;
     document.getElementById("zones").innerHTML = zones.map(function(z){ return '<option value="'+esc(z)+'">'; }).join("");

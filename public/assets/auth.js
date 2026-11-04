@@ -2297,8 +2297,8 @@
       '<span data-i18n="ab.install">Shyira app kuri Phone</span></button></li>';
 
     return '<div class="ab-in">' +
-      '<a class="ab-logo" href="/" aria-label="SERE Moto">' + AB.logo +
-      '<div><b>SERE Moto</b><span data-i18n="ab.tagline">Transport &amp; clients</span></div></a>' +
+      '<a class="ab-logo" href="/" aria-label="SEREMOTO">' + AB.logo +
+      '<div><b>SEREMOTO</b><span data-i18n="ab.tagline">Transport &amp; clients</span></div></a>' +
       '<nav class="ab-nav">' + nav +
       '<button class="ab-tab ab-tab-icon" id="abMenu" type="button" aria-haspopup="true" aria-expanded="false"' +
       ' aria-controls="abMenuPanel" data-i18n-title="ab.menu" title="Menu" aria-label="Menu">' + AB.bars + '</button>' +

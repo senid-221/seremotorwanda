@@ -11,8 +11,10 @@
     "seed:locations": "node scripts/seed-locations.js",
     "landing": "node scripts/build-landing.js",
     "test": "node test/smoke.js",
+    "test:sms": "node test/sms.js",
     "test:i18n": "node scripts/check-i18n.js",
-    "test:dashboards": "node test/dashboards.js"
+    "test:dashboards": "node test/dashboards.js",
+    "test:assistant": "node test/assistant.js"
   },
   "engines": {
     "node": "22.x"

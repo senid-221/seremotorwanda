@@ -8,7 +8,7 @@
 import { config } from './config.js';
 import { ApiError } from './validate.js';
 
-const DELIVERED = ['success', 'sent', 'queued', 'accepted', 'delivered', 'scheduled', 'true'];
+const DELIVERED = ['success', 'submitted', 'buffered', 'sent', 'queued', 'accepted', 'delivered', 'scheduled', 'true'];
 
 const international = (phone) => `+250${phone.slice(1)}`;
 
@@ -31,19 +31,41 @@ async function post(url, { headers, json, form, timeoutMs }) {
   }
 }
 
-const readBody = async (response) => {
-  const body = await response.json().catch(() => null);
-  if (!response.ok) {
-    const detail = body && (body.errorMessage || body.message || body.detail) ? `: ${body.errorMessage || body.message || body.detail}` : '';
-    throw new ApiError(502, 'sms_send_failed', `The SMS provider replied with HTTP ${response.status}${detail}`);
+/* Providers do not all answer a refusal in JSON — Africa's Talking rejects a bad API key with a
+   plain-text body — so the reason is read out of whichever shape came back instead of dropped. */
+const refusalReason = (body, text) => {
+  if (body) {
+    const nested = body.SMSMessageData && body.SMSMessageData.Message;
+    return body.errorMessage || body.message || body.detail || nested || '';
   }
-  return body;
+  return String(text || '').trim().slice(0, 160);
+};
+
+const readBody = async (response) => {
+  const text = await response.text().catch(() => '');
+  let body = null;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    body = null;
+  }
+  if (!response.ok) {
+    const detail = refusalReason(body, text);
+    throw new ApiError(502, 'sms_send_failed', `The SMS provider replied with HTTP ${response.status}${detail ? `: ${detail}` : ''}`);
+  }
+  if (text && body === null) {
+    throw new ApiError(502, 'sms_send_failed', `The SMS provider replied with something that is not JSON: ${text.slice(0, 120)}`);
+  }
+  return body || {};
 };
 
 /* Walks the provider's own status words; anything that is not a known-delivered word is a failure. */
 function assertDelivered(status, provider, detail) {
   const word = String(status ?? 'success').trim().toLowerCase();
   if (DELIVERED.includes(word)) return;
+  /* Africa's Talking also sends a numeric code beside the word; 1xx/2xx is its own way of saying
+     "taken", 4xx/5xx is the refusal. */
+  if (/^[12]\d{1,2}$/.test(word)) return;
   throw new ApiError(502, 'sms_send_failed', `${provider} refused the message${detail ? `: ${detail}` : ` (status ${status})`}`);
 }
 
@@ -51,15 +73,22 @@ const africastalking = async (phone, message) => {
   if (!config.sms.username || !config.sms.key) {
     throw new ApiError(503, 'sms_not_configured', 'SMS_USERNAME and SMS_PROVIDER_KEY are required for Africa\'s Talking');
   }
+  const form = { username: config.sms.username, to: international(phone), message };
+  /* An empty "from" is a refused request, not a default one — the account's own sender answers
+     only when the field is left out. */
+  if (config.sms.sender) form.from = config.sms.sender;
   const response = await post(config.sms.url || 'https://api.africastalking.com/version1/messaging', {
     headers: { apiKey: config.sms.key },
-    form: { username: config.sms.username, to: international(phone), message, from: config.sms.sender },
+    form,
     timeoutMs: config.sms.timeoutMs,
   });
   const body = await readBody(response);
-  const recipient = (body && body.SMSResponseData || [])[0];
-  if (!recipient) throw new ApiError(502, 'sms_send_failed', 'Africa\'s Talking returned no per-recipient result');
-  assertDelivered(recipient.status, "Africa's Talking", recipient.errorMessage);
+  const data = body.SMSMessageData || {};
+  const recipient = (data.Recipients || [])[0];
+  if (!recipient) {
+    throw new ApiError(502, 'sms_send_failed', `Africa's Talking queued nothing${data.Message ? `: ${data.Message}` : ''}`);
+  }
+  assertDelivered(recipient.status ?? recipient.statusCode, "Africa's Talking", recipient.errorMessage || data.Message);
   return { ref: recipient.messageId || null };
 };
 
