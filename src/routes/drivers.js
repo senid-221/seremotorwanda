@@ -9,7 +9,7 @@ import {
 } from '../locations.js';
 import { shapeRequest } from './requests.js';
 import {
-  DOCUMENT_KINDS, DOCUMENT_TYPES, documentKey, documentShape,
+  DOCUMENT_KINDS, DOCUMENT_TYPES_BY_KIND, documentKey, documentShape, documentTypesFor, acceptsType,
   headObject, presignDownload, presignUpload,
 } from '../storage.js';
 import {
@@ -246,14 +246,14 @@ router.get('/api/drivers/me/documents', requireAuth, async (req, res) => {
     ...documentShape(row),
     url: signed && row.status === 'uploaded' ? await presignDownload(row.object_key) : null,
   })));
-  res.json({ configured: signed, maxBytes: config.storage.maxUploadBytes, documents });
+  res.json({ configured: signed, maxBytes: config.storage.maxUploadBytes, documentTypes: DOCUMENT_TYPES_BY_KIND, documents });
 });
 
 router.post('/api/drivers/me/documents/:kind/upload-url', requireAuth, async (req, res) => {
   const kind = oneOf(req.params.kind, DOCUMENT_KINDS, 'kind');
   const contentType = String(req.body.content_type || '').toLowerCase();
-  if (!DOCUMENT_TYPES.includes(contentType)) {
-    throw new ApiError(422, 'unsupported_document_type', 'Upload a JPEG, PNG or WebP image.');
+  if (!acceptsType(kind, contentType)) {
+    throw new ApiError(422, 'unsupported_document_type', `A ${kind.replace(/_/g, ' ')} must be ${documentTypesFor(kind).join(', ')}`);
   }
   if (!storageConfigured()) {
     throw new ApiError(503, 'storage_not_configured', 'Document storage is not configured on this server');
@@ -290,11 +290,11 @@ router.post('/api/drivers/me/documents/:kind/complete', requireAuth, async (req,
 
   const head = await headObject(row.object_key);
   if (!head) throw new ApiError(409, 'document_not_uploaded', 'The file is not in storage yet. Upload it, then try again.');
-  if (!DOCUMENT_TYPES.includes(head.contentType)) {
-    throw new ApiError(422, 'unsupported_document_type', 'Upload a JPEG, PNG or WebP image.');
+  if (!acceptsType(kind, head.contentType)) {
+    throw new ApiError(422, 'unsupported_document_type', `A ${kind.replace(/_/g, ' ')} must be ${documentTypesFor(kind).join(', ')}`);
   }
   if (head.bytes > config.storage.maxUploadBytes) {
-    throw new ApiError(413, 'document_too_large', `Keep the image under ${Math.round(config.storage.maxUploadBytes / 1048576)} MB.`);
+    throw new ApiError(413, 'document_too_large', `Keep the file under ${Math.round(config.storage.maxUploadBytes / 1048576)} MB.`);
   }
 
   await run(

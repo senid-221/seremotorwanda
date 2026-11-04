@@ -17,6 +17,72 @@ export const matchesHash = (value, stored) => {
   return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
 };
 
+/* Rider passwords are hashed with scrypt from node:crypto — no third-party hash library, nothing to
+   install on the server. The parameters are part of the stored string so a future pass can raise them
+   without guessing how an old hash was made. Cost factors are deliberately modest: this runs inside a
+   serverless function on a shared CPU, and a moto rider's sign-in is not worth a second of delay. */
+const SCRYPT = { N: 16384, r: 8, p: 1, keylen: 32 };
+
+export function hashPassword(password) {
+  const salt = crypto.randomBytes(16);
+  const key = crypto.scryptSync(password, salt, SCRYPT.keylen, { N: SCRYPT.N, r: SCRYPT.r, p: SCRYPT.p });
+  return `scrypt$${SCRYPT.N}$${SCRYPT.r}$${SCRYPT.p}$${salt.toString('base64')}$${key.toString('base64')}`;
+}
+
+export function verifyPassword(password, stored) {
+  const parts = String(stored || '').split('$');
+  if (parts.length !== 6 || parts[0] !== 'scrypt') return false;
+  const [, N, r, p, salt, key] = parts;
+  let expected;
+  try {
+    expected = Buffer.from(key, 'base64');
+  } catch {
+    return false;
+  }
+  const actual = crypto.scryptSync(password, Buffer.from(salt, 'base64'), expected.length, {
+    N: Number(N), r: Number(r), p: Number(p),
+  });
+  return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+}
+
+/* A password is guessable in a way a phone number is not, so a wrong one is counted: ten attempts at
+   one account, and sixty wrong passwords from one address, per hour. Both are needed — a cap per
+   account still lets an attacker walk a list of addresses, and a cap per address still lets a single
+   account be tried slowly. Only a refusal is counted: a rider who signs in correctly ten times an
+   hour is using the app, not attacking it. */
+const LOGIN_ACCOUNT_PER_HOUR = 10;
+const LOGIN_IP_PER_HOUR = 60;
+const loginLog = { account: new Map(), ip: new Map() };
+
+const spent = (map, key) => {
+  const now = Date.now();
+  return (map.get(key) || []).filter((at) => now - at < 3_600_000);
+};
+
+function refuse(map, key, max) {
+  if (spent(map, key).length >= max) {
+    throw new ApiError(429, 'login_rate_limited', 'Too many wrong passwords in the last hour. Try again later.');
+  }
+}
+
+function push(map, key, max) {
+  const recent = spent(map, key);
+  recent.push(Date.now());
+  map.set(key, recent.slice(-max));
+}
+
+/* Asked before the password is tried, so a locked-out account cannot be hammered at all. */
+export function assertLoginBudget(email, ip) {
+  refuse(loginLog.account, String(email || '').toLowerCase(), LOGIN_ACCOUNT_PER_HOUR);
+  if (ip) refuse(loginLog.ip, ip, LOGIN_IP_PER_HOUR);
+}
+
+/* Asked once the attempt has failed, so the budget only drains on refusals. */
+export function recordLoginFailure(email, ip) {
+  push(loginLog.account, String(email || '').toLowerCase(), LOGIN_ACCOUNT_PER_HOUR);
+  if (ip) push(loginLog.ip, ip, LOGIN_IP_PER_HOUR);
+}
+
 const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
 
 export function signToken(payload, hours = config.sessionHours) {

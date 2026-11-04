@@ -106,6 +106,28 @@ export function email(raw) {
   return value;
 }
 
+/* The credential a rider signs in with. Stored lowercased so John@Example and john@example are one
+   account, not two — and so the unique index on the column actually catches the duplicate. */
+export function emailAddress(raw) {
+  const value = String(raw || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value) || value.length > 254) {
+    fail('email', 'Enter an email address you can read, like name@gmail.com');
+  }
+  return value;
+}
+
+export const PASSWORD_MIN = 8;
+
+/* Long enough to not be a phone number, short enough that a rider can type it on a phone keyboard.
+   Nothing else is checked: composition rules on a moto rider's password produce forgotten passwords,
+   not safety. */
+export function password(raw) {
+  const value = String(raw || '');
+  if (value.length < PASSWORD_MIN) fail('password', `Password must be at least ${PASSWORD_MIN} characters`);
+  if (value.length > 200) fail('password', 'Password must be at most 200 characters');
+  return value;
+}
+
 export const STATUS_FLOW = {
   new: ['seen', 'accepted', 'declined', 'cancelled'],
   seen: ['accepted', 'declined', 'cancelled'],
@@ -137,12 +159,6 @@ export function tinNumber(raw) {
   if (!exactlyDigits(KYC_RULES.tinDigits).test(value)) {
     fail('tin_number', `TIN must be the ${KYC_RULES.tinDigits} digits printed on your RRA taxpayer certificate`);
   }
-  return value;
-}
-
-export function otpCode(raw) {
-  const value = String(raw || '').replace(/\s/g, '');
-  if (!/^\d{6}$/.test(value)) fail('code', 'Enter the 6-digit code');
   return value;
 }
 

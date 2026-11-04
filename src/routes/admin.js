@@ -23,6 +23,9 @@ const CAT = '+2 hours';
 const adminShape = (row, lang = 'en') => ({
   id: row.id,
   name: row.name,
+  /* An application is opened with an email now, so the console shows the address the rider signs in
+     with — the public rider list never carries it. */
+  email: row.email,
   phone: row.phone,
   plate: row.plate,
   vehicleType: row.vehicle_type,

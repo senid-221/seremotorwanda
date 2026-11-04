@@ -1,6 +1,6 @@
 /* SERE Moto — passenger dashboard. Drives /api/passenger/auth/verify, /api/passenger/me,
    /api/passenger/trips*, /api/passenger/places* and /api/requests/:id/payments.
-   Sign-in is phone + the same 6-digit code riders already use: no password, no KYC. */
+   Sign-in is the phone number alone: the server asks the numbering plan whether it exists. */
 (function () {
   'use strict';
 
@@ -15,7 +15,6 @@
   var ecOf = S.ecOf;
 
   var POLL_MS = 30000;
-  var RESEND_MS = 30;
   var TAB_KEY = 'sere_pax_tab';
   var SCOPE_KEY = 'sere_pax_scope';
   var SCOPES = [['active', 'ps.scopeActive'], ['history', 'ps.scopeHistory'], ['all', 'ps.scopeAll']];
@@ -25,14 +24,13 @@
   var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
   var els = {};
-  var otp = null;
   var st = {
     view: '', kind: '', gate: '',
     me: null, stats: null, trips: [], places: [],
     tab: 'trips', scope: 'active',
     openPay: '', provider: 'mtn_momo', openRate: '', stars: 0, confirmPlace: '',
     busy: {},
-    phone: '', ttl: 300, cooldown: null, sending: false, verifying: false
+    phone: '', submitting: false
   };
   var timers = { poll: null, hide: null };
 
@@ -83,55 +81,17 @@
     S.hideBanner(els.board);
     S.hideBanner(els.err);
     showSignIn();
-    showStep('phone');
   }
 
   /* =============================================================== sign-in */
 
-  function showStep(which) {
-    S.visible(els.stPhone, which === 'phone');
-    S.visible(els.stCode, which === 'code');
-    var one = q('#hdStep1');
-    var two = q('#hdStep2');
-    if (one) { one.className = which === 'code' ? 'ok' : (which === 'phone' ? 'on' : ''); }
-    if (two) { two.className = which === 'code' ? 'on' : ''; }
-  }
-
   function paintSignIn() {
     text(els.namesHint, t('ps.nameHint'));
-    text(els.codeTo, st.phone ? t('lg.codeTo', { phone: st.phone }) : '');
-    text(els.codeHint, t('lg.codeHint', { m: Math.max(1, Math.round(st.ttl / 60)) }));
-    text(els.btnResend, t('lg.resend'));
-    if (st.cooldown) { text(els.resendTxt, t('lg.resendIn', { n: st.cooldown.left() })); }
-    if (otp) { otp.relabel(); }
   }
 
-  function resendLabel() {
-    text(els.btnResend, t('lg.resend'));
-  }
-
-  function startCooldown(seconds) {
-    if (st.cooldown) { st.cooldown.stop(); }
-    S.enable(els.btnResend, false);
-    st.cooldown = S.countdown(els.resendTxt, seconds, function (left) {
-      return t('lg.resendIn', { n: left });
-    }, function () {
-      st.cooldown = null;
-      S.enable(els.btnResend, true);
-      resendLabel();
-    });
-  }
-
-  function sendCode(phone) {
-    return api('/api/auth/otp/send', { body: { phone: phone } }).then(function (data) {
-      st.ttl = data.ttlSeconds || 300;
-      startCooldown(RESEND_MS);
-      return data;
-    });
-  }
-
-  function request() {
-    if (st.sending) { return; }
+  /* The number is the whole credential: one POST, and the numbering plan either knows it or not. */
+  function enter() {
+    if (st.submitting) { return; }
     var raw = String(els.phone.value || '');
     if (!S.isPhone(raw)) {
       S.fieldError(els.phoneField, t('su.errPhone'));
@@ -139,56 +99,24 @@
       els.phone.focus();
       return;
     }
-    S.fieldError(els.phoneField, '');
-    S.hideBanner(els.sendMsg);
     var phone = S.normalizePhone(raw);
     var names = S.cleanNames(els.names.value);
     if (names && !S.isNames(names)) {
       S.fieldError(els.namesField, t('su.errNames'));
+      els.names.focus();
       return;
     }
+    S.fieldError(els.phoneField, '');
     S.fieldError(els.namesField, '');
-    st.sending = true;
+    S.hideBanner(els.sendMsg);
+    var body = { phone: phone };
+    if (names) { body.name = names; }
+    st.submitting = true;
     S.loading(els.btnSend, true);
-    sendCode(phone).then(function () {
-      st.sending = false;
+    api('/api/passenger/auth/verify', { body: body }).then(function (data) {
+      st.submitting = false;
       S.loading(els.btnSend, false);
       st.phone = phone;
-      otp.clear();
-      otp.unlock();
-      S.hideBanner(els.codeErr);
-      showStep('code');
-      paintSignIn();
-      otp.focus();
-    }, function (err) {
-      st.sending = false;
-      S.loading(els.btnSend, false);
-      if (err.code === 'invalid_phone') { S.fieldError(els.phoneField, errText(err)); }
-      if (err.code === 'otp_rate_limited') {
-        var wait = parseInt(String(err.serverMessage || '').replace(/[^0-9]/g, ''), 10);
-        if (wait > 0 && wait < 600) { startCooldown(wait); }
-      }
-      S.banner(els.sendMsg, 'err', errText(err));
-    });
-  }
-
-  function verify() {
-    if (st.verifying) { return; }
-    var code = otp.value();
-    if (!S.isCode(code)) {
-      S.banner(els.codeErr, 'err', ecOf('invalid_code'));
-      otp.shake();
-      return;
-    }
-    st.verifying = true;
-    S.hideBanner(els.codeErr);
-    S.loading(els.btnVerify, true);
-    var body = { phone: st.phone, code: code };
-    var names = S.cleanNames(els.names.value);
-    if (names && S.isNames(names)) { body.name = names; }
-    api('/api/passenger/auth/verify', { body: body }).then(function (data) {
-      st.verifying = false;
-      S.loading(els.btnVerify, false);
       S.setToken(data.token);
       st.kind = 'passenger';
       st.me = data.passenger || null;
@@ -196,32 +124,10 @@
       say('ok', t('ps.hello', { name: nameOf(st.me) }));
       refresh(false);
     }, function (err) {
-      st.verifying = false;
-      S.loading(els.btnVerify, false);
-      S.banner(els.codeErr, 'err', errText(err));
-      if (err.code === 'otp_invalid' || err.code === 'invalid_code') {
-        otp.shake();
-      } else {
-        otp.clear();
-        otp.unlock();
-        if (err.code === 'otp_expired' || err.code === 'otp_attempts_exceeded') { startCooldown(10); }
-      }
-    });
-  }
-
-  function resend() {
-    if (els.btnResend.disabled || !st.phone) { return; }
-    S.hideBanner(els.codeErr);
-    otp.clear();
-    otp.unlock();
-    sendCode(st.phone).then(function () {
-      otp.focus();
-    }, function (err) {
-      S.banner(els.codeErr, 'err', errText(err));
-      if (err.code === 'otp_rate_limited') {
-        var wait = parseInt(String(err.serverMessage || '').replace(/[^0-9]/g, ''), 10);
-        startCooldown(wait > 0 && wait < 600 ? wait : RESEND_MS);
-      }
+      st.submitting = false;
+      S.loading(els.btnSend, false);
+      if (err.code === 'invalid_phone' || err.code === 'phone_invalid') { S.fieldError(els.phoneField, errText(err)); }
+      S.banner(els.sendMsg, 'err', errText(err));
     });
   }
 
@@ -249,7 +155,6 @@
   function loadSession() {
     if (!S.getToken()) {
       showSignIn();
-      showStep('phone');
       return Promise.resolve(false);
     }
     /* /api/auth/me is driver-only: asking it here would throw a passenger's token away. */
@@ -266,12 +171,10 @@
       /* the browser holds a token the server does not recognise: drop it and start clean */
       S.clearToken();
       showSignIn();
-      showStep('phone');
       return false;
     }, function (err) {
       if (err.status === 401) { S.clearToken(); }
       showSignIn();
-      showStep('phone');
       return false;
     });
   }
@@ -596,7 +499,7 @@
       + esc(me.email || '') + '">');
     html += '</div>';
     html += field(t('ad.kPhone'), '<input type="tel" id="pfPhone" maxlength="14" value="'
-      + esc(me.phone || '') + '" disabled>', t('su.verifiedShort'));
+      + esc(me.phone || '') + '" disabled>', t('ps.verifiedShort'));
     html += '<div class="pairs">'
       + pair(t('ps.createdOn'), S.stamp(me.createdAt || ''))
       + pair(t('ad.paxLast'), S.stamp(me.lastLoginAt || ''))
@@ -952,14 +855,14 @@
 
     els.frmPhone.addEventListener('submit', function (ev) {
       ev.preventDefault();
-      request();
+      enter();
     });
-    els.btnVerify.addEventListener('click', verify);
-    els.btnResend.addEventListener('click', resend);
-    els.btnBack.addEventListener('click', function () {
-      showStep('phone');
-      S.hideBanner(els.codeErr);
-      els.phone.focus();
+    els.phone.addEventListener('input', function () {
+      S.fieldError(els.phoneField, '');
+      S.hideBanner(els.sendMsg);
+    });
+    els.names.addEventListener('input', function () {
+      S.fieldError(els.namesField, '');
     });
     document.addEventListener('visibilitychange', function () {
       if (!document.hidden) { poll(); }
@@ -977,7 +880,6 @@
     els = {
       signIn: q('#signIn'),
       stPhone: q('#stPhone'),
-      stCode: q('#stCode'),
       frmPhone: q('#frmPhone'),
       phone: q('#inPhone'),
       phoneField: q('#fldPhone'),
@@ -986,14 +888,6 @@
       namesHint: q('#namesHint'),
       btnSend: q('#btnSend'),
       sendMsg: q('#sendMsg'),
-      codeTo: q('#codeTo'),
-      codeHint: q('#codeHint'),
-      otpHost: q('#otpHost'),
-      btnVerify: q('#btnVerify'),
-      codeErr: q('#codeErr'),
-      btnBack: q('#btnBack'),
-      btnResend: q('#btnResend'),
-      resendTxt: q('#resendTxt'),
       gate: q('#gate'), gateIcon: q('#gateIcon'), gateTitle: q('#gateTitle'),
       gateBody: q('#gateBody'), gateCta: q('#gateCta'),
       area: q('#area'),
@@ -1005,7 +899,6 @@
       footHello: q('#footHello'),
       btnRefresh: q('#btnRefresh'), btnLogout: q('#btnLogout')
     };
-    otp = S.buildOtp(els.otpHost, function () { verify(); });
     try {
       var tab = localStorage.getItem(TAB_KEY);
       if (tab && TABS.indexOf(tab) >= 0 && q('#tabs button[data-tab="' + tab + '"]')) { st.tab = tab; }

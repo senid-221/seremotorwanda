@@ -128,18 +128,19 @@ async function writeCache(kind, key, verdict, detail, source, note) {
   );
 }
 
-/* Anonymous callers cannot be allowed to drive RRA or NIDA: the verify_token binds every
-   lookup to a phone that just proved it owns itself, and each phone gets a fixed budget. */
+/* Scripted callers cannot be allowed to drive RRA or NIDA: every lookup is bound to the account
+   that asked for it — a phone number for a passenger, a driver id for a rider — and each one gets a
+   fixed hourly budget. */
 const attempts = new Map();
 
-function assertQuota(phone, max = 12) {
+function assertQuota(key, max = 12) {
   const now = Date.now();
-  const recent = (attempts.get(phone) || []).filter((at) => now - at < 3600_000);
+  const recent = (attempts.get(key) || []).filter((at) => now - at < 3600_000);
   if (recent.length >= max) {
-    throw new ApiError(429, 'kyc_rate_limited', 'Too many verification attempts for this phone. Try again later.');
+    throw new ApiError(429, 'kyc_rate_limited', 'Too many verification attempts for this applicant. Try again later.');
   }
   recent.push(now);
-  attempts.set(phone, recent);
+  attempts.set(key, recent);
 }
 
 /* -------------------------------------- RRA / TIN ------------------------------------ */
@@ -148,7 +149,7 @@ export const rraConfigured = () => Boolean(
   config.rra.baseUrl && (config.rra.apiKey || (config.rra.username && config.rra.password)),
 );
 
-export async function verifyTin(tin, { phone = null, force = false } = {}) {
+export async function verifyTin(tin, { key = null, force = false } = {}) {
   if (!force) {
     const hit = await readCache('tin', tin);
     if (hit) return { valid: Boolean(hit.valid), taxpayer: hit.taxpayer, source: 'cache', checkedAt: hit.checked_at };
@@ -156,7 +157,7 @@ export async function verifyTin(tin, { phone = null, force = false } = {}) {
   if (!rraConfigured()) {
     throw new ApiError(503, 'tin_check_unavailable', 'TIN verification is not connected to RRA yet');
   }
-  if (phone) assertQuota(phone);
+  if (key) assertQuota(key);
 
   const headers = authHeaders(config.rra);
   const endpoint = `${config.rra.baseUrl}${config.rra.path}`;
@@ -208,7 +209,7 @@ export function namesMatch(entered, held) {
   return holds(left, right) || holds(right, left);
 }
 
-export async function verifyId(number, names, { phone = null, force = false } = {}) {
+export async function verifyId(number, names, { key = null, force = false } = {}) {
   if (!force) {
     const hit = await readCache('id', number);
     if (hit) return { match: Boolean(hit.match), exists: Boolean(hit.match), name: hit.name, source: 'cache', checkedAt: hit.checked_at };
@@ -216,7 +217,7 @@ export async function verifyId(number, names, { phone = null, force = false } = 
   if (!idConfigured()) {
     throw new ApiError(503, 'id_check_unavailable', 'National ID verification is not connected to NIDA yet');
   }
-  if (phone) assertQuota(phone);
+  if (key) assertQuota(key);
 
   const parts = String(names || '').trim().split(/\s+/);
   let response;
@@ -260,8 +261,8 @@ export async function verifyId(number, names, { phone = null, force = false } = 
 
 /* Two contracts are understood here. numverify (one access key, one GET) answers whether the
    digits form a real number in the international numbering plan; a handed-over HLR endpoint
-   behind PHONE_CHECK_* answers whether the line is live. numverify is checked first because it
-   is the cheaper call, and a number it rejects should never reach an SMS aggregator. */
+   behind PHONE_CHECK_* answers whether the line is live. numverify is the first choice because it
+   is the self-serve one, and sign-in now rests on it entirely. */
 
 export const numverifyConfigured = () => Boolean(config.numverify.key);
 export const phoneCheckConfigured = () => numverifyConfigured()
@@ -381,29 +382,57 @@ const verdictOf = async (check) => {
   }
 };
 
-/* A number that cannot exist should not spend an SMS credit, so the OTP endpoint screens the
-   digits first. No provider wired up, or a provider that is down, still sends the code — the
-   code itself is the proof of ownership — unless KYC_STRICT=1 says otherwise. */
-export const screenPhone = (phone) => (phoneCheckConfigured()
-  ? verdictOf(async () => {
-    const result = await checkPhone(phone);
-    if (!result.valid) throw invalidPhone(result.source);
-  })
-  : Promise.resolve('unchecked'));
+/* A passenger's whole identity is a phone number, so for them this lookup is the only thing standing
+   between a stranger and a session: an unreadable answer or a number that is not in the plan refuses
+   the sign-in instead of waving it through. A cached REJECTION is re-checked live, because the plan
+   data is wrong often enough that a stale "no" should not lock a real subscriber out for half an
+   hour. A rider no longer signs in this way — for a rider the same check is one field of the KYC
+   form, and gateSignup below is where it runs. */
+export async function requireRealPhone(phone) {
+  if (!phoneCheckConfigured()) {
+    throw new ApiError(503, 'phone_check_unavailable',
+      'No phone verification service is configured (NUMVERIFY_ACCESS_KEY), so no number can be verified.');
+  }
+  let result = await checkPhone(phone);
+  if (!result.valid) result = await checkPhone(phone, { force: true });
+  if (!result.valid) throw invalidPhone(result.source);
+  return result;
+}
+
+/* A number now mints its own session, so the door gets a budget: 30 verifications per phone and 300
+   per network an hour. Comfortable for a rider tapping twice, useless to a script walking +250. */
+const VERIFY_PHONE_PER_HOUR = 30;
+const VERIFY_IP_PER_HOUR = 300;
+const verifyLog = { phone: new Map(), ip: new Map() };
+
+function spendBudget(map, key, max) {
+  const now = Date.now();
+  const recent = (map.get(key) || []).filter((at) => now - at < 3_600_000);
+  if (recent.length >= max) {
+    throw new ApiError(429, 'verify_rate_limited', 'Too many verifications in the last hour. Try again later.');
+  }
+  recent.push(now);
+  map.set(key, recent);
+}
+
+export function assertVerifyBudget(phone, ip) {
+  spendBudget(verifyLog.phone, phone, VERIFY_PHONE_PER_HOUR);
+  if (ip) spendBudget(verifyLog.ip, ip, VERIFY_IP_PER_HOUR);
+}
 
 export async function gateSignup({ phone, id, tin, names }) {
   const verdict = { tin: 'unchecked', id: 'unchecked', phone: 'unchecked' };
 
   if (rraConfigured()) {
     verdict.tin = await verdictOf(async () => {
-      const result = await verifyTin(tin, { phone });
+      const result = await verifyTin(tin, { key: phone });
       if (!result.valid) throw new ApiError(422, 'tin_not_found', 'No RRA taxpayer holds that TIN.');
     });
   }
 
   if (idConfigured()) {
     verdict.id = await verdictOf(async () => {
-      const result = await verifyId(id, names, { phone });
+      const result = await verifyId(id, names, { key: phone });
       if (!result.exists) throw new ApiError(422, 'id_not_found', 'That national ID number is not in the civil register.');
       if (!result.match) throw new ApiError(422, 'id_name_mismatch', 'The names held for that ID do not match the names you entered.');
     });

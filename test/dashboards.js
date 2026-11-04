@@ -7,19 +7,20 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { runSeed, startPostgres, scratchEnv } from './pg-harness.js';
 import { startFakeS3 } from './fake-s3.js';
+import { NUMVERIFY_TEST_KEY, startFakeNumverify } from './fake-numverify.js';
 
 const PORT = Number(process.env.TEST_PORT || crypto.randomInt(3900, 4900));
 const BASE = `http://127.0.0.1:${PORT}`;
 const ROOT = path.join(import.meta.dirname, '..');
 const pg = await startPostgres();
 const s3 = await startFakeS3();
+const numverify = await startFakeNumverify();
 
 const SCRATCH_ENV = scratchEnv(pg, {
   PORT: String(PORT),
   HOST: '127.0.0.1',
-  OTP_ECHO: '1',
-  OTP_RESEND_SECONDS: '1',
-  OTP_MAX_PER_HOUR: '60',
+  NUMVERIFY_ACCESS_KEY: NUMVERIFY_TEST_KEY,
+  NUMVERIFY_BASE_URL: numverify.base,
   S3_ENDPOINT: s3.endpoint,
   S3_REGION: 'us-east-1',
   S3_BUCKET: s3.bucket,
@@ -32,13 +33,18 @@ const tag = crypto.randomInt(10000, 99999).toString();
 const phoneFor = (n) => `078${tag}${String(n).padStart(2, '0')}`;
 const plateFor = (letter) => `RA ${tag.slice(0, 4)} ${letter}`;
 
-const ADMIN_PHONE = phoneFor(90);
+const ADMIN_EMAIL = `admin.${tag}@example.com`;
+const RIDER_EMAIL = `rider-one.${tag}@example.com`;
+const SECOND_RIDER_EMAIL = `rider-two.${tag}@example.com`;
 const RIDER_PHONE = phoneFor(10);
 const SECOND_RIDER_PHONE = phoneFor(11);
 const PASSENGER_PHONE = phoneFor(20);
 const GUEST_PHONE = phoneFor(21);
 
-SCRATCH_ENV.ADMIN_PHONE = ADMIN_PHONE;
+const PASS = 'scratch-password-2026';
+const PDF = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
+
+SCRATCH_ENV.ADMIN_EMAIL = ADMIN_EMAIL;
 
 let passed = 0;
 const failures = [];
@@ -75,30 +81,51 @@ const ok = (result, status, label) => {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function signIn(phone, endpoint = '/api/auth/otp/verify') {
-  const sent = ok(await api('/api/auth/otp/send', { method: 'POST', body: { phone } }), 200, 'otp/send');
-  assert.ok(sent.devCode, 'the scratch server must run with OTP_ECHO=1 so the suite can sign in');
-  return ok(await api(endpoint, { method: 'POST', body: { phone, code: sent.devCode } }), 200, endpoint);
+/* The passenger door is still the digits plus a live lookup in the numbering plan — nothing to type. */
+async function passengerSignIn(phone) {
+  return ok(await api('/api/passenger/auth/verify', { method: 'POST', body: { phone } }), 200, 'passenger sign-in');
 }
 
-async function riderSignup(phone, names, plate) {
-  const fresh = await signIn(phone);
-  assert.equal(fresh.status, 'new', `expected a brand-new number, got ${JSON.stringify(fresh)}`);
-  const suffix = phone.slice(-2);
-  const created = await api('/api/auth/signup', {
+async function logIn(email) {
+  return ok(await api('/api/auth/login', { method: 'POST', body: { email, password: PASS } }), 200, 'login');
+}
+
+/* A licence is a document in the bucket, so the whole upload road runs before the form can be filed:
+   ask for a signed URL, put the bytes at it, then confirm — the same three calls the signup page makes. */
+async function uploadLicence(token) {
+  const ticket = ok(await api('/api/drivers/me/documents/trading_licence/upload-url', {
+    method: 'POST', token, body: { content_type: 'application/pdf' },
+  }), 200, 'licence upload-url');
+  const put = await fetch(ticket.uploadUrl, {
+    method: 'PUT', headers: { 'Content-Type': 'application/pdf' }, body: PDF,
+  });
+  assert.equal(put.status, 200, `the bucket refused the file with ${put.status}`);
+  const done = ok(await api('/api/drivers/me/documents/trading_licence/complete', { method: 'POST', token }),
+    200, 'licence complete');
+  assert.equal(done.document.status, 'uploaded');
+}
+
+/* Signing up is two steps: an email account that hands back a draft session, then the details form
+   that turns it into the application sitting in the admin queue. */
+async function riderSignUp(email, names, phone, plate) {
+  const created = await api('/api/auth/signup', { method: 'POST', body: { email, password: PASS } });
+  assert.equal(created.status, 201, `signup returned ${created.status} ${JSON.stringify(created.json)}`);
+  const { token } = created.json;
+  await uploadLicence(token);
+  const filed = await api('/api/auth/details', {
     method: 'POST',
+    token,
     body: {
       names,
-      verify_token: fresh.verifyToken,
-      id_number: `1198500${tag}${suffix}00`,
-      tin_number: `10${tag}${suffix}`,
-      plate,
-      vehicle_type: 'moto',
       phone,
+      plate,
+      id_number: `1198500${tag}${phone.slice(-2)}00`,
+      tin_number: `10${tag}${phone.slice(-2)}`,
+      vehicle_type: 'moto',
     },
   });
-  assert.equal(created.status, 201, `signup returned ${created.status} ${JSON.stringify(created.json)}`);
-  return created.json.application;
+  assert.equal(filed.status, 200, `details returned ${filed.status} ${JSON.stringify(filed.json)}`);
+  return { token, application: filed.json.application };
 }
 
 const book = (body, token) => api('/api/requests', {
@@ -148,28 +175,31 @@ let completedTripId;
 
 try {
   const health = await waitForBoot();
-  assert.equal(health.tables, 15, 'the divisions table must be created alongside the KYC check tables');
-  assert.equal(health.drivers, 1, 'a scratch database starts with only the admin account');
+  assert.equal(health.tables, 14, 'the divisions table must be created alongside the KYC check tables');
+  assert.equal(health.drivers, 0, 'a scratch database starts empty — nobody is seeded any more');
+  assert.equal(health.adminConfigured, true, 'the scratch server must be started with ADMIN_EMAIL');
 
-  await check('admin signs in from the seeded ADMIN_PHONE account', async () => {
-    const json = await signIn(ADMIN_PHONE);
-    assert.equal(json.status, 'approved', `the admin must be pre-approved: ${JSON.stringify(json)}`);
-    assert.ok(json.driver.isAdmin, 'the ADMIN_PHONE account must be marked admin');
+  await check('the ADMIN_EMAIL account signs up and gains admin powers', async () => {
+    const created = await api('/api/auth/signup', { method: 'POST', body: { email: ADMIN_EMAIL, password: PASS } });
+    assert.equal(created.status, 201, `signup returned ${created.status} ${JSON.stringify(created.json)}`);
+    assert.equal(created.json.driver.isAdmin, true, `${ADMIN_EMAIL} is not an admin — the server did not claim it`);
+    const json = await logIn(ADMIN_EMAIL);
+    assert.ok(json.driver.isAdmin, 'the ADMIN_EMAIL account must be marked admin');
     adminId = json.driver.id;
     adminToken = json.token;
   });
 
-  await check('two riders sign up and wait for approval', async () => {
-    const first = await riderSignup(RIDER_PHONE, 'Test Rider One', plateFor('A'));
-    const second = await riderSignup(SECOND_RIDER_PHONE, 'Test Rider Two', plateFor('B'));
-    assert.equal(first.status, 'pending');
-    assert.equal(second.status, 'pending');
+  await check('two riders file the details form and wait for approval', async () => {
+    const first = await riderSignUp(RIDER_EMAIL, 'Test Rider One', RIDER_PHONE, plateFor('A'));
+    const second = await riderSignUp(SECOND_RIDER_EMAIL, 'Test Rider Two', SECOND_RIDER_PHONE, plateFor('B'));
+    assert.equal(first.application.status, 'pending');
+    assert.equal(second.application.status, 'pending');
     const list = ok(await api('/api/admin/applications?status=pending', { token: adminToken }), 200, 'applications');
     assert.equal(list.applications.length, 2, 'both applications must be pending');
   });
 
   await check('pending rider cannot open the dashboard', async () => {
-    const fresh = await signIn(RIDER_PHONE);
+    const fresh = await logIn(RIDER_EMAIL);
     assert.equal(fresh.status, 'pending');
     const blocked = await api('/api/drivers/me/requests', { token: fresh.token });
     assert.equal(blocked.status, 403, 'an unapproved rider must not list requests');
@@ -178,7 +208,7 @@ try {
 
   await check('admin approves a rider with the operating details', async () => {
     const application = ok(await api('/api/admin/applications?status=pending', { token: adminToken }), 200, 'applications')
-      .applications.find((row) => row.phone === RIDER_PHONE);
+      .applications.find((row) => row.email === RIDER_EMAIL);
     const decision = ok(await api(`/api/admin/applications/${application.id}/decision`, {
       method: 'POST',
       token: adminToken,
@@ -186,7 +216,7 @@ try {
     }), 200, 'decision');
     assert.equal(decision.application.status, 'approved');
     riderId = application.id;
-    riderToken = (await signIn(RIDER_PHONE)).token;
+    riderToken = (await logIn(RIDER_EMAIL)).token;
   });
 
   await check('NDITEGUYE puts the rider online and a GPS fix makes them live', async () => {
@@ -245,7 +275,8 @@ try {
   await check('a rider uploads KYC photos and the admin opens them with a signed link', async () => {
     const before = ok(await api('/api/drivers/me/documents', { token: riderToken }), 200, 'documents');
     assert.equal(before.configured, true);
-    assert.equal(before.documents.length, 0);
+    assert.equal(before.documents.length, 1, 'the trading licence arrived with the application');
+    assert.equal(before.documents[0].kind, 'trading_licence');
 
     const rejected = await api('/api/drivers/me/documents/national_id/upload-url', {
       method: 'POST', token: riderToken, body: { content_type: 'text/html' },
@@ -277,15 +308,20 @@ try {
     assert.equal(missing.status, 404, 'a document that was never started cannot be completed');
 
     const adminView = ok(await api(`/api/admin/riders/${riderId}/documents`, { token: adminToken }), 200, 'admin docs');
-    assert.equal(adminView.documents.length, 1);
+    assert.equal(adminView.documents.length, 2, 'the licence filed with the application and the photo uploaded here');
     assert.equal(adminView.documents[0].kind, 'national_id');
     assert.equal(adminView.documents[0].status, 'uploaded');
+    assert.equal(adminView.documents[1].kind, 'trading_licence');
+    assert.equal(adminView.documents[1].contentType, 'application/pdf');
     const file = await fetch(adminView.documents[0].url);
     assert.equal(file.status, 200);
     assert.deepEqual(Buffer.from(await file.arrayBuffer()), image, 'the admin link must return the exact file');
+    const licence = await fetch(adminView.documents[1].url);
+    assert.equal(licence.status, 200);
+    assert.deepEqual(Buffer.from(await licence.arrayBuffer()), PDF, 'the console reads the same PDF the rider sent');
   });
 
-  await check('passenger books as a guest, then claims the trip with phone + OTP', async () => {
+  await check('passenger books as a guest, then claims the trip with the same phone', async () => {
     const listed = ok(await api('/api/drivers?available=1', {}), 200, 'drivers');
     const rider = listed.drivers.find((row) => row.phone === RIDER_PHONE);
     assert.ok(rider, 'the approved online rider must be listed');
@@ -296,7 +332,7 @@ try {
     assert.ok(booked.request.fareRwf > 0, 'the RURA fare must be priced server-side');
     firstTripId = booked.request.id;
 
-    const signed = await signIn(PASSENGER_PHONE, '/api/passenger/auth/verify');
+    const signed = await passengerSignIn(PASSENGER_PHONE);
     assert.equal(signed.passenger.phone, PASSENGER_PHONE);
     assert.equal(signed.trips, 1, 'the earlier guest booking must be claimed at sign-in');
     passengerToken = signed.token;
@@ -325,6 +361,22 @@ try {
     assert.equal((await api('/api/passenger/me', { token: riderToken })).status, 401, 'a rider token must not open the passenger API');
     assert.equal((await api('/api/admin/stats', { token: riderToken })).status, 403, 'a rider token must not open the console');
     assert.equal((await api('/api/passenger/trips')).status, 401, 'the passenger API needs a session');
+  });
+
+  /* A rider is known by an email address and a passenger by a number, so the two doors stay apart: the
+     number that files the rider paperwork must not open a rider session. */
+  await check('the rider door takes an email, and the phone door is closed', async () => {
+    const wrong = await api('/api/auth/login', { method: 'POST', body: { email: RIDER_EMAIL, password: 'wrong-password' } });
+    assert.equal(wrong.status, 401);
+    assert.equal(wrong.json.error, 'invalid_credentials', 'a login form must not say whether the email exists');
+    const twice = await api('/api/auth/signup', { method: 'POST', body: { email: RIDER_EMAIL, password: PASS } });
+    assert.equal(twice.status, 409, 'an email already holding an account cannot sign up again');
+    assert.equal(twice.json.error, 'email_taken');
+    const retired = await api('/api/auth/phone/verify', { method: 'POST', body: { phone: RIDER_PHONE } });
+    assert.equal(retired.status, 404, 'a phone number no longer opens a rider account');
+    const digits = await passengerSignIn(PASSENGER_PHONE);
+    assert.equal((await api('/api/drivers/me', { token: digits.token })).status, 401,
+      'a number still signs a passenger in, and that session cannot read a rider profile');
   });
 
   await check('rider dashboard sees the incoming request', async () => {
@@ -452,7 +504,7 @@ try {
   });
 
   await check('a trip belongs to its own passenger only', async () => {
-    const other = await signIn(GUEST_PHONE, '/api/passenger/auth/verify');
+    const other = await passengerSignIn(GUEST_PHONE);
     assert.equal((await api(`/api/passenger/trips/${completedTripId}`, { token: other.token })).status, 403,
       'another passenger must not read this trip');
     const own = ok(await api(`/api/passenger/trips/${completedTripId}`, { token: passengerToken }), 200, 'trip detail');
@@ -481,8 +533,11 @@ try {
 
   await check('admin stats and overview add up', async () => {
     const stats = ok(await api('/api/admin/stats', { token: adminToken }), 200, 'admin/stats');
-    assert.equal(stats.drivers.approved, 2);
+    /* The console owner signed up with an email and never filed the details form, so it is still a
+       draft — only the two riders have applications. */
+    assert.equal(stats.drivers.approved, 1);
     assert.equal(stats.drivers.pending, 1);
+    assert.equal(stats.drivers.rejected, 0);
     assert.equal(stats.requests.total, 2);
     assert.equal(stats.requests.completed, 1);
     assert.equal(stats.requests.cancelled, 1);
@@ -523,7 +578,7 @@ try {
     ok(await api(`/api/admin/applications/${application.id}/decision`, {
       method: 'POST', token: adminToken, body: { action: 'approve', zone: 'Remera', services: 'ride', capacity: 1 },
     }), 200, 'approve second rider');
-    const secondToken = (await signIn(SECOND_RIDER_PHONE)).token;
+    const secondToken = (await logIn(SECOND_RIDER_EMAIL)).token;
     ok(await api('/api/drivers/me/ready', { method: 'POST', token: secondToken, body: {} }), 200, 'second rider online');
     const trip = ok(await book({
       driver_id: application.id, kind: 'ride', origin: 'Remera', destination: 'Kigali Heights', distance_km: 3,
@@ -576,6 +631,7 @@ try {
   child.kill();
   await wait(400);
   await s3.stop();
+  await numverify.stop();
   await pg.stop();
 }
 

@@ -60,13 +60,13 @@ li{margin-bottom:6px;font-size:13.5px}
     <p class="lead" data-i18n="reg.lead">Kuri motari: nta payment — umuyobozi wa SERE Moto ni we ukwemeza.</p>
     <ol>
       <li data-i18h="reg.1">Ku rupapuro, kanda <b>Rider</b> hejuru.</li>
-      <li data-i18h="reg.2">Uzuza <b>Amazina</b>, <b>Indangamuntu</b> (imibare 16), <b>TIN</b>, <b>Plaque</b> (RAB 123 A) na <b>Telefone</b> (07xxxxxxxx).</li>
-      <li data-i18h="reg.3">Hitamo <b>Ubwoko bw'ikinyabiziga</b>: Moto cyangwa Imodoka/Taksi.</li>
-      <li data-i18h="reg.4">Kanda <b>Ohereza code kuri telefone</b>, wandike <b>code y'imibare 6</b> wahawe, ukande <b>Emeza code</b>.</li>
-      <li data-i18h="reg.5">Kanda <b>Ohereza application</b> — ibi bikora iyo telefone yamaze kwemezwa.</li>
+      <li data-i18h="reg.2">Andika <b>Imeyili</b> n'<b>Ijambo ry'ibanga</b> (nibura inyuguti 8), ukande <b>Komeza</b>. Ushobora no gukanda <b>Google</b>.</li>
+      <li data-i18h="reg.3">Uzuza <b>Amazina</b>, <b>Indangamuntu</b> (imibare 16), <b>TIN</b> (imibare 9) na <b>Telefone</b> (07xxxxxxxx).</li>
+      <li data-i18h="reg.4">Ohereza <b>Uruhushya rw'ubucuruzi</b> (PDF), wandike <b>Plaque</b> (RAB 123 A) uhitemo <b>Ubwoko bw'ikinyabiziga</b>: Moto cyangwa Imodoka/Taksi.</li>
+      <li data-i18h="reg.5">Kanda <b>Ohereza application</b> — SERE Moto igenzura TIN kwa RRA, indangamuntu kwa NIDA na telefone muri gahunda ya telefone ya Rwanda; nta ruhushya rwa PDF, application ntakira.</li>
       <li data-i18h="reg.6">Application iba <b>itegereje kwemezwa</b>. Hanyuma kuri <b>Urubuga rw'umumotari</b> hitamo <b>Aho ukorera</b> (intara → akarere → umurenge → akagari). Umuyobozi ashyiraho serivise (moto zishyurwa ku giciro cya RURA; imodoka zishyiraho RWF/km), akayemeza cyangwa akayitera igiti avuga impamvu.</li>
     </ol>
-    <p class="note s-navy" data-i18h="reg.note">Kwinjira nyuma: <b>Injira</b> → telefone + code ya SMS. Nta jamo ry'ibanga rikenewe. Iyo umaze kwemezwa, <b>Urubuga rw'umumotari</b> rufunguka.</p>
+    <p class="note s-navy" data-i18h="reg.note">Kwinjira nyuma: <b>Injira</b> → imeyili n'ijambo ry'ibanga, cyangwa <b>Google</b>. Iyo umaze kwemezwa, <b>Urubuga rw'umumotari</b> rufunguka.</p>
   </div>
 
   <div class="card" id="find">
@@ -120,10 +120,10 @@ var DICT = {
     "reg.1":"Ku rupapuro, kanda <b>Rider</b> hejuru.",
     "reg.2":"Uzuza <b>Amazina</b>, <b>Indangamuntu</b> (imibare 16), <b>TIN</b>, <b>Plaque</b> (RAB 123 A) na <b>Telefone</b> (07xxxxxxxx).",
     "reg.3":"Hitamo <b>Ubwoko bw'ikinyabiziga</b>: Moto cyangwa Imodoka/Taksi.",
-    "reg.4":"Kanda <b>Ohereza code kuri telefone</b>, wandike <b>code y'imibare 6</b> wahawe, ukande <b>Emeza code</b>.",
+    "reg.4":"Kanda <b>Emeza numero</b> — SERE Moto igenzura ko numero iri muri gahunda ya telefone ya Rwanda.",
     "reg.5":"Kanda <b>Ohereza application</b> — ibi bikora iyo telefone yamaze kwemezwa.",
     "reg.6":"Application iba <b>itegereje kwemezwa</b>. Hanyuma kuri <b>Urubuga rw'umumotari</b> hitamo <b>Aho ukorera</b> (intara → akarere → umurenge → akagari). Umuyobozi ashyiraho serivise (moto zishyurwa ku giciro cya RURA; imodoka zishyiraho RWF/km), akayemeza cyangwa akayitera igiti avuga impamvu.",
-    "reg.note":"Kwinjira nyuma: <b>Injira</b> → telefone + code ya SMS. Nta jamo ry'ibanga rikenewe. Iyo umaze kwemezwa, <b>Urubuga rw'umumotari</b> rufunguka.",
+    "reg.note":"Kwinjira nyuma: <b>Injira</b> → numero ya telefone yawe. Nta jamo ry'ibanga rikenewe. Iyo umaze kwemezwa, <b>Urubuga rw'umumotari</b> rufunguka.",
     "find.t":"Shaka motari cyangwa taxi","find.lead":"Kuri wowe ukeneye: nta konti ikenewe kugira ngo ushake.",
     "find.1":"Kanda <b>Passenger</b> hejuru — app ihita ikusaba <b>Location</b>.",
     "find.2":"Ikakubaza kimwe kimwe: <b>INTARA YAWE?</b> → <b>AKARERE KAWE?</b> → <b>UMURENGE WAWE?</b> → <b>AKAGARI KAWE?</b> → <b>UMUDUGUDU WAWE?</b> Akagari n'umudugudu ushobora kubisimbuka ukanda <b>Komeza</b>.",
@@ -152,12 +152,12 @@ var DICT = {
     site:"← Back to the app",
     "reg.t":"Open a rider account","reg.lead":"For riders: no payment — a SERE Moto admin approves you.",
     "reg.1":"On the home page, tap <b>Rider</b> at the top.",
-    "reg.2":"Fill in <b>Full names</b>, <b>National ID</b> (16 digits), <b>TIN</b>, <b>Plate</b> (RAB 123 A) and <b>Phone</b> (07xxxxxxxx).",
-    "reg.3":"Pick the <b>Vehicle type</b>: Motorcycle or Car / taxi.",
-    "reg.4":"Tap <b>Send phone code</b>, type the <b>6-digit code</b> you received, then tap <b>Verify code</b>.",
-    "reg.5":"Tap <b>Submit application</b> — this only works once the phone is verified.",
+    "reg.2":"Type your <b>Email</b> and a <b>Password</b> (at least 8 characters), then tap <b>Continue</b>. You can tap <b>Google</b> instead.",
+    "reg.3":"Fill in <b>Full names</b>, <b>National ID</b> (16 digits), <b>TIN</b> (9 digits) and <b>Phone</b> (07xxxxxxxx).",
+    "reg.4":"Send your <b>Trading licence</b> (PDF), type the <b>Plate</b> (RAB 123 A) and pick the <b>Vehicle type</b>: Motorcycle or Car / taxi.",
+    "reg.5":"Tap <b>Submit application</b> — SERE Moto checks the TIN with RRA, the ID with NIDA and the phone against the Rwandan numbering plan; without the licence PDF the application is not accepted.",
     "reg.6":"Your application becomes <b>pending</b>. Then on the <b>Driver dashboard</b> pick <b>Where you work</b> (province → district → sector → cell). The admin sets your services (motorcycles are priced by RURA; cars set their own RWF/km), then approves you or rejects you with a reason.",
-    "reg.note":"To sign in later: <b>Log in</b> → phone + SMS code. No password is needed. Once an admin approves you, the <b>Driver dashboard</b> opens.",
+    "reg.note":"To sign in later: <b>Log in</b> → your email and password, or the <b>Google</b> button. Once an admin approves you, the <b>Driver dashboard</b> opens.",
     "find.t":"Find a moto or taxi","find.lead":"As a passenger: no account needed to search.",
     "find.1":"Tap <b>Passenger</b> at the top — the app immediately asks for your <b>Location</b>.",
     "find.2":"It asks one question at a time: <b>YOUR PROVINCE?</b> → <b>YOUR DISTRICT?</b> → <b>YOUR SECTOR?</b> → <b>YOUR CELL?</b> → <b>YOUR VILLAGE?</b> You can skip the cell and the village by tapping <b>Continue</b>.",

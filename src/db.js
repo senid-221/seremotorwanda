@@ -139,6 +139,10 @@ const bootstrap = async () => {
   await pool.query(SCHEMA_SQL);
 
   await ensureColumns('drivers', [
+    /* The credential a rider signs in with. email/password_hash are empty only on a row that was
+       created before sign-in moved off the phone number. */
+    ['email', 'TEXT'],
+    ['password_hash', 'TEXT'],
     ['lat', 'DOUBLE PRECISION'],
     ['lng', 'DOUBLE PRECISION'],
     ['loc_at', 'TEXT'],
@@ -159,11 +163,6 @@ const bootstrap = async () => {
     ['distance_source', 'TEXT'],
     ['fare_basis', 'TEXT'],
     ['passenger_id', 'INTEGER REFERENCES passengers (id) ON DELETE SET NULL'],
-  ]);
-
-  await ensureColumns('otp_challenges', [
-    ['provider', 'TEXT'],
-    ['sms_ref', 'TEXT'],
   ]);
 
   /* A trip recorded as a guest still belongs to the passenger who verifies that phone number. */

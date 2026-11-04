@@ -18,7 +18,6 @@
       'c.footRights': '© {y} SERE Moto · Kigali, Rwanda',
       'c.footWa': 'Ubufasha kuri WhatsApp',
       'c.footAdmin': 'Injira ya admin',
-      'c.digit': 'Imibare {n}',
       'c.close': 'Funga',
       'c.retry': 'Ongera ugerageze',
       'c.loading': 'Biracyategereza…',
@@ -32,29 +31,15 @@
       /* login */
       'lg.eyebrow': 'Injira ya motari',
       'lg.title': 'Injira kuri konti',
-      'lg.lede': 'Dohora telefone yawe, twandikire code y\'imibare 6.',
-      'lg.phone': 'Telefone',
-      'lg.send': 'Ohereza code',
-      'lg.sending': 'Turabohereza…',
+      'lg.lede': 'Andika imeyili yawe n\'ijambo ry\'ibanga.',
+      'lg.email': 'Imeyili',
+      'lg.password': 'Ijambo ry\'ibanga',
+      'lg.enter': 'Injira',
       'lg.or': 'cyangwa',
-      'lg.google': 'Injira ukoresheje Google',
-      'lg.step1': 'Telefone',
-      'lg.step2': 'Emeza',
-      'lg.code': 'Code y\'emeza',
-      'lg.codeTo': 'Twohereje code kuri {phone}',
-      'lg.codeHint': 'Imibare 6. Code irangira nyuma y\'iminota {m}.',
-      'lg.change': 'Hindura numero',
-      'lg.verify': 'Emeza code',
-      'lg.verifying': 'Irasuzumwa…',
-      'lg.resend': 'Ongera wohereze',
-      'lg.resendIn': 'Ongera wohereze mu {n}s',
       'lg.entering': 'Byakiriye — urimo kwinjira…',
-      'lg.newTitle': 'Iyi numero ntabwo ifite konti',
-      'lg.newBody': 'Telefone {phone} yemejwe. Fungura konti ya SERE Moto kugira ngo utangire gufata demand.',
-      'lg.newCta': 'Fungura konti',
       'lg.waitTitle': 'Tegereza emeza ya admin',
       'lg.waitBody': '{name}, application yawe iracyategereje ko admin wa SERE Moto ayemeza. Uzatangira wakira demand ihita yemezwa.',
-      'lg.waitNote': 'Gerageza kandi ukoresheje iyi numero igihe cyemejwe.',
+      'lg.waitNote': 'Injira kandi ukoresheje iyi imeyili igihe cyemejwe.',
       'lg.rejTitle': 'Application yawe ntiyemejwe',
       'lg.rejBody': 'Admin wa SERE Moto yanze iyi application. Impamvu:',
       'lg.rejHelp': 'Ushobora kwandikisha ukoresheje izindi nyandiko cyangwa ukavugana na SERE Moto.',
@@ -65,8 +50,12 @@
       /* signup */
       'su.eyebrow': 'Iyandikishe kwa motari',
       'su.title': 'Fungura konti',
-      'su.step1': 'Amakuru',
-      'su.step2': 'Emeza telefone',
+      'su.lede': 'Tangira ku imeyili, hanyuma uzuze impapuro.',
+      'su.lede2': 'Uzuze impapuro kugira ngo admin ya SERE Moto yemeze konti yawe.',
+      'su.email': 'Imeyili',
+      'su.password': 'Ijambo ry\'ibanga',
+      'su.passHint': 'Nibura inyuguti {n}.',
+      'su.continue': 'Komeza',
       'su.names': 'Amazina',
       'su.id': 'Indangamuntu',
       'su.tin': 'TIN',
@@ -75,21 +64,19 @@
       'su.type': 'Ubwoko bw\'ikinyabiziga',
       'su.moto': 'Moto',
       'su.car': 'Imodoka/Taksi',
-      'su.sendCode': 'Ohereza code kuri telefone',
-      'su.codeSent': 'Code yoherejwe kuri {phone}. Yuzuze hanyuma wohereze application.',
-      'su.verified': 'Telefone {phone} yemejwe',
-      'su.verifiedShort': 'Telefone yemejwe',
-      'su.reverify': 'Hindura',
-      'su.submit': 'Ohereza application',
-      'su.submitting': 'Iohereza…',
-      'su.needCode': 'Banza wemeze telefone yawe.',
-      'su.back': 'Subiza inyuma',
+      'su.licence': 'Uruhushya rw\'ubucuruzi (PDF)',
+      'su.licencePick': 'Hitamo dosiye',
+      'su.licenceNone': 'Nta dosiye',
+      'su.licenceUploading': 'Iyohereza…',
+      'su.licenceDone': 'Dosiye yoherejwe',
+      'su.licenceSize': 'Dosiye ntirenge {n} MB.',
+      'su.licenceType': 'Koresha PDF cyangwa ifoto.',
       'su.googleNote': 'Konti ya Google izahuza na iyi application.',
+      'su.submit': 'Ohereza application',
       'su.doneTitle': 'Byoherejwe',
       'su.doneBody': 'Tegereza ko SERE Moto admin yemeza application yawe.',
       'su.doneSum': '<b>{names}</b> · {plate} · {phone}',
-      'su.doneNote': 'Ushobora kugenzura status yawe igihe ari cyose: injira ukoresheje iyi numero. Tuzakoherereza demand igihe cyemejwe.',
-      'su.again': 'Fungura indi konti',
+      'su.doneNote': 'Injira ukoresheje {email} kugira ngo ubone status yawe. Tuzakoherereza demand igihe cyemejwe.',
       'su.toLogin': 'Injira kuri konti',
       'su.hasAccount': 'Ufite konti?',
       'su.errNames': 'Andika amazina yawe yose (nibura inyuguti 3).',
@@ -97,6 +84,8 @@
       'su.errTin': 'TIN igira imibare 9.',
       'su.errPlate': 'Plaque nka RAB 123 A.',
       'su.errPhone': 'Telefone igira imibare 10 (nka 0788123456).',
+      'su.errEmail': 'Andika imeyili ushobora gusoma.',
+      'su.errPass': 'Ijambo ry\'ibanga rigira nibura inyuguti 8.',
       'su.kycHint': 'TIN isuzumwa kwa RRA, indangamuntu isiuzwe kwa NIDA.',
       'su.tinChecking': 'TIN iragenzurwa kwa RRA…',
       'su.tinOk': 'RRA yemeje iyi TIN.',
@@ -248,6 +237,7 @@
       'rd.docsHint': 'Ohereza ifoto y\'ikarita y\'indangamuntu, uruhushya rwo gutwara n\'ifoto y\'ibyapa.',
       'rd.docNationalId': 'Ikarita y\'indangamuntu',
       'rd.docLicence': 'Uruhushya rwo gutwara',
+      'rd.docTrading': 'Uruhushya rw\'ubucuruzi',
       'rd.docPlate': 'Ifoto y\'ibyapa',
       'rd.docUpload': 'Ohereza ifoto',
       'rd.docReplace': 'Hindura ifoto',
@@ -298,7 +288,9 @@
       /* dashboards — passenger */
       'ps.eyebrow': 'Konti yawe',
       'ps.title': 'Ibyawe',
-      'ps.lede': 'Andika numero wahakiriyeho — tukwoherereze code. Nta password.',
+      'ps.lede': 'Andika numero wahakiriyeho. Nta password.',
+      'ps.phone': 'Telefone',
+      'ps.verifiedShort': 'Telefone yemejwe',
       'ps.hello': 'Muraho, {name}',
       'ps.notPax': 'Iyi konti ni iya motari. Fungura ikibaho cy\'umumotari.',
       'ps.riderArea': 'Urubuga rw\'umumotari',
@@ -407,7 +399,6 @@
       'c.footRights': '© {y} SERE Moto · Kigali, Rwanda',
       'c.footWa': 'WhatsApp support',
       'c.footAdmin': 'Admin sign-in',
-      'c.digit': 'Digit {n}',
       'c.close': 'Close',
       'c.retry': 'Try again',
       'c.loading': 'Loading…',
@@ -421,29 +412,15 @@
       /* login */
       'lg.eyebrow': 'Driver access',
       'lg.title': 'Log in to drive',
-      'lg.lede': 'Enter your phone number, we send a 6-digit code.',
-      'lg.phone': 'Phone',
-      'lg.send': 'Send code',
-      'lg.sending': 'Sending…',
+      'lg.lede': 'Enter your email and your password.',
+      'lg.email': 'Email',
+      'lg.password': 'Password',
+      'lg.enter': 'Log in',
       'lg.or': 'or',
-      'lg.google': 'Continue with Google',
-      'lg.step1': 'Phone',
-      'lg.step2': 'Verify',
-      'lg.code': 'Verification code',
-      'lg.codeTo': 'We sent a code to {phone}',
-      'lg.codeHint': '6 digits. The code expires in {m} minutes.',
-      'lg.change': 'Change number',
-      'lg.verify': 'Verify code',
-      'lg.verifying': 'Checking…',
-      'lg.resend': 'Resend code',
-      'lg.resendIn': 'Resend in {n}s',
-      'lg.entering': 'Verified — entering…',
-      'lg.newTitle': 'This number has no account',
-      'lg.newBody': 'Phone {phone} is verified. Open a SERE Moto account to start receiving requests.',
-      'lg.newCta': 'Create an account',
+      'lg.entering': 'Welcome — entering…',
       'lg.waitTitle': 'Waiting for admin approval',
       'lg.waitBody': '{name}, your application is still waiting for a SERE Moto admin to approve it. You will get requests after approval.',
-      'lg.waitNote': 'Come back and use this number once it is approved.',
+      'lg.waitNote': 'Log in again with this email once it is approved.',
       'lg.rejTitle': 'Application not approved',
       'lg.rejBody': 'A SERE Moto admin rejected this application. Reason:',
       'lg.rejHelp': 'You can sign up again with correct documents or talk to SERE Moto.',
@@ -454,8 +431,12 @@
       /* signup */
       'su.eyebrow': 'Driver sign-up',
       'su.title': 'Open an account',
-      'su.step1': 'Details',
-      'su.step2': 'Verify phone',
+      'su.lede': 'Start with an email, then complete the paperwork.',
+      'su.lede2': 'Fill in the paperwork so a SERE Moto admin can approve your account.',
+      'su.email': 'Email',
+      'su.password': 'Password',
+      'su.passHint': 'At least {n} characters.',
+      'su.continue': 'Continue',
       'su.names': 'Full names',
       'su.id': 'National ID',
       'su.tin': 'TIN',
@@ -464,21 +445,19 @@
       'su.type': 'Vehicle type',
       'su.moto': 'Motorcycle',
       'su.car': 'Car / taxi',
-      'su.sendCode': 'Send phone code',
-      'su.codeSent': 'A code was sent to {phone}. Enter it, then submit the application.',
-      'su.verified': 'Phone {phone} verified',
-      'su.verifiedShort': 'Phone verified',
-      'su.reverify': 'Change',
-      'su.submit': 'Submit application',
-      'su.submitting': 'Submitting…',
-      'su.needCode': 'Verify your phone number first.',
-      'su.back': 'Go back',
+      'su.licence': 'Trading licence (PDF)',
+      'su.licencePick': 'Choose a file',
+      'su.licenceNone': 'No file',
+      'su.licenceUploading': 'Uploading…',
+      'su.licenceDone': 'File uploaded',
+      'su.licenceSize': 'Keep the file under {n} MB.',
+      'su.licenceType': 'Use a PDF or a clear photo.',
       'su.googleNote': 'Your Google account will be linked to this application.',
+      'su.submit': 'Submit application',
       'su.doneTitle': 'Submitted',
       'su.doneBody': 'Wait for a SERE Moto admin to approve your application.',
       'su.doneSum': '<b>{names}</b> · {plate} · {phone}',
-      'su.doneNote': 'Check your status anytime: sign in again with this number. Requests start once you are approved.',
-      'su.again': 'Open another account',
+      'su.doneNote': 'Log in with {email} any time to see your status. Requests start once you are approved.',
       'su.toLogin': 'Log in to your account',
       'su.hasAccount': 'Already registered?',
       'su.errNames': 'Enter your full names (at least 3 characters).',
@@ -486,6 +465,8 @@
       'su.errTin': 'The TIN has 9 digits.',
       'su.errPlate': 'The plate looks like RAB 123 A.',
       'su.errPhone': 'The phone number is 10 digits (such as 0788123456).',
+      'su.errEmail': 'Enter an email address you can read.',
+      'su.errPass': 'The password must be at least 8 characters.',
       'su.kycHint': 'RRA checks the TIN and NIDA checks the national ID.',
       'su.tinChecking': 'Checking this TIN with RRA…',
       'su.tinOk': 'RRA confirms this TIN.',
@@ -637,6 +618,7 @@
       'rd.docsHint': 'Upload a photo of your national ID, driving licence and plate.',
       'rd.docNationalId': 'National ID',
       'rd.docLicence': 'Driving licence',
+      'rd.docTrading': 'Trading licence',
       'rd.docPlate': 'Plate photo',
       'rd.docUpload': 'Upload photo',
       'rd.docReplace': 'Replace photo',
@@ -687,7 +669,9 @@
       /* dashboards — passenger */
       'ps.eyebrow': 'Your account',
       'ps.title': 'My trips',
-      'ps.lede': 'Enter the number you booked with — we send a code. No password.',
+      'ps.lede': 'Enter the number you booked with. No password.',
+      'ps.phone': 'Phone',
+      'ps.verifiedShort': 'Phone verified',
       'ps.hello': 'Hello, {name}',
       'ps.notPax': 'This session is a driver account. Open the driver dashboard.',
       'ps.riderArea': 'Driver dashboard',
@@ -792,12 +776,8 @@
   var EC = {
     rw: {
       invalid_phone: "Telefone igira imibare 10 ya Rwande (078… cyangwa 072…).",
-      invalid_code: 'Andika code y\'imibare 6.',
-      otp_invalid: 'Iyi code siyo. Andika iyoherejwe kuri telefone yawe.',
-      otp_expired: 'Iyi code irangiye cyangwa yaracoreshijwe. Saba indi.',
-      otp_attempts_exceeded: 'Wagerageje incuro nyinshi. Saba code nshya.',
-      otp_rate_limited: 'Codes nyinshi kuri iyi numero — gerageza nyuma.',
-      sms_send_failed: 'Ubutumwa bwa SMS ntibubashije kohereza.',
+      phone_invalid: 'Iyi numero ntari muri gahunda ya telefone ya Rwanda — reba imibare wanditse.',
+      verify_rate_limited: 'Wagenzuye iyi numero incuro nyinshi — tegereza gato.',
       tin_check_unavailable: 'Kugenzura TIN kwa RRA ntigukora ubu — wohereza application ariko.',
       tin_not_found: 'Iyi TIN ntiboneka mu misoro ya RRA.',
       id_check_unavailable: 'Kugenzura indangamuntu kwa NIDA ntigukora ubu — wohereza application ariko.',
@@ -818,8 +798,6 @@
       invalid_tin_number: 'TIN igira imibare 9.',
       invalid_plate: 'Plaque nka RAB 123 A.',
       invalid_vehicle_type: 'Hitamo Moto cyangwa Imodoka/Taksi.',
-      phone_not_verified: 'Telefone ntibaravugururwa. Bandika code twohereje.',
-      invalid_verify_token: 'Imeza rya telefone ryarangiye. Saba code nshya.',
       invalid_google_token: 'Ihuza rya Google ryarangiye. Injira na Google kandi.',
       google_token_invalid: 'Google yohereje amakuru adasobanutse. Subira ugerageze.',
       google_token_expired: 'Igihe cya Google cyarangiye. Injira na Google kandi.',
@@ -866,9 +844,16 @@
       paystack_rejected: 'Karita yanze kwishyura — ongera ugerageze.',
       unknown_provider: 'Ubwoko bw\'ishyura ntibuzwi.',
       payment_not_found: 'Nta shyura riboneka.',
-      invalid_email: 'Imeyili ntabwo yo.',
+      invalid_email: 'Andika imeyili ushobora gusoma, nka name@gmail.com.',
+      invalid_password: 'Ijambo ry\'ibanga rigira nibura inyuguti 8.',
+      invalid_credentials: 'Iyi imeyili n\'ijambo ry\'ibanga ntibihuye na konti.',
+      login_rate_limited: 'Wagerageje kwinjira incuro nyinshi — gerageza nyuma y\'isaha.',
+      email_taken: 'Iyi imeyili isanzwe ifite konti. Injira aho kwandikisha.',
+      google_account_only: 'Iyi konti yafunguwe na Google. Injira ukoresheje Google.',
+      details_already_filed: 'Application yawe yamaze koherezwa. Tegereza emeza ya admin.',
+      licence_required: 'Banza wohereze uruhushya rw\'ubucuruzi (PDF).',
       storage_not_configured: 'Ububiko bw\'ibyangombwa ntibwashyizweho kuri iyi seriveri.',
-      unsupported_document_type: 'Hitamo ifoto ya JPEG, PNG cyangwa WebP.',
+      unsupported_document_type: 'Koresha PDF cyangwa ifoto ya JPEG, PNG, WebP.',
       document_too_large: 'Ifoto ni nini cyane — koresha iyindi ntoya.',
       document_not_uploaded: 'Ifoto ntiyageze mu bubiko — ongera uyikorehereze.',
       document_not_started: 'Banza usabe urubuga rwo kohereza ifoto.',
@@ -895,12 +880,8 @@
     },
     en: {
       invalid_phone: 'That is not a 10-digit Rwandan phone number (078… or 072…).',
-      invalid_code: 'Enter the 6-digit code.',
-      otp_invalid: 'That code is not correct. Use the one sent to your phone.',
-      otp_expired: 'This code expired or was already used. Request a new one.',
-      otp_attempts_exceeded: 'Too many wrong attempts. Request a new code.',
-      otp_rate_limited: 'Too many codes for this number — try again later.',
-      sms_send_failed: 'The SMS could not be sent.',
+      phone_invalid: 'That number is not in the Rwandan numbering plan — check the digits you typed.',
+      verify_rate_limited: 'This number was checked too many times — wait a moment.',
       tin_check_unavailable: 'The RRA TIN check is not available right now — you can still submit.',
       tin_not_found: 'No RRA taxpayer holds this TIN.',
       id_check_unavailable: 'The NIDA ID check is not available right now — you can still submit.',
@@ -921,8 +902,6 @@
       invalid_tin_number: 'The TIN must be 9 digits.',
       invalid_plate: 'The plate looks like RAB 123 A.',
       invalid_vehicle_type: 'Choose Moto or Car / taxi.',
-      phone_not_verified: 'The phone is not verified yet. Enter the code we sent.',
-      invalid_verify_token: 'That phone verification expired. Request a new code.',
       invalid_google_token: 'That Google link expired. Use Google sign-in again.',
       google_token_invalid: 'Google sent an unreadable account. Try Google sign-in again.',
       google_token_expired: 'That Google sign-in expired. Use Google again.',
@@ -969,9 +948,16 @@
       paystack_rejected: 'The card was declined — try again.',
       unknown_provider: 'That payment method is not known.',
       payment_not_found: 'No such payment.',
-      invalid_email: 'That email address is not valid.',
+      invalid_email: 'Enter an email address you can read, like name@gmail.com.',
+      invalid_password: 'The password must be at least 8 characters.',
+      invalid_credentials: 'That email and password do not match an account.',
+      login_rate_limited: 'Too many sign-in attempts — try again in an hour.',
+      email_taken: 'That email address already has an account. Log in instead.',
+      google_account_only: 'This account was opened with Google. Continue with Google.',
+      details_already_filed: 'Your application is already submitted. Wait for admin approval.',
+      licence_required: 'Attach your trading licence (PDF) first.',
       storage_not_configured: 'Document storage is not configured on this server.',
-      unsupported_document_type: 'Choose a JPEG, PNG or WebP image.',
+      unsupported_document_type: 'Use a PDF or a JPEG, PNG or WebP photo.',
       document_too_large: 'That image is too large — choose a smaller one.',
       document_not_uploaded: 'The file did not reach storage — upload it again.',
       document_not_started: 'Ask for an upload link before sending the photo.',
@@ -1062,13 +1048,6 @@
   function qa(sel, root) { return [].slice.call((root || document).querySelectorAll(sel)); }
   function text(node, value) { if (node) { node.textContent = value; } return node; }
   function visible(node, on) { if (node) { node.hidden = !on; } return node; }
-
-  function enable(node, on) {
-    if (!node) { return node; }
-    node.disabled = !on;
-    if (on) { node.removeAttribute('aria-disabled'); } else { node.setAttribute('aria-disabled', 'true'); }
-    return node;
-  }
 
   function loading(node, on) {
     if (!node) { return; }
@@ -1196,7 +1175,6 @@
   }
 
   function isPhone(value) { return /^07[2-9][0-9]{7}$/.test(normalizePhone(value)); }
-  function isCode(value) { return /^[0-9]{6}$/.test(digitsOnly(value)); }
   function isIdNumber(value) { return exactlyDigits(value, KYC.idDigits); }
   function isTin(value) { return exactlyDigits(value, KYC.tinDigits); }
 
@@ -1208,6 +1186,13 @@
     var v = normalizePlate(value);
     var tight = v.replace(/ /g, '');
     return /^[A-Z]{2,3}[0-9]{2,4}[A-Z]?$/.test(tight) || /^[A-Z]{2,3} [0-9]{2,4} [A-Z]$/.test(v);
+  }
+
+  /* The same shape the server accepts: one @, one dot in the domain, nothing else surprising.
+     The server lowercases the address itself, so two spellings of one mailbox are one account. */
+  function isEmail(value) {
+    var v = String(value || '').trim();
+    return v.length <= 120 && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(v);
   }
 
   function cleanNames(value) {
@@ -1342,168 +1327,6 @@
     if (ok) { host.classList.add('good'); } else { host.classList.remove('good'); }
   }
 
-  /* ============================================================== countdown */
-
-  function countdown(node, seconds, format, done) {
-    var left = seconds;
-    var timer = null;
-    function paint() {
-      if (node) { node.textContent = format(left); }
-    }
-    function stop() {
-      if (timer) { clearInterval(timer); timer = null; }
-    }
-    paint();
-    timer = setInterval(function () {
-      left -= 1;
-      if (left <= 0) {
-        stop();
-        if (node) { node.textContent = ''; }
-        if (done) { done(); }
-        return;
-      }
-      paint();
-    }, 1000);
-    return { stop: stop, left: function () { return left; } };
-  }
-
-  /* ============================================================= otp widget */
-
-  function buildOtp(host, onComplete) {
-    var LEN = 6;
-    var boxes = [];
-    host.innerHTML = '';
-    var row = document.createElement('div');
-    row.className = 'otp';
-    row.setAttribute('role', 'group');
-
-    for (var i = 0; i < LEN; i++) {
-      var box = document.createElement('input');
-      box.type = 'text';
-      box.setAttribute('inputmode', 'numeric');
-      box.setAttribute('autocomplete', i === 0 ? 'one-time-code' : 'off');
-      box.setAttribute('maxlength', '1');
-      box.setAttribute('pattern', '[0-9]*');
-      box.setAttribute('data-slot', String(i));
-      box.setAttribute('aria-label', t('c.digit', { n: i + 1 }));
-      row.appendChild(box);
-      boxes.push(box);
-    }
-    host.appendChild(row);
-
-    var busy = false;
-
-    function value() {
-      var out = '';
-      for (var k = 0; k < boxes.length; k++) { out += boxes[k].value; }
-      return out;
-    }
-    function relabel() {
-      for (var k = 0; k < boxes.length; k++) {
-        boxes[k].setAttribute('aria-label', t('c.digit', { n: k + 1 }));
-      }
-    }
-    function clear() {
-      for (var k = 0; k < boxes.length; k++) {
-        boxes[k].value = '';
-        boxes[k].classList.remove('filled');
-      }
-      row.classList.remove('bad');
-      boxes[0].focus();
-    }
-    function shake() {
-      row.classList.remove('bad');
-      /* restart the animation */
-      void row.offsetWidth;
-      row.classList.add('bad');
-      busy = false;
-      for (var k = 0; k < boxes.length; k++) { boxes[k].select(); }
-      boxes[boxes.length - 1].focus();
-    }
-    function settle() {
-      if (value().length === LEN && !busy) {
-        busy = true;
-        if (onComplete) { onComplete(value()); }
-      }
-    }
-    function put(index, char) {
-      var box = boxes[index];
-      if (!box) { return; }
-      box.value = char;
-      if (char) { box.classList.add('filled'); } else { box.classList.remove('filled'); }
-    }
-    function spread(start, digits) {
-      var i = start;
-      var j = 0;
-      while (i < LEN && j < digits.length) {
-        put(i, digits.charAt(j));
-        i += 1;
-        j += 1;
-      }
-      var next = Math.min(i, LEN - 1);
-      boxes[next].focus();
-      if (value().length === LEN) { settle(); }
-      return i;
-    }
-
-    boxes.forEach(function (box, index) {
-      box.addEventListener('input', function () {
-        row.classList.remove('bad');
-        var raw = digitsOnly(box.value);
-        if (!raw) { box.classList.remove('filled'); return; }
-        if (raw.length > 1) {
-          box.value = '';
-          box.classList.remove('filled');
-          spread(index, raw.split(''));
-          return;
-        }
-        put(index, raw.charAt(0));
-        if (index < LEN - 1) { boxes[index + 1].focus(); }
-        settle();
-      });
-      box.addEventListener('keydown', function (ev) {
-        var key = ev.key;
-        if (key === 'Backspace' && !box.value && index > 0) {
-          ev.preventDefault();
-          put(index - 1, '');
-          boxes[index - 1].focus();
-          busy = false;
-        } else if (key === 'ArrowLeft' && index > 0) {
-          ev.preventDefault();
-          boxes[index - 1].focus();
-        } else if (key === 'ArrowRight' && index < LEN - 1) {
-          ev.preventDefault();
-          boxes[index + 1].focus();
-        } else if (key && key.length === 1 && !/[0-9]/.test(key)) {
-          ev.preventDefault();
-        }
-      });
-      box.addEventListener('paste', function (ev) {
-        ev.preventDefault();
-        var pasted = '';
-        if (ev.clipboardData && ev.clipboardData.getData) { pasted = ev.clipboardData.getData('text'); }
-        var digits = digitsOnly(pasted).slice(0, LEN);
-        if (!digits) { return; }
-        busy = false;
-        spread(index, digits.split(''));
-      });
-      box.addEventListener('focus', function () { box.select(); });
-    });
-
-    return {
-      row: row,
-      value: value,
-      clear: clear,
-      shake: shake,
-      focus: function () { boxes[0].focus(); },
-      relabel: relabel,
-      unlock: function () { busy = false; },
-      setDisabled: function (off) {
-        boxes.forEach(function (b) { b.disabled = off; });
-      }
-    };
-  }
-
   /* ================================================================ google */
 
   var googleLoaded = false;
@@ -1563,11 +1386,15 @@
   function loadConfig() {
     return api('/api/config').then(function (data) {
       var kyc = (data && data.kyc) || {};
+      var docs = (data && data.documents) || {};
       if (kyc.phoneDigits) { KYC.phoneDigits = kyc.phoneDigits; }
       if (kyc.idDigits) { KYC.idDigits = kyc.idDigits; }
       if (kyc.tinDigits) { KYC.tinDigits = kyc.tinDigits; }
       return {
         googleClientId: data && data.googleClientId ? data.googleClientId : null,
+        passwordMin: kyc.passwordMin || 8,
+        /* the licence row only makes sense when there is a bucket to put the file in */
+        documents: { configured: Boolean(docs.configured), maxBytes: docs.maxBytes || 8 * 1048576 },
         kyc: {
           rra: Boolean(kyc.rra),
           id: Boolean(kyc.id),
@@ -1575,7 +1402,11 @@
         },
       };
     }, function () {
-      return { googleClientId: null, kyc: { rra: false, id: false, digits: { phone: 10, id: 16, tin: 9 } } };
+      return {
+        googleClientId: null, passwordMin: 8,
+        documents: { configured: false, maxBytes: 8 * 1048576 },
+        kyc: { rra: false, id: false, digits: { phone: 10, id: 16, tin: 9 } },
+      };
     });
   }
 
@@ -1583,29 +1414,17 @@
 
   function initLogin() {
     var els = {
-      stepHd: q('#stepHd'),
       stPhone: q('#stPhone'),
-      stCode: q('#stCode'),
       stWait: q('#stWait'),
-      stNew: q('#stNew'),
       stReject: q('#stReject'),
       stOk: q('#stOk'),
-      phone: q('#inPhone'),
-      phoneField: q('#fldPhone'),
-      phoneErr: q('#errPhone'),
+      email: q('#inEmail'),
+      emailField: q('#fldEmail'),
+      pass: q('#inPass'),
+      passField: q('#fldPass'),
       btnSend: q('#btnSend'),
       sendMsg: q('#sendMsg'),
       frmPhone: q('#frmPhone'),
-      codeTo: q('#codeTo'),
-      codeHint: q('#codeHint'),
-      otpHost: q('#otpHost'),
-      btnVerify: q('#btnVerify'),
-      codeErr: q('#codeErr'),
-      btnBack: q('#btnBack'),
-      btnResend: q('#btnResend'),
-      resendTxt: q('#resendTxt'),
-      newBody: q('#newBody'),
-      newLink: q('#newLink'),
       waitTitle: q('#waitTitle'),
       waitBody: q('#waitBody'),
       rejBody: q('#rejBody'),
@@ -1615,190 +1434,105 @@
       okName: q('#okName')
     };
 
-    var state = { phone: '', verifyToken: '', cooldown: null, ttl: 300, config: null, submitting: false };
-    var otp = buildOtp(els.otpHost, function () { verify(); });
+    var state = { submitting: false, passwordMin: 8 };
+    var view = { which: 'stPhone', data: null };
 
-    function showStep(which) {
-      ['stPhone', 'stCode', 'stWait', 'stNew', 'stReject', 'stOk'].forEach(function (k) {
+    /* A rider who has not filed the form yet has no name on the account, so every greeting falls
+       back to the address they signed in with. */
+    function who(data) {
+      var d = data.driver || {};
+      return d.name || d.names || d.email || '';
+    }
+
+    function paintState() {
+      var data = view.data || {};
+      if (view.which === 'stWait') {
+        text(els.waitTitle, t('lg.waitTitle'));
+        text(els.waitBody, t('lg.waitBody', { name: who(data) }));
+      }
+      if (view.which === 'stReject') {
+        text(els.rejBody, t('lg.rejBody'));
+        text(els.rejReason, data.reason || '');
+        visible(els.rejReason, !!data.reason);
+      }
+      if (view.which === 'stOk') {
+        text(els.okName, who(data));
+      }
+    }
+
+    function show(which, data) {
+      view.which = which;
+      view.data = data || null;
+      ['stPhone', 'stWait', 'stReject', 'stOk'].forEach(function (k) {
         visible(els[k], k === which);
       });
-      visible(els.stepHd, which === 'stPhone' || which === 'stCode');
-      markStep(which);
+      paintState();
     }
 
-    function markStep(which) {
-      var one = q('#hdStep1'), two = q('#hdStep2');
-      if (!one || !two) { return; }
-      one.className = which === 'stCode' ? 'ok' : (which === 'stPhone' ? 'on' : '');
-      two.className = which === 'stCode' ? 'on' : '';
-    }
-
-    function paintStatic() {
-      if (state.phone) {
-        text(els.codeTo, t('lg.codeTo', { phone: state.phone }));
-      }
-      text(els.codeHint, t('lg.codeHint', { m: Math.max(1, Math.round(state.ttl / 60)) }));
-      otp.relabel();
-      if (state.cooldown) {
-        text(els.resendTxt, t('lg.resendIn', { n: state.cooldown.left() }));
-      }
-    }
-
-    function resendLabel() {
-      text(els.btnResend, t('lg.resend'));
-    }
-
-    function startCooldown(seconds) {
-      if (state.cooldown) { state.cooldown.stop(); }
-      enable(els.btnResend, false);
-      state.cooldown = countdown(els.resendTxt, seconds, function (n) {
-        return t('lg.resendIn', { n: n });
-      }, function () {
-        state.cooldown = null;
-        enable(els.btnResend, true);
-        resendLabel();
-      });
-    }
-
-    function sendCode(phone) {
-      return api('/api/auth/otp/send', { body: { phone: phone } }).then(function (data) {
-        state.ttl = data.ttlSeconds || 300;
-        startCooldown(30);
-        return data;
-      });
-    }
-
-    function request() {
-      var value = String(els.phone.value || '');
-      if (!isPhone(value)) {
-        fieldError(els.phoneField, t('su.errPhone'));
-        banner(els.sendMsg, 'err', ecOf('invalid_phone'));
-        els.phone.focus();
+    /* The server says what this account is allowed to do next. A draft keeps its token because the
+       rider is about to fill in the details form, which is fenced behind that very session. */
+    function route(data) {
+      if (data.status === 'approved') {
+        setToken(data.token);
+        show('stOk', data);
+        window.setTimeout(function () { location.href = '/rider'; }, 700);
         return;
       }
-      fieldError(els.phoneField, '');
+      if (data.status === 'draft') {
+        setToken(data.token);
+        location.href = '/signup';
+        return;
+      }
+      if (data.status === 'pending') { show('stWait', data); return; }
+      if (data.status === 'rejected') { show('stReject', data); return; }
+      show('stPhone');
+      banner(els.sendMsg, 'err', t('c.loading'));
+    }
+
+    function enter() {
+      var email = String(els.email.value || '').trim().toLowerCase();
+      var pass = String(els.pass.value || '');
+      var bad = false;
+      if (!isEmail(email)) { fieldError(els.emailField, t('su.errEmail')); bad = true; }
+      else { fieldError(els.emailField, ''); }
+      if (pass.length < state.passwordMin) { fieldError(els.passField, t('su.errPass')); bad = true; }
+      else { fieldError(els.passField, ''); }
+      if (bad) {
+        (isEmail(email) ? els.pass : els.email).focus();
+        return;
+      }
+      if (state.submitting) { return; }
       hideBanner(els.sendMsg);
-      var phone = normalizePhone(value);
-      loading(els.btnSend, true);
       state.submitting = true;
-      sendCode(phone).then(function () {
-        loading(els.btnSend, false);
+      loading(els.btnSend, true);
+      api('/api/auth/login', { body: { email: email, password: pass } }).then(function (data) {
         state.submitting = false;
-        state.phone = phone;
-        state.verifyToken = '';
-        otp.clear();
-        hideBanner(els.codeErr);
-        showStep('stCode');
-        paintStatic();
-        otp.focus();
+        loading(els.btnSend, false);
+        route(data);
       }, function (err) {
-        loading(els.btnSend, false);
         state.submitting = false;
-        if (err.code === 'invalid_phone') { fieldError(els.phoneField, errText(err)); }
-        if (err.code === 'otp_rate_limited') {
-          var wait = parseInt(String(err.serverMessage || '').replace(/[^0-9]/g, ''), 10);
-          if (wait > 0 && wait < 600) { startCooldown(wait); }
-        }
+        loading(els.btnSend, false);
+        if (err.code === 'invalid_email') { fieldError(els.emailField, errText(err)); }
+        if (err.code === 'invalid_password') { fieldError(els.passField, errText(err)); }
+        if (err.code === 'google_account_only') { els.email.focus(); }
         banner(els.sendMsg, 'err', errText(err));
       });
     }
 
-    function routeVerify(data) {
-      var status = data.status;
-      if (status === 'approved') {
-        /* store the session exactly like the app expects, then open the rider dashboard */
-        setToken(data.token);
-        text(els.okName, (data.driver && (data.driver.name || data.driver.names)) || '');
-        showStep('stOk');
-        window.setTimeout(function () { location.href = '/rider'; }, 700);
-        return;
-      }
-      if (status === 'pending') {
-        /* never store a token for an unapproved account */
-        text(els.waitTitle, t('lg.waitTitle'));
-        text(els.waitBody, t('lg.waitBody', { name: (data.driver && (data.driver.name || data.driver.names)) || state.phone }));
-        showStep('stWait');
-        return;
-      }
-      if (status === 'rejected') {
-        text(els.rejBody, t('lg.rejBody'));
-        text(els.rejReason, data.reason || '');
-        visible(els.rejReason, !!data.reason);
-        showStep('stReject');
-        return;
-      }
-      if (status === 'new') {
-        state.verifyToken = data.verifyToken || '';
-        text(els.newBody, t('lg.newBody', { phone: data.phone || state.phone }));
-        if (els.newLink) {
-          els.newLink.href = '/signup?phone=' + encodeURIComponent(data.phone || state.phone) +
-            '&verify_token=' + encodeURIComponent(state.verifyToken);
-        }
-        showStep('stNew');
-        return;
-      }
-      showStep('stCode');
-      banner(els.codeErr, 'err', t('c.loading'));
-    }
-
-    function verify() {
-      var code = otp.value();
-      if (!isCode(code)) {
-        banner(els.codeErr, 'err', ecOf('invalid_code'));
-        return;
-      }
-      hideBanner(els.codeErr);
-      loading(els.btnVerify, true);
-      otp.setDisabled(true);
-      api('/api/auth/otp/verify', { body: { phone: state.phone, code: code } }).then(function (data) {
-        loading(els.btnVerify, false);
-        otp.setDisabled(false);
-        routeVerify(data);
-      }, function (err) {
-        loading(els.btnVerify, false);
-        otp.setDisabled(false);
-        banner(els.codeErr, 'err', errText(err));
-        if (err.code === 'otp_invalid' || err.code === 'invalid_code') { otp.shake(); }
-        else {
-          otp.clear();
-          if (err.code === 'otp_expired' || err.code === 'otp_attempts_exceeded') { startCooldown(10); }
-        }
-      });
-    }
-
     if (els.frmPhone) {
-      els.frmPhone.addEventListener('submit', function (ev) { ev.preventDefault(); request(); });
+      els.frmPhone.addEventListener('submit', function (ev) { ev.preventDefault(); enter(); });
     }
-    els.btnSend.addEventListener('click', function (ev) { ev.preventDefault(); request(); });
-    els.btnVerify.addEventListener('click', function (ev) { ev.preventDefault(); verify(); });
-    els.btnBack.addEventListener('click', function () {
-      showStep('stPhone');
-      hideBanner(els.codeErr);
-      if (state.cooldown) { state.cooldown.stop(); state.cooldown = null; }
-      els.phone.focus();
-    });
-    els.btnResend.addEventListener('click', function () {
-      if (els.btnResend.disabled || !state.phone) { return; }
-      hideBanner(els.codeErr);
-      otp.clear();
-      sendCode(state.phone).then(function () {
-        otp.focus();
-      }, function (err) {
-        banner(els.codeErr, 'err', errText(err));
-        if (err.code === 'otp_rate_limited') {
-          var wait = parseInt(String(err.serverMessage || '').replace(/[^0-9]/g, ''), 10);
-          startCooldown(wait > 0 && wait < 600 ? wait : 15);
-        }
+    [els.email, els.pass].forEach(function (input) {
+      input.addEventListener('input', function () {
+        fieldError(els.emailField, '');
+        fieldError(els.passField, '');
+        hideBanner(els.sendMsg);
       });
-    });
-    els.phone.addEventListener('input', function () {
-      fieldError(els.phoneField, '');
-      hideBanner(els.sendMsg);
     });
 
     /* google is only mounted when the server actually advertises a client id */
     loadConfig().then(function (cfg) {
-      state.config = cfg;
+      state.passwordMin = cfg.passwordMin;
       if (cfg.googleClientId) {
         visible(els.googleBox, true);
         mountGoogle(els.gsiSlot, cfg.googleClientId, function (credential) {
@@ -1806,10 +1540,11 @@
           api('/api/auth/google', { body: { credential: credential } }).then(function (data) {
             if (data.status === 'new') {
               location.href = '/signup?google_token=' + encodeURIComponent(data.googleToken || '') +
-                '&name=' + encodeURIComponent(data.name || '');
+                '&name=' + encodeURIComponent(data.name || '') +
+                '&email=' + encodeURIComponent(data.email || '');
               return;
             }
-            routeVerify(data);
+            route(data);
           }, function (err) {
             visible(els.googleBox, true);
             banner(els.sendMsg, 'err', errText(err));
@@ -1818,14 +1553,9 @@
       }
     });
 
-    onLang(function () {
-      paintStatic();
-      if (!state.cooldown) { resendLabel(); }
-    });
+    onLang(paintState);
 
-    showStep('stPhone');
-    paintStatic();
-    resendLabel();
+    show('stPhone');
     if (getToken()) { visible(q('#alreadyIn'), true); }
   }
 
@@ -1833,71 +1563,79 @@
 
   function initSignup() {
     var els = {
-      stepHd: q('#stepHd'),
+      stAccount: q('#stAccount'),
       stForm: q('#stForm'),
-      stCode: q('#stCode'),
       stDone: q('#stDone'),
-      frm: q('#frmSignup'),
+      stepLede: q('#stepLede'),
+      email: q('#inEmail'),
+      emailField: q('#fldEmail'),
+      pass: q('#inPass'),
+      passField: q('#fldPass'),
+      passHint: q('#passHint'),
+      btnAccount: q('#btnAccount'),
+      acctMsg: q('#acctMsg'),
+      frmAccount: q('#frmAccount'),
+      googleBox: q('#googleBox'),
+      gsiSlot: q('#gsiSlot'),
+      googleNote: q('#googleNote'),
       names: q('#inNames'),
+      fldNames: q('#fldNames'),
       id: q('#inId'),
+      fldId: q('#fldId'),
       tin: q('#inTin'),
+      fldTin: q('#fldTin'),
       plate: q('#inPlate'),
+      fldPlate: q('#fldPlate'),
       phone: q('#inPhone'),
-      otpHost: q('#otpHost'),
+      fldPhone: q('#fldPhone'),
       seg: q('#segType'),
-      errNames: q('#fldNames'),
-      errId: q('#fldId'),
-      errTin: q('#fldTin'),
-      errPlate: q('#fldPlate'),
-      errPhone: q('#fldPhone'),
       tinState: q('#tinState'),
       idState: q('#idState'),
       kycHint: q('#kycHint'),
-      formMsg: q('#formMsg'),
-      codeMsg: q('#codeMsg'),
-      btnCode: q('#btnCode'),
+      licRow: q('#fldLic'),
+      btnLic: q('#btnLic'),
+      inLic: q('#inLic'),
+      licName: q('#licName'),
+      licState: q('#licState'),
       btnSubmit: q('#btnSubmit'),
-      btnVerify: q('#btnVerify'),
-      btnEditPhone: q('#btnEditPhone'),
-      btnBackForm: q('#btnBackForm'),
-      codeTo: q('#codeTo'),
-      codeLine: q('#codeLine'),
-      verifiedLine: q('#verifiedLine'),
-      verifiedTxt: q('#verifiedTxt'),
-      resend: q('#btnResend'),
-      resendTxt: q('#resendTxt'),
-      googleNote: q('#googleNote'),
+      formMsg: q('#formMsg'),
       doneSum: q('#doneSum'),
-      doneNote: q('#doneNote'),
-      linkLogin: q('#linkLogin')
+      doneNote: q('#doneNote')
     };
 
     var state = {
       vehicle: 'moto',
-      phone: '',
-      verifyToken: '',
       googleToken: param('google_token'),
-      cooldown: null,
-      ttl: 300,
-      verified: false,
+      google: Boolean(param('google_token')),
+      email: '',
+      passwordMin: 8,
+      docs: { configured: false, maxBytes: 8 * 1048576 },
+      licence: null,
       cap: { rra: false, id: false },
       checks: { tin: null, id: null },
-      running: { tin: '', id: '' }
+      running: { tin: '', id: '' },
+      signing: false,
+      filing: false
     };
 
-    var otp = buildOtp(els.otpHost, function () { verifyPhone(); });
+    /* --------------------------------------------------------------- steps */
 
-    /* arriving from /login with a verified phone */
-    var qPhone = normalizePhone(param('phone'));
-    var qVerify = param('verify_token');
+    function showStep(which) {
+      visible(els.stAccount, which === 'stAccount');
+      visible(els.stForm, which === 'stForm');
+      visible(els.stDone, which === 'stDone');
+      text(els.stepLede, t(which === 'stAccount' ? 'su.lede' : 'su.lede2'));
+    }
+
+    /* ------------------------------------------------------------ fields */
 
     function checkField(which, silent) {
       var map = {
-        names: { host: els.errNames, input: els.names, ok: isNames(els.names.value), msg: t('su.errNames') },
-        id: { host: els.errId, input: els.id, ok: isIdNumber(els.id.value), msg: t('su.errId') },
-        tin: { host: els.errTin, input: els.tin, ok: isTin(els.tin.value), msg: t('su.errTin') },
-        plate: { host: els.errPlate, input: els.plate, ok: isPlate(els.plate.value), msg: t('su.errPlate') },
-        phone: { host: els.errPhone, input: els.phone, ok: isPhone(els.phone.value), msg: t('su.errPhone') }
+        names: { host: els.fldNames, input: els.names, ok: isNames(els.names.value), msg: t('su.errNames') },
+        id: { host: els.fldId, input: els.id, ok: isIdNumber(els.id.value), msg: t('su.errId') },
+        tin: { host: els.fldTin, input: els.tin, ok: isTin(els.tin.value), msg: t('su.errTin') },
+        plate: { host: els.fldPlate, input: els.plate, ok: isPlate(els.plate.value), msg: t('su.errPlate') },
+        phone: { host: els.fldPhone, input: els.phone, ok: isPhone(els.phone.value), msg: t('su.errPhone') }
       };
       var item = map[which];
       if (!item) { return true; }
@@ -1916,11 +1654,10 @@
       return ok;
     }
 
-    /* ----------------------------------------------------- RRA / NIDA verdicts
-       Both lookups are fenced behind the code that just proved the phone, so they can only run
-       after the phone is verified. A register that does not know the number is shown in red;
-       a lookup that could not be made is shown in grey — "not found" and "not asked" are not
-       the same fact and the page must never blur them. */
+    /* ------------------------------------------------- RRA / NIDA verdicts
+       Both lookups run on the rider's own session now: the account is the budget key, so nobody can
+       drive the registers from a script. A register that does not know the number is red; a lookup
+       that could not be made is grey — "not found" and "not asked" are not the same fact. */
 
     var KYC_WRONG = {
       tin_not_found: 1, id_not_found: 1, id_name_mismatch: 1,
@@ -1954,11 +1691,11 @@
         '<span>' + esc(kycWords(which, verdict)) + '</span>' +
         '<button class="mini" type="button" data-kyc="' + which + '">' + esc(t('su.checkAgain')) + '</button>';
       line.hidden = false;
-      fieldGood(which === 'tin' ? els.errTin : els.errId, verdict.kind === 'ok');
+      fieldGood(which === 'tin' ? els.fldTin : els.fldId, verdict.kind === 'ok');
     }
 
     function kycRun(which, force) {
-      if (!state.verifyToken || !(which === 'tin' ? state.cap.rra : state.cap.id)) { return; }
+      if (!getToken() || !(which === 'tin' ? state.cap.rra : state.cap.id)) { return; }
       var value = kycDigits(which);
       var wellFormed = which === 'tin' ? isTin(value) : isIdNumber(value);
       if (!wellFormed) { state.checks[which] = null; kycPaint(which); return; }
@@ -1967,10 +1704,12 @@
       state.checks[which] = { busy: true };
       kycPaint(which);
       var body = which === 'tin'
-        ? { tin_number: value, verify_token: state.verifyToken }
-        : { id_number: value, names: cleanNames(els.names.value), verify_token: state.verifyToken };
+        ? { tin_number: value }
+        : { id_number: value, names: cleanNames(els.names.value) };
       if (force) { body.force = true; }
-      api(which === 'tin' ? '/api/verify-tin' : '/api/verify-id', { body: body }).then(function (data) {
+      api(which === 'tin' ? '/api/verify-tin' : '/api/verify-id', {
+        body: body, useToken: true
+      }).then(function (data) {
         if (state.running[which] !== value) { return; }
         state.checks[which] = which === 'tin'
           ? { kind: data.valid ? 'ok' : 'bad', name: String(data.taxpayer || '').slice(0, 60), code: 'tin_not_found' }
@@ -1984,123 +1723,140 @@
       });
     }
 
-    function kycForget() {
-      state.checks = { tin: null, id: null };
-      state.running = { tin: '', id: '' };
-      kycPaint('tin');
-      kycPaint('id');
-    }
-
     function kycLimits(kyc) {
       if (els.tin) { els.tin.setAttribute('maxlength', String(kyc.digits.tin)); }
       if (els.id) { els.id.setAttribute('maxlength', String(kyc.digits.id)); }
       if (els.kycHint) { visible(els.kycHint, !!(state.cap.rra || state.cap.id)); }
     }
 
-    function paintButtons() {
-      var v = !!(state.verified && state.verifyToken);
-      visible(els.btnCode, !v);
-      visible(els.btnSubmit, v);
-    }
+    /* ------------------------------------------------------- trading licence
+       The paper a moto operator gets from the district office. It arrives as a PDF, goes straight to
+       the private bucket, and the server only asks for it once the bucket actually exists. */
 
-    function paintVerified() {
-      var on = !!(state.verified && state.verifyToken);
-      visible(els.verifiedLine, on);
-      visible(els.codeLine, !on && !!state.phone);
-      if (on) { text(els.verifiedTxt, t('su.verified', { phone: state.phone })); }
-      paintButtons();
-    }
+    var LIC_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
 
-    function showStep(which) {
-      visible(els.stForm, which === 'stForm');
-      visible(els.stCode, which === 'stCode');
-      visible(els.stDone, which === 'stDone');
-      visible(els.stepHd, which !== 'stDone');
-      var one = q('#hdStep1'), two = q('#hdStep2');
-      if (one && two) {
-        one.className = which === 'stCode' ? 'ok' : 'on';
-        two.className = which === 'stCode' ? 'on' : '';
-      }
-    }
-
-    function startCooldown(seconds) {
-      if (state.cooldown) { state.cooldown.stop(); }
-      enable(els.resend, false);
-      state.cooldown = countdown(els.resendTxt, seconds, function (n) {
-        return t('lg.resendIn', { n: n });
-      }, function () {
-        state.cooldown = null;
-        enable(els.resend, true);
-        text(els.resend, t('lg.resend'));
-      });
-    }
-
-    function sendCode(phone) {
-      return api('/api/auth/otp/send', { body: { phone: phone } }).then(function (data) {
-        state.ttl = data.ttlSeconds || 300;
-        startCooldown(30);
-        return data;
-      });
-    }
-
-    function askCode() {
-      if (!validAll()) { return; }
-      hideBanner(els.formMsg);
-      var phone = normalizePhone(els.phone.value);
-      loading(els.btnCode, true);
-      sendCode(phone).then(function () {
-        loading(els.btnCode, false);
-        state.phone = phone;
-        state.verified = false;
-        showStep('stCode');
-        text(els.codeTo, t('lg.codeTo', { phone: phone }));
-        banner(els.codeMsg, 'info', t('su.codeSent', { phone: phone }));
-        otp.clear();
-        otp.focus();
-      }, function (err) {
-        loading(els.btnCode, false);
-        if (err.code === 'invalid_phone') { fieldError(els.errPhone, errText(err)); }
-        banner(els.formMsg, 'err', errText(err));
-      });
-    }
-
-    function verifyPhone() {
-      var code = otp.value();
-      if (!isCode(code)) { banner(els.codeMsg, 'err', ecOf('invalid_code')); return; }
-      hideBanner(els.codeMsg);
-      loading(els.btnVerify, true);
-      otp.setDisabled(true);
-      api('/api/auth/otp/verify', { body: { phone: state.phone, code: code } }).then(function (data) {
-        loading(els.btnVerify, false);
-        otp.setDisabled(false);
-        if (data.status === 'new') {
-          state.verifyToken = data.verifyToken || '';
-          state.verified = true;
-          paintVerified();
-          showStep('stForm');
-          banner(els.formMsg, 'ok', t('su.verified', { phone: state.phone }));
-          kycRun('tin');
-          kycRun('id');
-          if (els.btnSubmit) { els.btnSubmit.focus(); }
-          return;
-        }
-        /* the number already belongs to a driver — never keep that token here */
-        clearToken();
-        banner(els.codeMsg, 'err', t('su.errPhone') + ' ' + ecOf('phone_taken'));
-      }, function (err) {
-        loading(els.btnVerify, false);
-        otp.setDisabled(false);
-        banner(els.codeMsg, 'err', errText(err));
-        if (err.code === 'otp_invalid' || err.code === 'invalid_code') { otp.shake(); }
-      });
-    }
-
-    function submit() {
-      if (!validAll()) { return; }
-      if (!state.verifyToken) {
-        banner(els.formMsg, 'err', t('su.needCode'));
+    function licPaint(verdict) {
+      var line = els.licState;
+      if (!line) { return; }
+      if (!verdict) { line.hidden = true; line.innerHTML = ''; return; }
+      if (verdict.busy) {
+        line.className = 'kycline info';
+        line.innerHTML = '<span class="dot" aria-hidden="true"></span><span>' + esc(t('su.licenceUploading')) + '</span>';
+        line.hidden = false;
         return;
       }
+      line.className = 'kycline' + (verdict.kind === 'bad' ? ' bad' : '');
+      line.innerHTML = (verdict.kind === 'bad' ? ICON.warn : ICON.ok) + '<span>' + esc(verdict.text) + '</span>';
+      line.hidden = false;
+    }
+
+    function uploadLicence() {
+      var file = els.inLic.files && els.inLic.files[0];
+      els.inLic.value = '';
+      if (!file) { return; }
+      text(els.licName, file.name);
+      if (LIC_TYPES.indexOf(file.type) < 0) {
+        state.licence = null;
+        licPaint({ kind: 'bad', text: t('su.licenceType') });
+        return;
+      }
+      if (file.size > state.docs.maxBytes) {
+        state.licence = null;
+        licPaint({ kind: 'bad', text: t('su.licenceSize', { n: Math.round(state.docs.maxBytes / 1048576) }) });
+        return;
+      }
+      state.licence = null;
+      licPaint({ busy: true });
+      if (els.btnLic) { els.btnLic.disabled = true; }
+      api('/api/drivers/me/documents/trading_licence/upload-url', {
+        method: 'POST', body: { content_type: file.type }, useToken: true
+      }).then(function (ticket) {
+        return fetch(ticket.uploadUrl, {
+          method: 'PUT', headers: { 'Content-Type': file.type }, body: file
+        }).then(function (res) {
+          if (!res.ok) {
+            var failure = new Error('upload');
+            failure.code = 'document_not_uploaded';
+            throw failure;
+          }
+          return api('/api/drivers/me/documents/trading_licence/complete', { method: 'POST', useToken: true });
+        });
+      }).then(function (data) {
+        if (els.btnLic) { els.btnLic.disabled = false; }
+        state.licence = data.document;
+        var kb = Math.max(1, Math.round((data.document.bytes || file.size) / 1024));
+        licPaint({ kind: 'ok', text: t('su.licenceDone') + ' · ' + kb + ' KB' });
+        hideBanner(els.formMsg);
+      }, function (err) {
+        if (els.btnLic) { els.btnLic.disabled = false; }
+        state.licence = null;
+        licPaint({ kind: 'bad', text: errText(err) });
+      });
+    }
+
+    /* ------------------------------------------------------------- step 1 */
+
+    function createAccount(google) {
+      var email = String(els.email.value || '').trim().toLowerCase();
+      var passphrase = String(els.pass.value || '');
+      if (!isEmail(email)) {
+        fieldError(els.emailField, t('su.errEmail'));
+        els.email.focus();
+        return;
+      }
+      fieldError(els.emailField, '');
+      if (!google) {
+        if (passphrase.length < state.passwordMin) {
+          fieldError(els.passField, t('su.errPass'));
+          els.pass.focus();
+          return;
+        }
+        fieldError(els.passField, '');
+      }
+      if (state.signing) { return; }
+      state.signing = true;
+      hideBanner(els.acctMsg);
+      loading(els.btnAccount, true);
+      var body = { email: email };
+      if (google) { body.google_token = state.googleToken; }
+      else { body.password = passphrase; }
+      api('/api/auth/signup', { body: body }).then(function (data) {
+        state.signing = false;
+        loading(els.btnAccount, false);
+        /* a draft account keeps its token: the details form is fenced behind this very session */
+        setToken(data.token);
+        state.email = email;
+        state.googleToken = '';
+        enterForm();
+      }, function (err) {
+        state.signing = false;
+        loading(els.btnAccount, false);
+        if (err.code === 'invalid_email' || err.code === 'email_taken') { fieldError(els.emailField, errText(err)); }
+        if (err.code === 'invalid_password') { fieldError(els.passField, errText(err)); }
+        banner(els.acctMsg, 'err', errText(err));
+      });
+    }
+
+    /* ------------------------------------------------------------- step 2 */
+
+    function enterForm() {
+      showStep('stForm');
+      visible(els.licRow, Boolean(state.docs.configured));
+      visible(els.googleNote, state.google);
+      window.scrollTo(0, 0);
+      kycRun('tin');
+      kycRun('id');
+      if (els.names && !els.names.value) { els.names.focus(); }
+    }
+
+    function fileApplication() {
+      if (!validAll()) { return; }
+      if (state.docs.configured && !state.licence) {
+        banner(els.formMsg, 'err', ecOf('licence_required'));
+        if (els.btnLic) { els.btnLic.focus(); }
+        return;
+      }
+      if (state.filing) { return; }
       hideBanner(els.formMsg);
       var body = {
         names: cleanNames(els.names.value),
@@ -2108,89 +1864,86 @@
         tin_number: String(els.tin.value || '').replace(/[ -]/g, ''),
         plate: normalizePlate(els.plate.value),
         phone: normalizePhone(els.phone.value),
-        vehicle_type: state.vehicle,
-        verify_token: state.verifyToken
+        vehicle_type: state.vehicle
       };
-      if (state.googleToken) { body.google_token = state.googleToken; }
+      state.filing = true;
       loading(els.btnSubmit, true);
-      api('/api/auth/signup', { body: body }).then(function (data) {
+      api('/api/auth/details', { body: body, useToken: true }).then(function (data) {
+        state.filing = false;
         loading(els.btnSubmit, false);
-        var app = data.application || {};
-        text(els.doneSum, '');
-        els.doneSum.innerHTML = t('su.doneSum', {
-          names: esc(app.name || app.names || body.names),
-          plate: esc(app.plate || body.plate),
-          phone: esc(app.phone || body.phone)
-        });
-        els.doneNote.innerHTML = t('su.doneNote');
+        paintDone(data.application || body);
         showStep('stDone');
         window.scrollTo(0, 0);
       }, function (err) {
+        state.filing = false;
         loading(els.btnSubmit, false);
         var fieldMap = {
-          invalid_names: els.errNames, invalid_id_number: els.errId, invalid_tin_number: els.errTin,
-          invalid_plate: els.errPlate, invalid_phone: els.errPhone, invalid_vehicle_type: null,
-          phone_taken: els.errPhone, id_number_taken: els.errId, tin_number_taken: els.errTin,
-          plate_taken: els.errPlate, google_taken: null
+          invalid_names: els.fldNames, invalid_id_number: els.fldId, invalid_tin_number: els.fldTin,
+          invalid_plate: els.fldPlate, invalid_phone: els.fldPhone, phone_invalid: els.fldPhone,
+          invalid_vehicle_type: null, id_number_taken: els.fldId, tin_number_taken: els.fldTin,
+          plate_taken: els.fldPlate
         };
         var host = Object.prototype.hasOwnProperty.call(fieldMap, err.code) ? fieldMap[err.code] : undefined;
         if (host) { fieldError(host, errText(err)); }
-        if (err.code === 'invalid_verify_token' || err.code === 'phone_not_verified') {
-          state.verified = false;
-          state.verifyToken = '';
-          paintVerified();
-          visible(els.btnCode, true);
-          showStep('stCode');
-          text(els.codeTo, t('lg.codeTo', { phone: state.phone }));
-          otp.clear();
-          otp.focus();
+        if (err.code === 'licence_required' && els.btnLic) { els.btnLic.focus(); }
+        if (err.code === 'authentication_required') { clearToken(); showStep('stAccount'); }
+        if (err.code === 'details_already_filed') {
+          api('/api/auth/me').then(function (data) {
+            paintDone(data.driver || {});
+            showStep('stDone');
+          }, function () { banner(els.formMsg, 'err', errText(err)); });
+          return;
         }
         banner(els.formMsg, 'err', errText(err));
       });
     }
 
-    /* segmented vehicle control */
-    qa('button', els.seg).forEach(function (b) {
-      b.addEventListener('click', function () {
-        state.vehicle = b.getAttribute('data-value');
-        qa('button', els.seg).forEach(function (o) {
-          o.setAttribute('aria-pressed', String(o === b));
+    function paintDone(app) {
+      els.doneSum.innerHTML = t('su.doneSum', {
+        names: esc(app.name || app.names || ''),
+        plate: esc(app.plate || ''),
+        phone: esc(app.phone || '')
+      });
+      els.doneNote.innerHTML = t('su.doneNote', { email: esc(state.email || app.email || '') });
+    }
+
+    /* ------------------------------------------------------------ wiring */
+
+    if (els.frmAccount) {
+      els.frmAccount.addEventListener('submit', function (ev) { ev.preventDefault(); createAccount(false); });
+    }
+    [els.email, els.pass].forEach(function (input) {
+      input.addEventListener('input', function () {
+        fieldError(els.emailField, '');
+        fieldError(els.passField, '');
+        hideBanner(els.acctMsg);
+      });
+    });
+
+    if (els.btnLic) {
+      els.btnLic.addEventListener('click', function (ev) { ev.preventDefault(); els.inLic.click(); });
+    }
+    if (els.inLic) { els.inLic.addEventListener('change', uploadLicence); }
+
+    qa('input[name="vtype"]', els.seg).forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        state.vehicle = radio.value;
+        qa('.choice-opt', els.seg).forEach(function (row) {
+          row.className = 'choice-opt' + (row.contains(radio) && radio.checked ? ' on' : '');
         });
       });
     });
 
-    els.btnCode.addEventListener('click', function (ev) { ev.preventDefault(); askCode(); });
-    els.btnVerify.addEventListener('click', function (ev) { ev.preventDefault(); verifyPhone(); });
-    els.btnSubmit.addEventListener('click', function (ev) { ev.preventDefault(); submit(); });
-    if (els.resend) {
-      els.resend.addEventListener('click', function () {
-        if (els.resend.disabled || !state.phone) { return; }
-        hideBanner(els.codeMsg);
-        sendCode(state.phone).then(function () { otp.focus(); }, function (err) {
-          banner(els.codeMsg, 'err', errText(err));
-        });
-      });
-    }
-    els.btnEditPhone.addEventListener('click', function () {
-      state.verified = false;
-      state.verifyToken = '';
-      kycForget();
-      paintVerified();
-      showStep('stForm');
-      els.phone.focus();
-    });
-    els.btnBackForm.addEventListener('click', function () {
-      showStep('stForm');
-      hideBanner(els.codeMsg);
-    });
+    els.btnSubmit.addEventListener('click', function (ev) { ev.preventDefault(); fileApplication(); });
 
     ['names', 'id', 'tin', 'plate', 'phone'].forEach(function (k) {
       var input = { names: els.names, id: els.id, tin: els.tin, plate: els.plate, phone: els.phone }[k];
-      var host = { names: els.errNames, id: els.errId, tin: els.errTin, plate: els.errPlate, phone: els.errPhone }[k];
+      var host = { names: els.fldNames, id: els.fldId, tin: els.fldTin, plate: els.fldPlate, phone: els.fldPhone }[k];
       var lookups = k === 'id' || k === 'tin';
       input.addEventListener('blur', function () {
         checkField(k, false);
         if (lookups) { kycRun(k); }
+        if (k === 'names' && state.checks.id) { kycRun('id', true); }
       });
       input.addEventListener('input', function () {
         fieldError(host, '');
@@ -2208,48 +1961,81 @@
       });
     }
 
-    /* prefill from the query string / Google */
-    if (qPhone && isPhone(qPhone)) { els.phone.value = qPhone; }
+    /* google never fills the password box: the address it vouches for is the whole credential */
     if (state.googleToken) {
-      visible(els.googleNote, true);
-      var preName = param('name');
-      if (preName && !els.names.value) { els.names.value = preName; }
+      els.email.value = String(param('email') || '').toLowerCase();
     }
-    if (qPhone && qVerify && isPhone(qPhone)) {
-      state.phone = qPhone;
-      state.verifyToken = qVerify;
-      state.verified = true;
-      visible(els.btnCode, false);
-      paintVerified();
-      banner(els.formMsg, 'ok', t('su.verified', { phone: qPhone }));
-    }
-    if (els.plate && !els.plate.value) { els.plate.value = ''; }
 
-    /* the digit laws and which registers are wired come from the server, never from this file */
     loadConfig().then(function (cfg) {
+      state.passwordMin = cfg.passwordMin;
+      state.docs = cfg.documents;
+      text(els.passHint, t('su.passHint', { n: cfg.passwordMin }));
       state.cap = cfg.kyc;
       kycLimits(cfg.kyc);
-      if (state.verifyToken) {
-        kycRun('tin');
-        kycRun('id');
+      if (cfg.googleClientId) {
+        visible(els.googleBox, true);
+        mountGoogle(els.gsiSlot, cfg.googleClientId, function (credential) {
+          if (!credential) { return; }
+          api('/api/auth/google', { body: { credential: credential } }).then(function (data) {
+            if (data.status === 'new') {
+              els.email.value = String(data.email || '').toLowerCase();
+              state.googleToken = data.googleToken || '';
+              state.google = true;
+              createAccount(true);
+              return;
+            }
+            /* the address already belongs to a rider — send them where their account actually is */
+            setToken(data.token);
+            afterSession(data);
+          }, function (err) {
+            banner(els.acctMsg, 'err', errText(err));
+          });
+        });
       }
+      openSession();
     });
 
+    /* ---------------------------- where does the session this page holds go? */
+
+    function afterSession(data) {
+      var d = data.driver || data || {};
+      state.email = d.email || state.email;
+      if (d.status === 'approved') { location.href = '/rider'; return; }
+      if (d.status === 'pending' || d.status === 'rejected') {
+        /* the application is out of this page's hands — /login owns those two states */
+        clearToken();
+        location.href = '/login';
+        return;
+      }
+      var preName = param('name');
+      if (preName && !els.names.value) { els.names.value = preName; }
+      enterForm();
+    }
+
+    function openSession() {
+      /* a Google handshake is a brand-new account: never let an old token decide this page's step */
+      if (state.googleToken) { clearToken(); createAccount(true); return; }
+      if (!getToken()) { showStep('stAccount'); return; }
+      api('/api/auth/me').then(function (data) {
+        afterSession(data);
+      }, function (err) {
+        clearToken();
+        showStep('stAccount');
+        if (err.code !== 'authentication_required') { banner(els.acctMsg, 'err', errText(err)); }
+      });
+    }
+
     onLang(function () {
-      otp.relabel();
       ['names', 'id', 'tin', 'plate', 'phone'].forEach(function (k) {
-        var host = { names: els.errNames, id: els.errId, tin: els.errTin, plate: els.errPlate, phone: els.errPhone }[k];
+        var host = { names: els.fldNames, id: els.fldId, tin: els.fldTin, plate: els.fldPlate, phone: els.fldPhone }[k];
         if (host && host.classList.contains('bad')) { checkField(k, false); }
       });
       kycPaint('tin');
       kycPaint('id');
-      if (state.verified) { text(els.verifiedTxt, t('su.verified', { phone: state.phone })); }
-      if (state.phone && els.codeTo && !els.stCode.hidden) { text(els.codeTo, t('lg.codeTo', { phone: state.phone })); }
-      if (!state.cooldown) { text(els.resend, t('lg.resend')); }
+      text(els.passHint, t('su.passHint', { n: state.passwordMin }));
     });
 
-    showStep('stForm');
-    if (!state.cooldown) { text(els.resend, t('lg.resend')); }
+    showStep('stAccount');
   }
 
   /* ================================================================ app bar
@@ -2427,17 +2213,17 @@
     /* language + copy */
     t: t, setLang: setLang, getLang: function () { return lang; }, onPage: onPage, onLang: onLang,
     /* DOM + api */
-    q: q, qa: qa, api: api, esc: esc, text: text, visible: visible, enable: enable, loading: loading,
+    q: q, qa: qa, api: api, esc: esc, text: text, visible: visible, loading: loading,
     param: param, getToken: getToken, setToken: setToken, clearToken: clearToken,
     /* messages */
     errText: errText, ecOf: ecOf, banner: banner, hideBanner: hideBanner,
     fieldError: fieldError, fieldGood: fieldGood, icons: ICON, barIcons: AB,
     /* widgets */
-    buildOtp: buildOtp, countdown: countdown, loadConfig: loadConfig, mountGoogle: mountGoogle,
+    loadConfig: loadConfig, mountGoogle: mountGoogle,
     /* validators */
-    isPhone: isPhone, isCode: isCode, isIdNumber: isIdNumber, isTin: isTin, isPlate: isPlate,
+    isPhone: isPhone, isIdNumber: isIdNumber, isTin: isTin, isPlate: isPlate,
     isNames: isNames, cleanNames: cleanNames, normalizePhone: normalizePhone,
-    normalizePlate: normalizePlate, telHref: telHref, digitsOnly: digitsOnly,
+    normalizePlate: normalizePlate, telHref: telHref, digitsOnly: digitsOnly, isEmail: isEmail,
     /* formatting */
     rwf: rwf, num: num, km: km, initials: initials, stamp: stamp, since: since,
     badge: badge, payBadge: payBadge, stars: stars, group3: group3,

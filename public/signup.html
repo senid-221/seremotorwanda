@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SEREMOTO — Iyandikishe / Sign up</title>
-<meta name="description" content="Iyandikise nk'umotari wa SERE Moto: amazina, indangamuntu, TIN, plaque, telefone na bwoko bw'ikinyabiziga. Register as a SERE Moto driver with your KYC details.">
+<meta name="description" content="Fungura konti ya SERE Moto n'imeyili cyangwa Google, uzuzemo amazina, indangamuntu, telefone, TIN, uruhushya rw'ubucuruzi na plaque. Register as a SERE Moto driver with email or Google, then complete your KYC details.">
 <meta name="theme-color" content="#1e3a8a">
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23d97706'/><circle cx='10' cy='22' r='4' fill='white'/><circle cx='23' cy='22' r='4' fill='white'/><path d='M10 22l4-8h6l3 8' stroke='white' stroke-width='2.5' fill='none'/></svg>">
@@ -50,16 +50,45 @@
           <span data-i18n="su.eyebrow">Iyandikishe kwa motari</span>
         </span>
         <h1 class="title" data-i18n="su.title">Fungura konti</h1>
+        <p class="lede" id="stepLede" data-i18n="su.lede">Imeyili n'ijambo ry'ibanga, hanyuma wuzuze impapuro.</p>
       </div>
 
-      <div class="steps-hd" id="stepHd">
-        <i id="hdStep1" class="on"><span class="n">1</span><span data-i18n="su.step1">Amakuru</span></i>
-        <span class="bar" aria-hidden="true"></span>
-        <i id="hdStep2"><span class="n">2</span><span data-i18n="su.step2">Emeza telefone</span></i>
+      <!-- step 1 — the account is an email and a password (or Google) -->
+      <div class="step" id="stAccount">
+        <form id="frmAccount" novalidate autocomplete="on">
+          <div class="field" id="fldEmail">
+            <label for="inEmail" data-i18n="su.email">Imeyili</label>
+            <input id="inEmail" name="email" type="email" inputmode="email" autocomplete="username"
+                   autocapitalize="none" spellcheck="false" maxlength="120">
+            <p class="err" id="errEmail" hidden aria-live="polite"></p>
+          </div>
+          <div class="field" id="fldPass">
+            <label for="inPass" data-i18n="su.password">Ijambo ry'ibanga</label>
+            <input id="inPass" name="password" type="password" autocomplete="new-password" maxlength="80">
+            <p class="err" id="errPass" hidden aria-live="polite"></p>
+            <p class="hint" id="passHint" data-i18n="su.passHint">Nibura inyuguti 8.</p>
+          </div>
+          <button class="btn btn-p btn-block" id="btnAccount" type="submit">
+            <span data-i18n="su.continue">Komeza</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="M12 5.5 18.5 12 12 18.5"/></svg>
+          </button>
+        </form>
+        <p class="msg msg-err" id="acctMsg" hidden role="alert"></p>
+
+        <div class="google" id="googleBox" hidden>
+          <p class="sep" data-i18n="lg.or">cyangwa</p>
+          <div class="gsi-slot" id="gsiSlot"></div>
+        </div>
+
+        <p class="foot">
+          <span data-i18n="su.hasAccount">Ufite konti?</span>
+          <a class="link" href="/login" data-i18n="c.navLogin">Injira</a>
+        </p>
       </div>
 
-      <!-- step 1 — KYC details -->
-      <div class="step" id="stForm">
+      <!-- step 2 — the application itself: names, ID, TIN, licence, plate, phone -->
+      <div class="step" id="stForm" hidden>
+        <p class="msg msg-info" id="googleNote" hidden><span data-i18n="su.googleNote">Konti ya Google izahuza na iyi application.</span></p>
         <form id="frmSignup" novalidate autocomplete="on">
           <div class="field" id="fldNames">
             <label for="inNames" data-i18n="su.names">Amazina</label>
@@ -83,6 +112,19 @@
           </div>
           <p class="hint" id="kycHint" hidden data-i18n="su.kycHint">TIN isuzumwa kwa RRA, indangamuntu isiuzwe kwa NIDA.</p>
 
+          <div class="field" id="fldLic" hidden>
+            <span class="lbl" data-i18n="su.licence">Uruhushya rw'ubucuruzi (PDF)</span>
+            <p class="filerow">
+              <button class="btn btn-ghost btn-s" type="button" id="btnLic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 19h16"/></svg>
+                <span data-i18n="su.licencePick">Hitamo dosiye</span>
+              </button>
+              <span class="grow" id="licName" data-i18n="su.licenceNone">Nta dosiye</span>
+            </p>
+            <input id="inLic" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" hidden>
+            <p class="kycline" id="licState" hidden aria-live="polite"></p>
+          </div>
+
           <div class="field" id="fldPlate">
             <label for="inPlate" data-i18n="su.plate">Plaque</label>
             <input id="inPlate" name="plate" type="text" autocomplete="off" autocapitalize="characters" maxlength="11">
@@ -93,68 +135,29 @@
             <label for="inPhone" data-i18n="su.phone">Telefone</label>
             <input id="inPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="14">
             <p class="err" id="ePhone" hidden aria-live="polite"></p>
-            <p class="hint" id="codeLine" hidden data-i18n="su.needCode">Banza wemeze telefone yawe.</p>
-            <p class="okline" id="verifiedLine" hidden>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
-              <span class="grow" id="verifiedTxt">Telefone yemejwe</span>
-              <button class="mini" type="button" id="btnEditPhone" data-i18n="su.reverify">Hindura</button>
-            </p>
           </div>
 
           <div class="field" id="fldType">
             <span class="lbl" id="typeLbl" data-i18n="su.type">Ubwoko bw'ikinyabiziga</span>
-            <div class="seg" id="segType" role="group" aria-labelledby="typeLbl">
-              <button type="button" data-value="moto" aria-pressed="true">
-                <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="22" r="4.2"/><circle cx="23" cy="22" r="4.2"/><path d="M9 22l4-8h6l3 8"/><path d="M13 14h7"/></svg>
-                <span data-i18n="su.moto">Moto</span>
-              </button>
-              <button type="button" data-value="car" aria-pressed="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 14.5h18"/><path d="M4.5 14.5 6.5 9h11l2 5.5"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>
-                <span data-i18n="su.car">Imodoka/Taksi</span>
-              </button>
+            <div class="choice" id="segType" role="radiogroup" aria-labelledby="typeLbl">
+              <label class="choice-opt on">
+                <input class="choice-dot" type="radio" name="vtype" value="moto" checked>
+                <span class="choice-name" data-i18n="su.moto">Moto</span>
+              </label>
+              <label class="choice-opt">
+                <input class="choice-dot" type="radio" name="vtype" value="car">
+                <span class="choice-name" data-i18n="su.car">Imodoka/Taksi</span>
+              </label>
             </div>
-            <p class="msg msg-info" id="googleNote" hidden><span data-i18n="su.googleNote">Konti ya Google izahuza na application iyitwe.</span></p>
           </div>
         </form>
 
         <div class="actions">
-          <button class="btn btn-ghost" type="button" id="btnCode">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a10 10 0 0 0 4.5 4.5l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z"/></svg>
-            <span data-i18n="su.sendCode">Ohereza code kuri telefone</span>
-          </button>
-          <button class="btn btn-p" type="button" id="btnSubmit" hidden>
+          <button class="btn btn-p" type="button" id="btnSubmit">
             <span data-i18n="su.submit">Ohereza application</span>
           </button>
         </div>
         <p class="msg msg-err" id="formMsg" hidden role="alert"></p>
-
-        <p class="foot">
-          <span data-i18n="su.hasAccount">Ufamye konti?</span>
-          <a class="link" href="/login" data-i18n="c.navLogin">Injira</a>
-        </p>
-      </div>
-
-      <!-- step 2 — verify the phone -->
-      <div class="step" id="stCode" hidden>
-        <p class="okline">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a10 10 0 0 0 4.5 4.5l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z"/></svg>
-          <span class="grow" id="codeTo">Twohereje code kuri 0788123456</span>
-          <button class="mini" type="button" id="btnBackForm" data-i18n="su.back">Subiza inyuma</button>
-        </p>
-
-        <div class="field">
-          <span class="lbl" data-i18n="lg.code">Code y'emeza</span>
-          <div id="otpHost"></div>
-          <div class="otp-meta">
-            <button class="mini" type="button" id="btnResend" data-i18n="lg.resend">Ongera wohereze</button>
-            <span class="countdown" id="resendTxt" aria-live="polite"></span>
-          </div>
-        </div>
-
-        <button class="btn btn-p btn-block" type="button" id="btnVerify">
-          <span data-i18n="lg.verify">Emeza code</span>
-        </button>
-        <p class="msg msg-err" id="codeMsg" hidden role="alert"></p>
       </div>
 
       <!-- state — submitted (celebration, no redirect) -->
@@ -172,7 +175,6 @@
         <p class="note" id="doneNote">Ushobora kugenzura status yawe nyuma.</p>
         <div class="actions">
           <a class="btn btn-p" id="linkLogin" href="/login"><span data-i18n="su.toLogin">Injira kuri konti</span></a>
-          <a class="btn btn-quiet" href="/signup"><span data-i18n="su.again">Fungura indi konti</span></a>
         </div>
       </div>
     </section>

@@ -47,7 +47,7 @@
             <span data-i18n="ps.eyebrow">Konti yawe</span>
           </span>
           <h1 class="title" data-i18n="ps.title">Ibyawe</h1>
-          <p class="lede" data-i18n="ps.lede">Andika numero wahakiriyeho — tukwoherereze code. Nta password.</p>
+          <p class="lede" data-i18n="ps.lede">Andika numero wahakiriyeho. Nta password.</p>
         </div>
         <div class="tools">
           <button class="btn btn-quiet btn-s" type="button" id="btnRefresh" hidden>
@@ -61,18 +61,12 @@
         </div>
       </div>
 
-      <!-- not signed in: phone + the same 6-digit code riders use -->
+      <!-- not signed in: the phone number is the whole credential -->
       <div id="signIn" hidden>
-        <div class="steps-hd" id="stepHd">
-          <i id="hdStep1" class="on"><span class="n">1</span><span data-i18n="lg.step1">Telefone</span></i>
-          <span class="bar" aria-hidden="true"></span>
-          <i id="hdStep2"><span class="n">2</span><span data-i18n="lg.step2">Emeza</span></i>
-        </div>
-
         <div class="step" id="stPhone">
           <form id="frmPhone" novalidate autocomplete="on">
             <div class="field" id="fldPhone">
-              <label for="inPhone" data-i18n="lg.phone">Telefone</label>
+              <label for="inPhone" data-i18n="ps.phone">Telefone</label>
               <input id="inPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national"
                      maxlength="14">
               <p class="err" id="errPhone" hidden aria-live="polite"></p>
@@ -84,34 +78,11 @@
               <p class="err" id="errNames" hidden aria-live="polite"></p>
             </div>
             <button class="btn btn-p btn-block" id="btnSend" type="submit">
-              <span data-i18n="lg.send">Ohereza code</span>
+              <span data-i18n="lg.enter">Injira</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="M12 5.5 18.5 12 12 18.5"/></svg>
             </button>
           </form>
           <p class="msg msg-err" id="sendMsg" hidden role="alert"></p>
-        </div>
-
-        <div class="step" id="stCode" hidden>
-          <p class="okline">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a10 10 0 0 0 4.5 4.5l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z"/></svg>
-            <span class="grow" id="codeTo">Twohereje code kuri 0788123456</span>
-            <button class="mini" type="button" id="btnBack" data-i18n="lg.change">Hindura numero</button>
-          </p>
-
-          <div class="field">
-            <span class="lbl" data-i18n="lg.code">Code y'emeza</span>
-            <div id="otpHost"></div>
-            <p class="hint" id="codeHint">Imibare 6. Code irangira nyuma y'iminota 5.</p>
-            <div class="otp-meta">
-              <button class="mini" type="button" id="btnResend" data-i18n="lg.resend">Ongera wohereze</button>
-              <span class="countdown" id="resendTxt" aria-live="polite"></span>
-            </div>
-          </div>
-
-          <button class="btn btn-p btn-block" id="btnVerify" type="button">
-            <span data-i18n="lg.verify">Emeza code</span>
-          </button>
-          <p class="msg msg-err" id="codeErr" hidden role="alert"></p>
         </div>
       </div>
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SEREMOTO — Injira / Log in</title>
-<meta name="description" content="Injira kuri konti ya motari wa SERE Moto ukoresheje code ya telefone. Log in to your SERE Moto driver account with a phone code.">
+<meta name="description" content="Injira kuri konti ya motari wa SERE Moto ukoresheje imeyili n'ijambo ry'ibanga, cyangwa Google. Log in to your SERE Moto driver account with email, password or Google.">
 <meta name="theme-color" content="#1e3a8a">
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23d97706'/><circle cx='10' cy='22' r='4' fill='white'/><circle cx='23' cy='22' r='4' fill='white'/><path d='M10 22l4-8h6l3 8' stroke='white' stroke-width='2.5' fill='none'/></svg>">
@@ -52,28 +52,27 @@
           <span data-i18n="lg.eyebrow">Injira ya motari</span>
         </span>
         <h1 class="title" data-i18n="lg.title">Injira kuri konti</h1>
-        <p class="lede" data-i18n="lg.lede">Dohora telefone yawe, twandikire code y'imibare 6.</p>
+        <p class="lede" data-i18n="lg.lede">Andika imeyili n'ijambo ry'ibanga.</p>
       </div>
 
-      <p class="msg msg-info" id="alreadyIn" hidden aria-live="polite"><span data-i18n="lg.alreadyIn">Urafiye konti? Injira ukoresheje /.</span></p>
+      <p class="msg msg-info" id="alreadyIn" hidden aria-live="polite"><span data-i18n="lg.alreadyIn">Uramaze kwinjira. Fungura ikibaho cy'umumotari cyangwa inzira zawe.</span></p>
 
-      <div class="steps-hd" id="stepHd">
-        <i id="hdStep1" class="on"><span class="n">1</span><span data-i18n="lg.step1">Telefone</span></i>
-        <span class="bar" aria-hidden="true"></span>
-        <i id="hdStep2"><span class="n">2</span><span data-i18n="lg.step2">Emeza</span></i>
-      </div>
-
-      <!-- step 1 — phone -->
+      <!-- one step — the email and its password are the credential -->
       <div class="step" id="stPhone">
         <form id="frmPhone" novalidate autocomplete="on">
-          <div class="field" id="fldPhone">
-            <label for="inPhone" data-i18n="lg.phone">Telefone</label>
-            <input id="inPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national"
-                   maxlength="14">
-            <p class="err" id="errPhone" hidden aria-live="polite"></p>
+          <div class="field" id="fldEmail">
+            <label for="inEmail" data-i18n="lg.email">Imeyili</label>
+            <input id="inEmail" name="email" type="email" inputmode="email" autocomplete="username"
+                   autocapitalize="none" spellcheck="false" maxlength="120">
+            <p class="err" id="errEmail" hidden aria-live="polite"></p>
+          </div>
+          <div class="field" id="fldPass">
+            <label for="inPass" data-i18n="lg.password">Ijambo ry'ibanga</label>
+            <input id="inPass" name="password" type="password" autocomplete="current-password" maxlength="80">
+            <p class="err" id="errPass" hidden aria-live="polite"></p>
           </div>
           <button class="btn btn-p btn-block" id="btnSend" type="submit">
-            <span data-i18n="lg.send">Ohereza code</span>
+            <span data-i18n="lg.enter">Injira</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="M12 5.5 18.5 12 12 18.5"/></svg>
           </button>
         </form>
@@ -85,31 +84,7 @@
         </div>
       </div>
 
-      <!-- step 2 — OTP -->
-      <div class="step" id="stCode" hidden>
-        <p class="okline">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a10 10 0 0 0 4.5 4.5l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z"/></svg>
-          <span class="grow" id="codeTo">Twohereje code kuri 0788123456</span>
-          <button class="mini" type="button" id="btnBack" data-i18n="lg.change">Hindura numero</button>
-        </p>
-
-        <div class="field">
-          <span class="lbl" id="otpLbl" data-i18n="lg.code">Code y'emeza</span>
-          <div id="otpHost"></div>
-          <p class="hint" id="codeHint" data-i18n="lg.codeHint">Imibare 6. Code irangira nyuma y'iminota 5.</p>
-          <div class="otp-meta">
-            <button class="mini" type="button" id="btnResend" data-i18n="lg.resend">Ongera wohereze</button>
-            <span class="countdown" id="resendTxt" aria-live="polite"></span>
-          </div>
-        </div>
-
-        <button class="btn btn-p btn-block" id="btnVerify" type="button">
-          <span data-i18n="lg.verify">Emeza code</span>
-        </button>
-        <p class="msg msg-err" id="codeErr" hidden role="alert"></p>
-      </div>
-
-      <!-- state — approved -->
+      <!-- state — signed in and approved -->
       <div class="step" id="stOk" hidden>
         <div class="done">
           <svg class="tick" viewBox="0 0 80 80" aria-hidden="true">
@@ -122,34 +97,19 @@
         </div>
       </div>
 
-      <!-- state — waiting for admin approval (no token is stored) -->
+      <!-- state — application still with an admin (no token is kept unless it is a draft) -->
       <div class="step" id="stWait" hidden>
         <div class="panel-wait">
           <span class="dot" aria-hidden="true"></span>
           <div>
             <h3 id="waitTitle" data-i18n="lg.waitTitle">Tegereza emeza ya admin</h3>
             <p id="waitBody"></p>
-            <p class="hint" data-i18n="lg.waitNote">Gerageza kandi ukoresheje iyi numero igihe cyemejwe.</p>
+            <p class="hint" data-i18n="lg.waitNote">Gerageza kandi ukoresheje iyi imeyili igihe cyemejwe.</p>
           </div>
         </div>
         <div class="actions">
           <a class="btn btn-p" href="/"><span data-i18n="c.home">Ahabanza</span></a>
           <a class="btn btn-ghost" href="https://wa.me/250780000000" target="_blank" rel="noopener"><span data-i18n="c.footWa">Ubufasha kuri WhatsApp</span></a>
-        </div>
-      </div>
-
-      <!-- state — phone verified but no account yet -->
-      <div class="step" id="stNew" hidden>
-        <div class="msg msg-wait" id="newMsg">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.6h.01"/></svg>
-          <span>
-            <b data-i18n="lg.newTitle">Iyi numero ntabwo ifite konti</b><br>
-            <span id="newBody"></span>
-          </span>
-        </div>
-        <div class="actions">
-          <a class="btn btn-p" id="newLink" href="/signup"><span data-i18n="lg.newCta">Fungura konti</span></a>
-          <a class="btn btn-quiet" href="/"><span data-i18n="c.home">Ahabanza</span></a>
         </div>
       </div>
 

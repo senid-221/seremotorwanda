@@ -30,15 +30,6 @@ export const config = {
     productId: process.env.MOMO_PRODUCT_ID || '',
     callbackBase: process.env.MOMO_CALLBACK_BASE || '',
   },
-  sms: {
-    provider: (process.env.SMS_PROVIDER || 'generic').toLowerCase(),
-    url: process.env.SMS_PROVIDER_URL || '',
-    key: process.env.SMS_PROVIDER_KEY || '',
-    username: process.env.SMS_USERNAME || '',
-    sender: process.env.SMS_SENDER_ID || '',
-    accountSid: process.env.SMS_TWILIO_ACCOUNT_SID || '',
-    timeoutMs: num(process.env.SMS_TIMEOUT_MS, 10000),
-  },
   /* RRA taxpayer lookup. The base URL comes from the RRA API contract — it is not guessable. */
   rra: {
     baseUrl: (process.env.RRA_BASE_URL || '').replace(/\/+$/, ''),
@@ -68,9 +59,9 @@ export const config = {
     key: process.env.PHONE_CHECK_KEY || '',
     timeoutMs: num(process.env.PHONE_CHECK_TIMEOUT_MS, 10000),
   },
-  /* numverify (apilayer.com) checks a number against the international numbering plan: it says
-     whether +250 7x xxx xxxx is a real Rwandan mobile range at all, before an SMS credit goes out.
-     It is not an HLR probe, so a "valid" verdict never means somebody answered the phone.
+  /* numverify (apilayer.com) checks a number against the international numbering plan. Sign-in rests
+     on it now that no SMS code is sent at all, so an outage refuses the login rather than guessing.
+     It is not an HLR probe, so a "valid" verdict never means somebody holds that SIM.
      The key is served over two hosts — https://apilayer.net/api (the numverify plan-check host)
      and https://api.apilayer.com/number_verification (their gateway); the old
      api.apilayer.com/numverify route was withdrawn and answers 404. */
@@ -105,7 +96,10 @@ export const config = {
     signedUrlTtlSeconds: num(process.env.S3_SIGNED_URL_TTL_SECONDS, 300),
     maxUploadBytes: num(process.env.S3_MAX_UPLOAD_MB, 8) * 1024 * 1024,
   },
-  adminPhone: process.env.ADMIN_PHONE ? process.env.ADMIN_PHONE.replace(/[^0-9]/g, '') : '',
+  /* The console owner is recognised by email, because that is what a rider signs in with now. The
+     first account to claim this address becomes an admin — stored and compared lowercased, exactly
+     the way the signup form stores an address, so ADMIN_EMAIL=Anyone@Example.com still matches. */
+  adminEmail: (process.env.ADMIN_EMAIL || '').trim().toLowerCase(),
   /* RURA Board Decision 03/BD/RD-TRP/2021 as adjusted August 2022 — override only when RURA issues a new decision. */
   fare: {
     motorcycleFirstBandKm: num(process.env.FARE_MOTO_FIRST_KM, 2),
@@ -123,26 +117,7 @@ export const config = {
     timeoutMs: num(process.env.OSM_TIMEOUT_MS, 8000),
   },
   liveLocationSeconds: num(process.env.LIVE_LOCATION_SECONDS, 180),
-  /* Development only: when true, an OTP is returned in the API response so tools can sign in without SMS. */
-  otpEcho: process.env.OTP_ECHO === '1',
-  otp: {
-    ttlSeconds: num(process.env.OTP_TTL_SECONDS, 300),
-    maxAttempts: num(process.env.OTP_MAX_ATTEMPTS, 3),
-    resendSeconds: num(process.env.OTP_RESEND_SECONDS, 30),
-    maxPerHour: num(process.env.OTP_MAX_PER_HOUR, 8),
-  },
 };
-
-/* Delivery counts as configured only when the chosen provider has what its own API needs:
-   Africa's Talking wants a username, Twilio an account SID, anything else an explicit URL. */
-export const smsConfigured = () => {
-  if (!config.sms.key) return false;
-  if (config.sms.provider === 'africastalking') return Boolean(config.sms.username);
-  if (config.sms.provider === 'twilio') return Boolean(config.sms.accountSid || config.sms.username);
-  return Boolean(config.sms.url);
-};
-
-export const otpDevMode = () => !smsConfigured();
 
 export const storageConfigured = () => Boolean(
   config.storage.bucket && config.storage.accessKeyId && config.storage.secretAccessKey,
@@ -150,16 +125,7 @@ export const storageConfigured = () => Boolean(
 
 export const aiConfigured = () => Boolean(config.ai.apiKey);
 
-/* Names the vars the selected provider is actually missing, so the boot log cannot send an
-   Africa's Talking user off to configure a URL they never use. */
-function smsSetupHint() {
-  if (config.sms.provider === 'africastalking') return 'SMS_USERNAME + SMS_PROVIDER_KEY';
-  if (config.sms.provider === 'twilio') return 'SMS_TWILIO_ACCOUNT_SID + SMS_PROVIDER_KEY';
-  return 'SMS_PROVIDER_URL + SMS_PROVIDER_KEY';
-}
-
 export const kycHealth = () => ({
-  smsProvider: otpDevMode() ? 'none' : config.sms.provider,
   rra: Boolean(config.rra.baseUrl && (config.rra.apiKey || (config.rra.username && config.rra.password))),
   idProvider: config.idCheck.url ? (config.idCheck.provider || 'generic') : null,
   phoneCheck: config.numverify.key ? 'numverify'
@@ -172,16 +138,14 @@ export const missingConfig = () => {
   if (config.jwtSecret.length < 32) problems.push('JWT_SECRET (>=32 chars)');
   if (!config.paystack.secretKey) problems.push('PAYSTACK_SECRET_KEY');
   if (!config.momo.userId) problems.push('MOMO_USER_ID');
-  if (otpDevMode()) problems.push(`${smsSetupHint()} (OTP codes are only printed to the server console)`);
-  if (config.otpEcho) problems.push('OTP_ECHO=1 (codes are returned in the API response — remove it before going live)');
   if (!config.rra.baseUrl) problems.push('RRA_BASE_URL + RRA_API_KEY (TIN numbers are format-checked only, never looked up at RRA)');
   if (!config.idCheck.url) problems.push('ID_CHECK_URL + ID_CHECK_KEY (national ID numbers are format-checked only, never matched against NIDA)');
   if (!config.numverify.key && !config.phoneCheck.url) {
-    problems.push('NUMVERIFY_ACCESS_KEY (Rwandan phone numbers are format-checked only, never looked up)');
+    problems.push('NUMVERIFY_ACCESS_KEY (passengers cannot sign in and a rider phone cannot be screened)');
   }
   if (!config.google.clientId) problems.push('GOOGLE_CLIENT_ID (Google sign-in returns 503)');
   if (!aiConfigured()) problems.push('AI_API_KEY (the booking interview keeps its scripted questions and answers none)');
-  if (!config.adminPhone) problems.push('ADMIN_PHONE (no account can become an admin)');
+  if (!config.adminEmail) problems.push('ADMIN_EMAIL (no account can become an admin)');
   if (!storageConfigured()) problems.push('S3_BUCKET + S3_ACCESS_KEY_ID + S3_SECRET_ACCESS_KEY (rider documents cannot be uploaded)');
   return problems;
 };

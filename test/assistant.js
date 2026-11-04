@@ -80,8 +80,9 @@ const openai = await startFakeOpenai();
 const env = scratchEnv(pgInstance, {
   PORT: String(PORT),
   HOST: '127.0.0.1',
-  ADMIN_PHONE: phoneFor(90),
-  OTP_RESEND_SECONDS: '1',
+  /* The address is set so this scratch server cannot inherit the real console owner from .env; nobody
+     in this suite signs up, and the rider below is written straight into the table as a fixture. */
+  ADMIN_EMAIL: `admin.${tag}@example.com`,
   AI_BASE_URL: openai.base,
   AI_API_KEY: AI_TEST_KEY,
   AI_MODEL: 'gpt-4o-suite',
@@ -89,6 +90,8 @@ const env = scratchEnv(pgInstance, {
 
 await runSeed(env);
 const db = new pg.Pool({ connectionString: pgInstance.url, ssl: false, max: 1 });
+/* One rider parked 300 m from the test point. Written here rather than walked through the signup road
+   because this suite is about what the model is shown, and the signup road is proved elsewhere. */
 await db.query(
   `INSERT INTO drivers (phone, name, plate, vehicle_type, zone, status, is_online, on_trip, lat, lng, loc_at)
    VALUES ($1, 'Jean Bosco', $2, 'moto', 'Kigali', 'approved', 1, 0, $3, $4, datetime('now'))`,

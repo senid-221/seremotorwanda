@@ -479,7 +479,8 @@
     for (var i = 0; i < data.documents.length; i++) {
       var doc = data.documents[i];
       var label = doc.kind === 'national_id' ? t('rd.docNationalId')
-        : doc.kind === 'driving_licence' ? t('rd.docLicence') : t('rd.docPlate');
+        : doc.kind === 'driving_licence' ? t('rd.docLicence')
+          : doc.kind === 'trading_licence' ? t('rd.docTrading') : t('rd.docPlate');
       var ready = doc.status === 'uploaded' && doc.url;
       html += '<a class="btn btn-ghost btn-s" href="' + esc(ready ? doc.url : '#') + '"'
         + (ready ? ' target="_blank" rel="noopener"' : ' aria-disabled="true"')

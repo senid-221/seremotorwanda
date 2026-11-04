@@ -144,15 +144,16 @@ input:disabled,select:disabled,textarea:disabled{background:#eef2f7;color:var(--
 input[type="tel"],input.num{letter-spacing:.02em}
 .field.bad input,.field.bad select{border-color:var(--danger);background:#fff5f5}
 .field.good input{border-color:var(--brand-2)}
-/* The KYC form stacks six boxes on one screen, so it reads as a wall of slabs at the default size.
+/* The rider form stacks six boxes on one screen, so it reads as a wall of slabs at the default size.
    Phones keep 16px type below — anything smaller makes iOS Safari zoom the field on focus. */
-#frmSignup input,#frmSignup select{font-size:15px;line-height:1.3;padding:7px 10px;border-radius:9px}
-/* Same compaction for the two controls sitting under the fields: the vehicle picker and the row that
-   sends the code. #btnSubmit is included so the pair in .actions never ends up two different heights. */
-#segType button{min-height:36px;padding:7px 8px;font-size:13.5px}
-#segType button svg{width:16px;height:16px}
-#btnCode,#btnSubmit{min-height:36px;padding:7px 12px;font-size:13.5px;gap:6px}
-#btnCode svg,#btnSubmit svg{width:15px;height:15px}
+#frmSignup input,#frmSignup select,#frmAccount input{font-size:15px;line-height:1.3;padding:7px 10px;border-radius:9px}
+/* Same compaction for the controls sitting under the fields: the vehicle rows and the buttons that
+   submit each step. Every button in a step shares one height so the pair never looks misaligned. */
+.choice{border-top:1px solid var(--line)}
+.choice-opt{min-height:38px;padding:6px 8px;font-size:13.5px}
+.choice-opt svg{width:16px;height:16px}
+#btnAccount,#btnSubmit,#btnSend{min-height:36px;padding:7px 12px;font-size:13.5px;gap:6px}
+#btnAccount svg,#btnSubmit svg,#btnSend svg{width:15px;height:15px}
 .hint{font-size:12.5px;color:var(--ink-soft);margin-top:5px}
 .err{display:flex;align-items:flex-start;gap:5px;font-size:12.5px;font-weight:600;color:var(--danger);margin-top:5px}
 .err svg{width:13px;height:13px;flex:none;margin-top:2px}
@@ -214,24 +215,20 @@ input[type="tel"],input.num{letter-spacing:.02em}
 .seg button:hover:not([aria-pressed="true"]){background:#e8eefb;color:var(--navy)}
 .seg button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 
-/* -------------------------------------------------------------------- OTP */
-.otp{display:flex;gap:7px;align-items:flex-start;min-width:0}
-.otp input{flex:1 1 0;min-width:0;max-width:56px;width:auto;height:54px;padding:0;text-align:center;
-  font-family:var(--display);font-size:22px;font-weight:700;color:var(--navy);letter-spacing:0;background:#fff;
-  border:1px solid var(--line);border-radius:11px}
-.otp input:focus{outline:3px solid var(--focus);outline-offset:1px;border-color:var(--navy-3);box-shadow:0 0 0 4px var(--ring)}
-.otp input.filled{border-color:var(--navy-3);background:#f5f8ff;animation:pop .22s cubic-bezier(.2,.9,.3,1.3) both}
-.otp.bad{animation:shake .38s cubic-bezier(.36,.07,.19,.97) both}
-.otp.bad input{border-color:var(--danger);background:#fff5f5}
-@keyframes pop{from{transform:scale(.9)}60%{transform:scale(1.06)}to{transform:scale(1)}}
-@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}
-  30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
-.otp-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--ink-soft);min-width:0}
-.countdown{font-variant-numeric:tabular-nums;font-weight:700;color:var(--label)}
-@media (max-width:359px){
-  .otp{gap:5px}
-  .otp input{height:48px;font-size:19px;border-radius:9px}
-}
+/* A/B choice rows — the same language the booking interview uses: a hairline between options, a real
+   radio at the left, never a filled button. Two choices must read as a list, not as two CTAs. */
+.choice{border-top:1px solid var(--line-2)}
+.choice-opt{display:flex;align-items:center;gap:10px;min-height:46px;padding:8px 4px;
+  border-bottom:1px solid var(--line-2);color:var(--ink);font-size:16px;font-weight:700;line-height:1.25;
+  text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.choice-opt:last-child{border-bottom:0}
+.choice-opt:hover{background:#f5f8ff}
+.choice-opt.on{background:#eff6ff;color:var(--navy)}
+.choice-dot{flex:none;width:19px;height:19px;min-height:19px;padding:0;border:0;border-radius:50%;
+  accent-color:var(--navy);background:#fff;cursor:pointer}
+.choice-dot:focus{outline:0}
+.choice-opt:focus-within{outline:3px solid #bfdbfe;outline-offset:2px}
+.choice-name{text-transform:uppercase;letter-spacing:.2px}
 
 /* --------------------------------------------------------------- statuses */
 .msg{border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;margin-top:14px;min-width:0;
@@ -292,17 +289,6 @@ input[type="tel"],input.num{letter-spacing:.02em}
 .note{margin-top:16px;background:var(--slab-2);border:1px solid var(--line-2);border-radius:10px;padding:11px 12px;
   font-size:13px;color:var(--ink-soft);text-align:left;min-width:0}
 .note b{color:var(--ink)}
-
-/* ------------------------------------------------------------------- steps */
-.steps-hd{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:11.5px;font-weight:800;
-  letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);flex-wrap:wrap}
-.steps-hd i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
-.steps-hd .n{width:18px;height:18px;border-radius:50%;background:var(--line-2);color:var(--ink);font-size:10.5px;
-  display:flex;align-items:center;justify-content:center;font-weight:800}
-.steps-hd .on .n{background:var(--navy);color:#fff}
-.steps-hd .on{color:var(--navy)}
-.steps-hd .ok .n{background:var(--brand-2);color:#fff}
-.steps-hd .bar{flex:1 1 14px;height:1px;background:var(--line-2);min-width:12px}
 
 /* divider with "or" */
 .sep{display:flex;align-items:center;gap:10px;margin:18px 0 14px;font-size:11.5px;font-weight:700;
@@ -491,22 +477,21 @@ input[type="tel"],input.num{letter-spacing:.02em}
   .hd .title{min-height:26px}
   .lede{font-size:13.5px;margin-top:6px}
   .hd .lede{min-height:40px}
-  .steps-hd{margin-bottom:10px;gap:6px}
   .field{margin-bottom:11px}
   .field > label,.lbl{margin-bottom:4px;font-size:11.5px}
   input,select,textarea{padding:9px 11px}
-  #frmSignup input,#frmSignup select{font-size:16px;padding:6px 10px}
+  #frmSignup input,#frmSignup select,#frmAccount input{font-size:16px;padding:6px 10px}
   .hint{font-size:12px;margin-top:4px;line-height:1.35}
   .err{font-size:12px;margin-top:4px}
   .seg{padding:3px}
   .seg button{min-height:40px;padding:8px 4px;font-size:14px}
+  .choice-opt{min-height:38px;padding:6px 4px;font-size:13px}
+  .choice-opt svg{width:15px;height:15px}
   .btn{padding:11px 12px;min-height:44px;font-size:14.5px}
   .btn.btn-s{min-height:32px;padding:5px 10px;font-size:12px}
   .btn.btn-s svg{width:14px;height:14px}
-  #segType button{min-height:34px;padding:6px 4px;font-size:13px}
-  #segType button svg{width:15px;height:15px}
-  #btnCode,#btnSubmit{min-height:34px;padding:6px 10px;font-size:13px}
-  #btnCode svg,#btnSubmit svg{width:14px;height:14px}
+  #btnAccount,#btnSubmit,#btnSend{min-height:34px;padding:6px 10px;font-size:13px}
+  #btnAccount svg,#btnSubmit svg,#btnSend svg{width:14px;height:14px}
   .actions{margin-top:12px;gap:7px}
   .foot{margin-top:12px;padding-top:11px;grid-template-columns:minmax(0,1fr) 116px}
   .foot > a{width:116px}
@@ -700,6 +685,16 @@ input[type="tel"],input.num{letter-spacing:.02em}
 @media (max-width:430px){
   .docrow{flex-wrap:wrap}
   .docrow .btn{flex:1 1 auto}
+}
+
+/* the trading licence the rider attaches inside the details form: one row, one file button */
+.filerow{display:flex;align-items:center;gap:9px;border:1px solid var(--line-2);border-radius:10px;
+  background:var(--slab-2);padding:7px 9px;min-width:0}
+.filerow .grow{flex:1 1 90px;min-width:0;font-size:13px;font-weight:600;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filerow .btn{flex:0 0 auto}
+@media (max-width:430px){
+  .filerow .btn{flex:1 1 auto}
 }
 
 /* admin application documents: the links live for a few minutes, so they are opened on demand */

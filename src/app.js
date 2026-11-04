@@ -46,7 +46,7 @@ app.get('/api/health', async (_req, res) => {
     assistant: assistantHealth(),
     divisions: divisionHealth(),
     storage: storageHealth(),
-    adminConfigured: Boolean(config.adminPhone),
+    adminConfigured: Boolean(config.adminEmail),
     commissionPercent: config.commissionPercent,
   });
 });

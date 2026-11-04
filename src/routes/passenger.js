@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { all, get, run } from '../db.js';
 import { requirePassenger, signToken } from '../auth.js';
-import { consumeOtp } from '../otp.js';
+import { assertVerifyBudget, requireRealPhone } from '../kyc.js';
 import { shapePayment } from './payments.js';
 import {
-  ApiError, integerInRange, normalizeRwandaPhone, numberInRange, otpCode, text,
+  ApiError, integerInRange, normalizeRwandaPhone, numberInRange, text,
 } from '../validate.js';
 
 const router = Router();
@@ -81,10 +81,11 @@ const ownTrip = async (passengerId, id) => {
   return row;
 };
 
-/* Phone + the same 6-digit code riders already use: no password, no KYC, nothing to remember. */
+/* A number the numbering plan recognises is the whole sign-in: no password, no code, nothing to remember. */
 router.post('/api/passenger/auth/verify', async (req, res) => {
   const phone = normalizeRwandaPhone(req.body.phone);
-  await consumeOtp(phone, otpCode(req.body.code));
+  assertVerifyBudget(phone, req.ip);
+  await requireRealPhone(phone);
 
   const name = req.body.name ? text(req.body.name, 'name', { max: 80 }) : null;
   const row = await get('SELECT * FROM passengers WHERE phone = ?', phone);

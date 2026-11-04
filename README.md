@@ -17,58 +17,84 @@ divisions — Intara, Akarere, Umurenge, Akagari and Umudugudu. The booking page
 a time and the dashboards use cascading dropdowns, so a search for Gasabo and a fix posted in neighbouring
 Kimisagara reach the same rider.
 
-Real backend, not a prototype: Express + Neon Postgres (`pg`), passwordless OTP login, RSA-verified
-Google sign-in, admin-reviewed applications, rider documents in an S3-compatible bucket, and live provider
-calls. Every business rule is enforced server-side, so the API rejects bad data even if the UI is bypassed.
-There are no passwords to leak and no mocked responses anywhere in the code.
+Real backend, not a prototype: Express + Neon Postgres (`pg`), email + password and Google sign-in for
+drivers, one-tap phone sign-in for passengers, RSA-verified Google ID tokens, admin-reviewed applications,
+rider documents in an S3-compatible bucket, and live provider calls. Every business rule is enforced
+server-side, so the API rejects bad data even if the UI is bypassed. There are no mocked responses anywhere
+in the code, and a password is never stored in the clear — `src/auth.js` hashes it with scrypt
+(N=16384, r=8, p=1) and the stored string carries its own salt and parameters.
 
 ## Requirements
 
 * Node.js 22.5 or newer (24 is what it is developed and deployed on). The only database is a Postgres
   server — a Neon `postgresql://` URL in `DATABASE_URL`. There is no bundled/local-file fallback and no
   Prisma/`generate` step.
-* An S3-compatible bucket (AWS S3, Cloudflare R2, Backblaze B2, MinIO) for rider documents. Optional: with
-  no `S3_*` keys the app still runs and the upload endpoints answer `503 storage_not_configured`.
+* An S3-compatible bucket (AWS S3, Cloudflare R2, Backblaze B2, MinIO) for rider documents. With no `S3_*`
+  keys the app still runs and the upload endpoints answer `503 storage_not_configured` — but the details form
+  needs an uploaded trading licence, so no new application can be filed until the bucket is set.
 * Nothing else. Runtime dependencies are Express, dotenv, `pg`, and the AWS SDK S3 client + presigner.
 
 ## How signing in works
 
-There is no password. A driver proves a phone number, then proves identity through a SERE Moto admin:
+**Drivers — an account, then the paperwork.** A phone number is no longer a driver credential; it is one of
+the fields an application is screened on. Signup is deliberately two calls, so a rider can start on a slow
+connection, lose it, and finish without losing the account.
 
-1. **Phone → OTP.** `POST /api/auth/otp/send` first screens the digits with the phone provider (see
-   *Rider credential checks*), so a number that cannot exist is refused with `422 phone_invalid` before any
-   SMS credit is spent; then it stores a hash of a 6-digit code with a TTL, an attempt cap, a
-   resend cooldown and an hourly cap. `POST /api/auth/otp/verify` returns a 15-minute `verify_token` bound
-   to that exact number — proof the number is in the user's hand, nothing more.
-2. **Known number** → the session token is returned immediately with the driver's `status`.
-   **Unknown number** → `{ status: "new", verifyToken }` and the UI offers `/signup`.
-3. **Sign up** (`POST /api/auth/signup`) requires that `verify_token` plus names, ID number, TIN and plate.
-   The digit laws in `src/validate.js` are hard rules — a phone is exactly **10 digits** (`07` + 8 others), a
-   national ID exactly **16**, a TIN exactly **9** — and `GET /api/config` publishes the same numbers, so the
-   form can never drift away from the API. Anything else is refused before a row is written: `invalid_phone`,
-   `invalid_id_number`, `invalid_tin_number`. An accepted application is written with `status = 'pending'`
-   and the applicant is told to wait — nothing is usable yet.
-4. **The registers answer for themselves.** When RRA / NIDA / phone-check credentials are configured, the
-   application also stores what each service actually said — `pass`, `fail`, `unavailable` or `unchecked`,
-   visible as three pills on the admin queue. A TIN or ID the register does not recognise is a hard `422`, not
-   a warning; a register that could not be reached is never recorded as a pass. See
-   *Rider credential checks* below.
-5. **Admin approval** (`/admin`, `POST /api/admin/applications/:id/decision`). An admin checks the ID, TIN
-   and plate, then approves or rejects with a reason. Approval can also fill in zone, services and
-   price-per-km inline if the rider has not set them yet. A single pill can be re-checked with
-   `POST /api/admin/applications/:id/verify` once the credentials are in place.
-6. **Pending and rejected accounts hold a token but get nothing.** The API answers `403 account_pending` on
-   the driver dashboard, `409 driver_unavailable` if a client tries to book them, and they never appear in
-   `GET /api/drivers`. A rejected number verifies its OTP and gets back `{ status: "rejected", reason }`
-   with no session token at all, so the login page can show the admin's reason. Rejected accounts cannot be
-   approved silently — an admin decision on them returns `409 already_reviewed`.
-7. **Google** works the same way: the ID token from Google Identity Services is verified against Google's
-   JWKS (RS256 signature plus `iss`/`aud`/`exp`) server-side, and the verified e-mail's address is looked
-   up as a Rwandan number. Google never bypasses the approval gate — a first-time Google user still gets
-   `status: "new"` and goes through signup.
+1. **An account** — `POST /api/auth/signup` with `{ email, password }`. The address is trimmed and lowercased
+   before it is stored, so `John@Example.com` and `john@example.com` are one account, not two. A password is
+   at least `PASSWORD_MIN` (8) characters. The response is `201 { status: "draft", token }` — a real session,
+   and the only thing it can open is the paperwork.
+   The **Google button** is the other door: `POST /api/auth/google` verifies the ID token from Google Identity
+   Services against Google's JWKS (RS256 signature plus `iss`/`aud`/`exp`), then either hands back a session or,
+   for a Google-verified address nobody holds yet, `{ status: "new", googleToken }`. Signup accepts that value
+   as `google_token` and opens the account with no password at all. Without `GOOGLE_CLIENT_ID` the endpoint
+   answers `503 google_not_configured`.
+2. **Logging in** — `POST /api/auth/login` with the same email and password. An unknown address and a wrong
+   password get one answer (`401 invalid_credentials`), because a form that distinguishes them is a list of who
+   has an account here. An account opened with Google has no password to type, so it answers
+   `403 google_account_only` and the page sends the rider back to the button. Failed attempts are budgeted —
+   10 per address and 60 per IP per hour, then `429 login_rate_limited`; a successful login spends nothing.
+3. **The details form** — `POST /api/auth/details` carries **names, national ID, phone, TIN, plate and vehicle
+   type**. The digit laws in `src/validate.js` are hard rules — a phone is exactly **10 digits** (`07` + 8
+   others), a national ID exactly **16**, a TIN exactly **9** — and `GET /api/config` publishes the same
+   numbers, so the form can never drift away from the API. Anything else is refused before a row is written:
+   `invalid_names`, `invalid_phone`, `invalid_id_number`, `invalid_tin_number`, `invalid_plate`.
+4. **The licence is a document, not a number.** The trading licence goes to the bucket the same way the ID and
+   plate photos do: `POST /api/drivers/me/documents/trading_licence/upload-url` returns a short-lived presigned
+   `PUT`, the browser puts the PDF at it, and `POST …/complete` confirms the object is really there before the
+   row is marked `uploaded`. While the bucket is configured, an application without an uploaded licence is
+   refused: `422 licence_required`.
+5. **The registers answer for themselves.** The details form runs `gateSignup`, which screens the phone against
+   numverify, the TIN against RRA and the ID against NIDA. When a register is configured, what it actually said
+   is stored with the application — `pass`, `fail`, `unavailable` or `unchecked`, visible as three pills on the
+   admin queue. A TIN or ID the register does not recognise is a hard `422` (`tin_not_found`, `id_not_found`,
+   `id_name_mismatch`, `phone_invalid`), not a warning; a register that could not be reached is recorded as
+   `unavailable` and never as a pass. See *Rider credential checks* below.
+6. **Filed, then waited on.** A complete application becomes `status = 'pending'`. A draft or pending session
+   is refused by the booking surfaces (`403 account_pending`), a passenger cannot book it
+   (`409 driver_unavailable`) and it never appears in `GET /api/drivers`. Filing twice is refused
+   (`409 details_already_filed`). A rejected account logs in and gets back `{ status: "rejected", reason }`
+   with no session token at all, so the login page can show the admin's reason; an admin decision on it returns
+   `409 already_reviewed`.
+7. **Admin approval** (`/admin`, `POST /api/admin/applications/:id/decision`). An admin reads the KYC pills,
+   opens the uploaded documents with a signed link, then approves or rejects with a reason. Approval can also
+   fill in zone, services and price-per-km inline if the rider has not set them yet.
+8. **Passengers are unchanged.** One-tap: `POST /api/passenger/auth/verify` normalises the digits to
+   `07xxxxxxxx`, screens them with numverify and mints the session in the same call — no password, no account
+   to create, and no approval needed to search or book. That door is also open to guests, who book with a name
+   and a number and claim those trips the first time they verify the same number.
 
-Admin access is not a checkbox in the database. The first time the number in `ADMIN_PHONE` verifies an OTP,
-it is flagged `is_admin = 1`, which unlocks `/admin` and the decision endpoints. Everyone else gets
+**What each check proves — and what it does not.** A driver account is only as strong as its password: scrypt
+hashing and the login budget make guessing expensive, and a session token is a signed value, not a row the
+browser can edit. The phone number inside the application is screened against the numbering plan, which proves
+*these digits are a real Rwandan mobile*, not *this person holds that SIM* — step 7 (a human reading the
+documents) is what keeps a stranger out of a driver account. For passengers the number **is** the credential:
+no code is sent to the SIM, so anyone who can read a number can open the trip list booked to it. SMS delivery
+was removed from this codebase (not switched off), so restoring that guarantee means landing an SMS
+provider again.
+
+Admin access is not a checkbox in the database. The first account to sign up or log in with the address in
+`ADMIN_EMAIL` is flagged `is_admin = 1`, which unlocks `/admin` and the decision endpoints. Everyone else gets
 `403 admin_only`.
 
 ## Fares and distances
@@ -236,7 +262,7 @@ Then set these three in `.env`:
 ```
 DATABASE_URL=postgresql://USER:PASSWORD@ep-xxxx-pooler.eu-central-1.aws.neon.tech/DBNAME?sslmode=require
 JWT_SECRET=<the 64-char hex you just generated>
-ADMIN_PHONE=0788210345
+ADMIN_EMAIL=you@example.com
 ```
 
 `DATABASE_URL` is the connection string Neon gives you under **Connect** — copy the **pooled** one and keep
@@ -251,9 +277,11 @@ npm start
 Open http://127.0.0.1:3000 — the UI is bilingual, Kinyarwanda by default with an EN toggle. Login lives at
 `/login`, signup at `/signup`, the admin console at `/admin`.
 
-`npm run seed` creates no sample traffic. It only guarantees that the `ADMIN_PHONE` account exists and is
-`approved` + admin, so `/admin` is reachable on a fresh database. Every rider you see afterwards signed up
-through `/signup` and was approved in the console.
+`npm run seed` creates no account and no sample traffic. If a rider already holds the address in
+`ADMIN_EMAIL` it flags that account `is_admin`; if nobody holds it yet, the script says so and you sign up at
+`/signup` with that address — the first account to claim it is made an admin by the server itself, with a
+password you chose. Every other rider you see afterwards signed up the same way and was approved in the
+console.
 
 Payments are deliberately unconfigured in a fresh `.env`. With `PAYSTACK_SECRET_KEY` or the MoMo vars empty,
 the API answers `503 paystack_not_configured` / `503 momo_not_configured` and the UI shows that in the
@@ -273,10 +301,11 @@ DATABASE_POOL_MAX=10
 JWT_SECRET=<the 64-char hex you generated>
 SESSION_HOURS=720
 PLATFORM_COMMISSION_PERCENT=5
-ADMIN_PHONE=0788210345
-OTP_ECHO=1                        # laptop only: the code comes back in the API response — never set in production
+ADMIN_EMAIL=you@example.com   # the address that becomes the console owner — compared lowercased
+NUMVERIFY_ACCESS_KEY=<the key from your numverify dashboard>   # no key → no number verifies → passengers cannot sign in
 
-# Rider documents (ID, licence, plate) — any S3-compatible bucket. Leave empty to disable uploads.
+# Rider documents (trading licence PDF, ID, licence, plate) — any S3-compatible bucket. Empty keys still
+# boot the app, but no rider can file an application, because the details form wants the licence uploaded.
 S3_ENDPOINT=
 S3_REGION=us-east-1
 S3_BUCKET=
@@ -307,12 +336,14 @@ LIVE_LOCATION_SECONDS=180
 generic agent gets the shared instance to throttle you. Set `LIVE_LOCATION_SECONDS` higher only if riders
 keep the app open between fixes — it is the age at which a position stops being advertised as live.
 
-Leave `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `SMS_PROVIDER_KEY`, `GOOGLE_CLIENT_ID`, `AI_API_KEY`, every
-`RRA_*` / `ID_*` / `NUMVERIFY_*` / `PHONE_CHECK_*` value and the `S3_*` block empty until you have real credentials — a
-half-filled block is worse than an empty one because requests then fail with network errors instead of a
-clear "not configured". At boot the server prints every gap it found (`missing configuration:
-PAYSTACK_SECRET_KEY, RRA_BASE_URL …`) together with the vars the *chosen* SMS provider needs, so you know
-which features will answer 503.
+Leave `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `GOOGLE_CLIENT_ID`, `AI_API_KEY`, every `RRA_*` / `ID_*` value
+and the `S3_*` block empty until you have real credentials — a half-filled block is worse than an empty one
+because requests then fail with network errors instead of a clear "not configured". The phone check is the one
+exception worth wiring early: `NUMVERIFY_ACCESS_KEY` (or `PHONE_CHECK_URL` + `PHONE_CHECK_KEY`) is the whole
+passenger door, so with neither set no passenger can sign in at all. A rider can still open an account and file
+the details form, but the phone verdict on that application is stored as `unavailable` instead of `pass`. At
+boot the server prints every gap it found (`missing configuration: PAYSTACK_SECRET_KEY, RRA_BASE_URL …`),
+naming that dependency in the same words, so you know which features will answer 503 and who is locked out.
 
 ### Database (Neon)
 
@@ -325,18 +356,21 @@ which features will answer 503.
    `no-verify` against a self-signed proxy. `DATABASE_POOL_MAX` (default 10) is the per-process pool size.
 4. The schema creates itself: `src/db.js` runs `src/schema.js` on boot, and the statement is idempotent
    (`CREATE TABLE IF NOT EXISTS`, named constraints), so the first boot on an empty database builds all
-   fifteen tables and later boots change nothing.
+   fourteen tables and later boots change nothing.
 5. `npm run seed:locations` loads the 17,437-row division tree from `data/locations.json`, and `npm run seed`
-   guarantees the `ADMIN_PHONE` admin account. Both are safe to re-run.
+   points the console owner at whoever holds `ADMIN_EMAIL` — it writes no rows of its own. Both are safe to
+   re-run.
 
 There is no MySQL/SQLite mode and no file to back up — Neon keeps its own point-in-time history, which is
 what "Restore" in the console uses.
 
 ### Rider documents (S3)
 
-An approved application is only as good as the papers behind it, so the rider profile carries three
-photos — `national_id`, `driving_licence` and `plate` — and the console shows them next to the approve
-button. The browser never holds a bucket credential and never learns the object key policy:
+An application is only as good as the papers behind it. A rider files a photo of the **trading licence**
+while filling the details form — that upload is one of the gates the application must pass before it can be
+submitted — and the profile later carries three more photos: `national_id`, `driving_licence` and `plate`.
+The console shows all four next to the approve button. The browser never holds a bucket credential and never
+learns the object key policy:
 
 1. `POST /api/drivers/me/documents/:kind/upload-url` signs a **PUT** for
    `riders/<driverId>/<kind>` with the declared content type and a TTL (`S3_SIGNED_URL_TTL_SECONDS`,
@@ -348,8 +382,9 @@ button. The browser never holds a bucket credential and never learns the object 
 4. `GET /api/admin/riders/:id/documents` returns signed **GET** links, valid for the same TTL, so an admin
    can open each photo during review. `GET /api/drivers/me/documents` does the same for the rider's own.
 
-Accepted types are JPEG, PNG and WebP; `S3_MAX_UPLOAD_MB` (default 8) caps the size. Any S3-compatible
-service works — set `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_REGION`, and add
+Accepted types are JPEG, PNG and WebP, plus PDF for `trading_licence`. `S3_MAX_UPLOAD_MB` (default 8) caps
+the size. Any S3-compatible service works — set `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`,
+`S3_REGION`, and add
 `S3_ENDPOINT` plus `S3_FORCE_PATH_STYLE=1` for R2 / MinIO / Backblaze. Keep the bucket **private**: the app
 only ever reads through signed URLs, so a public bucket would leak every rider's ID. The IAM user needs
 `s3:PutObject` and `s3:GetObject` on `riders/*` and nothing else — S3 authorises the `HeadObject` check with
@@ -365,56 +400,13 @@ without it the upload fails in the browser with a network error before a byte is
 
 `GET /api/health` reports `storage.configured` so a deploy can be checked without opening the console.
 
-### Login OTP (SMS)
-
-With no provider key set the server runs in **dev mode**: it prints the code to its own console and sends
-nothing. The code is put in the `/api/auth/otp/send` response only when you also set `OTP_ECHO=1`, which is
-what `test/smoke.js` needs to sign in. Never set `OTP_ECHO` in public: anyone who can read that response logs
-in as anyone. At boot the server lists `OTP_ECHO=1` as a problem when it is on, so a leftover dev flag shows
-up in the startup log — and no customer can log in at all until a provider is wired up.
-
-Pick the adapter with `SMS_PROVIDER`; each one needs its own pair of vars, and `SMS_PROVIDER_KEY` is what
-switches dev mode off:
-
-| `SMS_PROVIDER` | Required | Notes |
-| --- | --- | --- |
-| `generic` (default when unset) | `SMS_PROVIDER_URL` + `SMS_PROVIDER_KEY` | POST JSON `{to, from, message}` with `Authorization: Bearer <key>` — any aggregator that speaks that shape. |
-| `africastalking` (what `.env.example` picks) | `SMS_USERNAME` + `SMS_PROVIDER_KEY` | dashboard.africastalking.com → Settings → API keys. Posts form-encoded to `https://api.africastalking.com/version1/messaging` unless `SMS_PROVIDER_URL` overrides it. |
-| `twilio` | `SMS_TWILIO_ACCOUNT_SID` (or `SMS_USERNAME`) + `SMS_PROVIDER_KEY` | The auth token, not the API key. `SMS_PROVIDER_URL` overrides the REST endpoint for a proxy. |
-
-```
-SMS_SENDER_ID=SEREMOTO
-SMS_TIMEOUT_MS=10000
-OTP_TTL_SECONDS=300
-OTP_MAX_ATTEMPTS=3
-OTP_RESEND_SECONDS=30
-OTP_MAX_PER_HOUR=8
-```
-
-An HTTP 200 is not proof of delivery — Africa's Talking and Twilio both return per-recipient or per-message
-status inside a 2xx body — so the adapter reads that status and only calls the message sent when the provider
-says `success`/`submitted`/`buffered`/`sent`/`queued`/`accepted`/`delivered` (Africa's Talking puts the words
-inside `SMSMessageData.Recipients[0].status`, beside a numeric `statusCode` where 101 means taken), or answers
-with a 1xx/2xx code of its own. Anything else returns `502 sms_send_failed`, and the OTP is never stored as
-delivered. The provider's message id is saved on the challenge (`otp_challenges.provider`,
-`otp_challenges.sms_ref`) so a "I never got the code" dispute can be opened with something the provider
-recognises. The number is stored in local `07…` format and dialled as `+250…`.
-
-Two refusals are worth reading on the way to the dashboard: a bad API key comes back as **plain text**
-(`HTTP 401: The supplied authentication is invalid`), not JSON, and an unregistered `SMS_SENDER_ID` comes back
-as HTTP 201 with `status: "Rejected"` on the recipient — so both are passed through in the message the API
-returns instead of being flattened into a bare status code. `SMS_SENDER_ID` left empty means the `from` field
-is not sent at all, which lets the account's default short code answer (an empty `from=` is itself refused).
-`npm run test:sms` boots a server against a gateway that speaks those exact dialects — accepted, rejected
-sender, empty recipient list, HTML body, gateway down, revoked key — and fails if the code that reads them
-drifts; that suite is what caught the wrong field name.
-
 ### Rider credential checks (RRA TIN, NIDA ID, live phone)
 
 Three registers can answer questions this server must not guess at: **RRA** for the 9-digit TIN, **NIDA** (or
 peleza.com, or any ID contract you are handed) for the 16-digit national ID, and **numverify** (or an
 HLR-style service) for the phone number. `src/kyc.js` holds one adapter per register; `src/routes/kyc.js`
-exposes them to the signup page. **The browser never talks to a register and never sees a credential** — it
+exposes them to the signup page, and the phone adapter also stands at the sign-in door. **The browser never
+talks to a register and never sees a credential** — it
 posts to this server, which holds the keys, caches the verdict and answers in one shape.
 
 ```
@@ -463,38 +455,50 @@ a pinned field, because "0" means success in some government dialects and failur
 **numverify is the one register with a self-serve key**, so it is wired as a first-class provider rather than a
 generic contract: `GET {base}/validate?access_key=…&number=+25078xxxxxxx` (the key also travels in the
 `apikey` header, because the two hosts read it differently) returns `{valid, country_code, carrier,
-line_type}` and nothing else is configured. `POST /api/auth/otp/send` screens the digits with it
-*before* an SMS goes out, so a number that cannot exist never spends aggregator credit — `422 phone_invalid`.
-What it proves is the numbering plan, not a live handset: the verdict is stored as `source = numverify` with
-the carrier and line type beside it, and the SMS code stays the only proof that somebody owns the number.
+line_type}` and nothing else is configured. It answers in **two places**, with two different rules. At the
+passenger door (`POST /api/passenger/auth/verify`) it *is* the credential: the digits are looked up before
+anything is minted, so a number the Rwandan plan does not know is refused with `422 phone_invalid` and no
+session is issued. Inside a rider's details form (`POST /api/auth/details`) it is one field among five: an
+unknown number also stops the application with `422 phone_invalid`, but an outage only records
+`phone_status = 'unavailable'` and the application is still filed. What it proves is the numbering plan — not
+a live handset and not who holds the SIM. The verdict is stored as `source = numverify` with the carrier and
+line type beside it, and the admin's approval of the documents remains the only proof that a real
+person stands behind the account.
 A refusal — `{"success":false,"errors":{…}}`, `{"error":{…}}`, or the `api.apilayer.com` gateway's bare
 `{"message":"Invalid authentication credentials"}` — is recorded as `phone_check_unavailable` naming that
-reason, and the code still goes out: an outage on our side must never be shown to a rider as "your number
-is wrong" — unless `KYC_STRICT=1`. `numverify.com` itself serves no API (its `/api` path is the website, and
+reason, and at the passenger door that becomes `502`: an outage is announced as an outage instead of being guessed at or
+dressed up as "your number is wrong". `numverify.com` itself serves no API (its `/api` path is the website, and
 `api.numverify.com`, which the documentation quotes, does not resolve in DNS), and the retired
 `api.apilayer.com/numverify` route answers `404 no Route matched with those values`, so a stale
 `NUMVERIFY_BASE_URL` shows up as an outage carrying those exact words rather than as a silent skip.
-The verdict is cached for 24 hours (30 minutes when
-it is a fail) in `phone_checks`, so the same digits are looked up once, not once per code.
+The verdict is cached for 24 hours (30 minutes when it is a fail) in `phone_checks`, so the same digits are
+looked up once, not once per sign-in — but a cached *fail* is re-checked live before it refuses, because a stale
+plan record must not lock a real subscriber out. Because that lookup is the whole passenger credential, `assertVerifyBudget`
+also caps it: 30 verifications per phone and 300 per IP an hour, answered with `429 verify_rate_limited` before
+an API call is spent.
 
-With **no** `RRA_*`/`ID_*`/`NUMVERIFY_ACCESS_KEY`/`PHONE_CHECK_*` keys the app still ships: the three digit laws
-are enforced in `src/validate.js`, every credential column is recorded as `unchecked`, and
-`POST /api/verify-tin` answers `503 tin_check_unavailable`. Nothing is ever displayed or stored as a pass that
-no register confirmed.
+With no `RRA_*` or `ID_*` keys the app still ships: the three digit laws are enforced in `src/validate.js`,
+every credential column is recorded as `unchecked`, and `POST /api/verify-tin` answers
+`503 tin_check_unavailable`. Nothing is ever displayed or stored as a pass that no register confirmed. The phone
+check is the exception — without `NUMVERIFY_ACCESS_KEY` or `PHONE_CHECK_*` there is no way to prove a number
+exists, so `POST /api/passenger/auth/verify` answers `503 phone_check_unavailable` and the passenger door is
+closed. A rider's door is email and password, so it stays open, and the phone pill on their application simply
+reads *not checked*.
 
 | Method | Path | Body | Answer |
 | --- | --- | --- | --- |
-| POST | `/api/verify-tin` | `verify_token`, `tin_number`, optional `force` | `200 {valid, taxpayer, source: rra\|cache}`; `200 {valid:false}` when RRA simply has no such taxpayer |
-| POST | `/api/verify-id` | `verify_token`, `id_number`, optional `names`, `force` | `200 {exists, match, source}` — the register's own spelling of the name is **never** echoed, or any 16-digit number could be read back one match at a time |
+| POST | `/api/verify-tin` | `tin_number`, optional `force` — **needs a rider session** | `200 {valid, taxpayer, source: rra\|cache}`; `200 {valid:false}` when RRA simply has no such taxpayer |
+| POST | `/api/verify-id` | `id_number`, optional `names`, `force` — **needs a rider session** | `200 {exists, match, source}` — the register's own spelling of the name is **never** echoed, or any 16-digit number could be read back one match at a time |
 | POST | `/api/admin/applications/:id/verify` | `check: tin\|id\|phone` | Re-runs one check for that applicant and stores `pass`/`fail` |
 
-Both public lookups are fenced behind the `verify_token` a phone just earned from a real SMS code
-(`400 invalid_verify_token` without it) and each phone gets 12 lookups an hour (`429 kyc_rate_limited`), so a
-script cannot drive RRA or NIDA through SERE Moto. Verdicts are cached in the database — a pass for 24 hours,
+Both lookups are fenced behind the account asking: `401 authentication_required` without a driver token, and
+the budget is counted per account id — 12 lookups an hour, then `429 kyc_rate_limited`. A session says who is
+asking; it does not say they are telling the truth about themselves, which is what the register's answer is
+for. Verdicts are cached in the database — a pass for 24 hours,
 a fail for 30 minutes, so a register outage does not become 200 calls per applicant. `force: true` ignores the
 cache; the admin re-check button uses it.
 
-Signup stores four honest states per applicant (`tin_status`, `id_status`, `phone_status`, `kyc_at`):
+The details form stores four honest states per applicant (`tin_status`, `id_status`, `phone_status`, `kyc_at`):
 
 * `pass` — the register confirmed it.
 * `fail` — the register answered and the value was wrong (`tin_not_found`, `id_not_found`,
@@ -506,7 +510,7 @@ Signup stores four honest states per applicant (`tin_status`, `id_status`, `phon
 
 Set `KYC_STRICT=1` when the contracts are live and you want the opposite rule: an application is refused with
 `503 kyc_unreachable` unless all three registers answered, and any check still `unchecked` fails the signup
-too. `/signup` shows a live verdict line per field once the phone is verified; `/admin` shows the three pills
+too. `/signup` shows a live verdict line as each KYC field is filled in; `/admin` shows the three pills
 plus the evidence the register gave (taxpayer name, matched name, operator).
 
 ### Booking assistant (language model)
@@ -595,7 +599,6 @@ MOMO_CALLBACK_BASE=https://your-domain.rw
 
 ```bash
 npm test                                       # seeds + boots its own server on a scratch database
-npm run test:sms                               # the OTP adapter against a fake Africa's Talking gateway
 npm run test:dashboards                        # rider / passenger / admin contracts, same idea
 npm run test:assistant                         # the booking interview against a fake chat gateway
 npm run test:i18n                              # Kinyarwanda ↔ English key parity
@@ -607,21 +610,29 @@ without ever touching the Neon database in `.env`. The scratch database is a rea
 behind a TCP socket), which is why the suites catch Postgres-only mistakes such as an out-of-order foreign
 key or a camelCase alias folding to lowercase; no credentials and no network are involved. Set
 `TEST_DATABASE_URL` to run them against a real Postgres/Neon branch instead — useful when you want to
-reproduce something against the provider itself — and the suites will write their rows there. `OTP_ECHO=1`
-is forced for the scratch process only, which is what lets a suite sign in without an SMS provider. The
+reproduce something against the provider itself — and the suites will write their rows there. `NUMVERIFY_BASE_URL`
+is pointed at an in-process fake that speaks numverify's own JSON (described below), which is what lets a suite
+sign in without a key, a quota or the network. The
 document-upload checks run against an in-memory fake S3 over `node:http`, so presigned PUT/GET/HEAD are
 exercised without bucket credentials. Set `BASE_URL=http://127.0.0.1:3000`
 to point `npm test` at a server that is already running instead — it will then write random-tagged drivers,
 plates, IDs, phones and trips into **that** database, which is fine for a demo instance and not fine for a
 live one. `TEST_PORT` picks the scratch port.
 
-The suites read `ADMIN_PHONE` and `PAYSTACK_SECRET_KEY` from the same `.env` the server boots from, and every
-provider-dependent assertion branches on what the *server* reports on `/api/health` rather than on the test
-process's own environment — so the same suite is meaningful against a server with RRA / Paystack / MoMo keys
-and against one without. It covers OTP issue/attempt/lockout and the resend cooldown, verify-token binding (a
-token for one phone cannot sign up another), every KYC digit law and duplicate phone/ID/TIN/plate, the
-credential-lookup fence (`400` without a `verify_token`, `422` on a malformed value, `503`/`200` per register
-depending on whether it is wired), the pending/rejected access gates, the admin bootstrap from `ADMIN_PHONE`,
+The suites read `PAYSTACK_SECRET_KEY` from the same `.env` the server boots from, hand that scratch server an
+`ADMIN_EMAIL` of their own, and every provider-dependent assertion branches on what the *server*
+reports on `/api/health` rather than on the test process's own environment — so the same suite is meaningful
+against a server with RRA / Paystack / MoMo keys and against one without. It covers the email door end to end
+(signup hands back a `draft` session, the details form turns it into a `pending` application, and an account
+that has filed cannot file again — `409 details_already_filed`), the login fence (one `401 invalid_credentials`
+for both an unknown address and a wrong password, `403 google_account_only` for an account that has no password
+to type, `429 login_rate_limited` past the hourly budget, and a successful login spending nothing), the retired
+driver phone door answering `404`, the Google handshake (a link that expired, an address that does not match the
+token, a Google account already linked to another rider), every KYC digit law and duplicate
+email/phone/ID/TIN/plate, the licence gate (`422 licence_required` until the PDF is in the bucket, then the
+presigned PUT/HEAD road that marks it `uploaded`), the credential-lookup fence (`401` without a rider session,
+`422` on a malformed value, `503`/`200` per register
+depending on whether it is wired), the pending/rejected access gates, the admin bootstrap from `ADMIN_EMAIL`,
 approve/reject/already-reviewed/incomplete-profile transitions, `403 admin_only` for non-admins including the
 KYC re-check route, the RURA fare bands (including that a motorcycle is priced by the table and not by its own
 rate), OpenStreetMap measuring a real Kigali journey instead of a straight line, the GPS fix endpoint and
@@ -632,12 +643,20 @@ that admits its distance, `location_code` on the rider profile and the `division
 works *or* where they were last seen), and — when keys are set — that payment attempts really leave
 the process and a provider rejection surfaces as `502`, never as a fake success.
 
-`npm run test:sms` is the one that runs the server with a provider *configured* — the other two boot in dev
-mode with `OTP_ECHO=1`, so the adapter that reads the gateway's reply was never reached. It points
-`SMS_PROVIDER_URL` at a local gateway that answers in Africa's Talking's exact shape and asserts the send is
-reported as sent only when the recipient really was accepted, that `otp_challenges.provider`/`sms_ref` hold the
-gateway's own message id, and that a `Rejected` recipient, an empty recipient list, an HTML body, a gateway 500
-and a revoked-key plain-text 401 each surface as `502` with the provider's reason attached.
+`test/fake-numverify.js` is the gateway the passenger door and the rider phone field are tested against, and it
+answers in numverify's exact
+shape. `npm test` points `NUMVERIFY_BASE_URL` at it and asserts the whole contract rather than a stub: only
+`+25078…` numbers are known to the fake, so the unknown-number branch is a real answer; the digits must reach it
+in international form carrying the key in the query *or* the `apikey` header, because the two apilayer hosts read
+it differently; a dead number must get `422 phone_invalid` with no session, and each door must re-check a cached
+rejection live so a stale plan record cannot lock a subscriber out; a cached pass must not spend a second lookup;
+`/api/auth/otp/send`, `/api/auth/otp/verify` and the retired `/api/auth/phone/verify` must answer `404`, not a
+stale handler; and setting the fake to
+`down`, `gibberish` or `gateway_refusal` (the `api.apilayer.com` bare `{"message": …}` 401) must refuse the
+passenger door with `502 phone_check_unavailable` and hand out nothing — while the rider's application still
+files, carrying `unavailable` as the honest verdict for that one field — then open again as soon as the fake
+answers.
+`npm run test:dashboards` boots the same fake so the rider and passenger dashboards can sign in without a key.
 
 `npm run test:assistant` does the same for the booking interview: `AI_BASE_URL` points at a local gateway that
 answers in an OpenAI-compatible shape, and the suite checks that the question the passenger sees really came
@@ -665,14 +684,15 @@ control.
 | Path | Who | What |
 | --- | --- | --- |
 | `/` | Everyone | Rider search and booking — the passenger app, no dashboard of its own |
-| `/passenger` | Passengers | Phone + OTP sign-in, own trips with receipts, cancel, rate, saved places, profile |
+| `/passenger` | Passengers | Phone-number sign-in, own trips with receipts, cancel, rate, saved places, profile |
 | `/rider` | Approved drivers | Inbox (live / history), earnings, ratings, profile with ID / licence / plate photo uploads, online + NDITEGUYE and GPS posting |
-| `/login` | Drivers | Phone → OTP, or Google. Approved → `/rider`; shows waiting/rejected states instead of an error |
-| `/signup` | New drivers | Names, ID (16 digits), TIN (9 digits), plate, verified phone, vehicle type; live RRA/NIDA verdict line per field once the phone is confirmed |
-| `/admin` | `ADMIN_PHONE` only | Console: KYC queue with the uploaded ID / licence / plate photos, riders, trips, payments ledger, passengers, 7-day overview |
+| `/login` | Drivers | Email and password, or the Google button. Approved → `/rider`; shows waiting/rejected states instead of an error |
+| `/signup` | New drivers | Step 1: email + password, or Google. Step 2 — the details form: names, ID (16 digits), TIN (9 digits), phone, plate, vehicle type and the trading licence PDF; live RRA/NIDA verdict line as each field is filled |
+| `/admin` | `ADMIN_EMAIL` only | Console: KYC queue with the uploaded licence, ID / licence / plate photos, riders, trips, payments ledger, passengers, 7-day overview |
 | `/guide` | Everyone | Bilingual how-to instructions, opened from the *Uko bikora* row in the header Menu |
 
-`public/assets/auth.js` holds the shared ES5 library — dictionaries, the app header, the OTP widget and the
+`public/assets/auth.js` holds the shared ES5 library — dictionaries, the app header, the sign-in and
+signup controllers and the
 API helper — plus a page-controller registry. Each dashboard lives in its own file (`rider.js`,
 `passenger.js`, `admin.js`) and registers itself with `SERE.onPage(name, init)`; the page's `<body
 data-page="…">` picks which one boots. `auth.css` is the stylesheet for those pages. `/api/config` tells the
@@ -705,12 +725,12 @@ the row shows the installed state in place.
 | Method | Path | Auth | Purpose |
 | --- | --- | --- | --- |
 | GET | `/api/config` | – | `googleClientId`, `liveLocationSeconds`, the RURA `fare` table, the KYC digit laws (`kyc.phoneDigits` 10, `kyc.idDigits` 16, `kyc.tinDigits` 9) and which registers are wired |
-| POST | `/api/auth/otp/send` | – | Screens the digits with the phone provider, then issues an OTP; `devCode` in the response only with `OTP_ECHO=1` |
-| POST | `/api/auth/otp/verify` | – | Verify the OTP → session token, or `verify_token` for a new number |
-| POST | `/api/auth/signup` | `verify_token` | KYC application → `status: pending`, with one register verdict per credential |
-| POST | `/api/verify-tin` | `verify_token` | Ask RRA about a 9-digit TIN → `{valid, taxpayer, source}`; 12 lookups/hour per phone |
-| POST | `/api/verify-id` | `verify_token` | Ask the ID register about a 16-digit number → `{exists, match, source}`; never echoes the register's name |
-| POST | `/api/auth/google` | – | Verify a Google ID token → session token |
+| POST | `/api/auth/signup` | `email` + `password`, or `email` + `google_token` | Opens the driver account → `201 {status: "draft", token}`. The address is stored lowercased; `409 email_taken` if it already has an account, `422 invalid_password` under 8 characters, `400 invalid_google_token` / `403 google_email_mismatch` if the Google link is stale or points at another address |
+| POST | `/api/auth/login` | `email` + `password` | `200 {status, token, driver}` for `draft` / `pending` / `approved`; `200 {status: "rejected", reason}` with no token. `401 invalid_credentials` for both an unknown address and a wrong password, `403 google_account_only` when the account was opened with Google, `429 login_rate_limited` past 10 failures per address or 60 per IP an hour |
+| POST | `/api/auth/details` | Bearer (draft) | The application: `names`, `id_number` (16), `tin_number` (9), `phone` (10), `plate`, `vehicle_type`, and the `trading_licence` document already uploaded → `status: pending` with one register verdict per credential. `422 licence_required`, `409 details_already_filed`, and the register refusals `tin_not_found` / `id_not_found` / `id_name_mismatch` / `phone_invalid` |
+| POST | `/api/verify-tin` | Bearer | Ask RRA about a 9-digit TIN → `{valid, taxpayer, source}`; 12 lookups/hour per account |
+| POST | `/api/verify-id` | Bearer | Ask the ID register about a 16-digit number → `{exists, match, source}`; never echoes the register's name |
+| POST | `/api/auth/google` | – | Verify a Google ID token against Google's JWKS → session token, or `{status: "new", googleToken}` for an address nobody holds; `503 google_not_configured` without `GOOGLE_CLIENT_ID` |
 | GET | `/api/auth/me` | Bearer | Driver session identity: `status`, `isAdmin`, review `reason` |
 | GET | `/api/auth/session` | Bearer | Kind-safe probe → `kind: passenger \| driver \| null` plus that account; the only route both token types may call |
 | GET | `/api/drivers` | – | Search approved drivers: `q`, `zone`, `division`, `vehicle_type`, `service`, `online`, `available`, `near=<lat,lng>`, `max_km`, `lang` |
@@ -721,8 +741,8 @@ the row shows the installed state in place.
 | POST | `/api/drivers/me/online` | Bearer + approved | Toggle availability; going offline clears the stored position |
 | POST | `/api/drivers/me/location` | Bearer + approved | Post the rider's GPS fix (`lat`, `lng`, optional `accuracy`); answers the sector it fell `around` |
 | POST | `/api/drivers/me/ready` | Bearer + approved | NDITEGUYE: go online and drop a stale `with_passenger` flag |
-| GET | `/api/drivers/me/documents` | Bearer | Own ID / licence / plate rows with `status`, `bytes` and a signed GET `url` once uploaded |
-| POST | `/api/drivers/me/documents/:kind/upload-url` | Bearer | `kind` is `national_id`\|`driving_licence`\|`plate`; body `content_type` → presigned PUT `uploadUrl`, TTL `expiresIn`, `maxBytes`; marks the row `pending` |
+| GET | `/api/drivers/me/documents` | Bearer | Own trading licence / ID / licence / plate rows with `status`, `bytes` and a signed GET `url` once uploaded |
+| POST | `/api/drivers/me/documents/:kind/upload-url` | Bearer | `kind` is `national_id`\|`driving_licence`\|`plate`\|`trading_licence` (PDF); body `content_type` → presigned PUT `uploadUrl`, TTL `expiresIn`, `maxBytes`; marks the row `pending` |
 | POST | `/api/drivers/me/documents/:kind/complete` | Bearer | HEAD the uploaded object, check type and size, mark `uploaded` with the real byte count |
 | GET | `/api/drivers/me/requests` | Bearer + approved | Dashboard inbox, `scope=active\|history\|all` |
 | GET | `/api/drivers/me/stats` | Bearer + approved | Trips/gross/payout per today-week-month, distance, unbilled total, rating distribution, `can_go_online` blockers |
@@ -738,7 +758,7 @@ the row shows the installed state in place.
 | GET | `/api/payments/:reference` | Bearer | Payment status (driver of that trip) |
 | POST | `/api/payments/:reference/verify` | Bearer | Ask the provider to confirm |
 | GET | `/api/earnings` | Bearer | Collected / payout / fee totals |
-| POST | `/api/passenger/auth/verify` | – | Passenger phone + OTP → passenger token; claims guest trips booked on that number |
+| POST | `/api/passenger/auth/verify` | – | Passenger phone number → passenger token (the row is created on first sign-in); claims guest trips booked on that number |
 | GET | `/api/passenger/me` | Passenger | Profile, saved places, trip and rating counters |
 | PATCH | `/api/passenger/me` | Passenger | Rename, set email |
 | GET | `/api/passenger/trips` | Passenger | Own trips, `scope=active\|history\|all`, each with rider, payment and rating |
@@ -762,19 +782,20 @@ the row shows the installed state in place.
 | GET | `/api/admin/overview` | Bearer + admin | 7-day series, per-zone / provider / kind breakdowns, top riders with their division, webhook health |
 | POST | `/api/webhooks/paystack` | signature | Provider callback |
 | POST | `/api/webhooks/mtn-momo` | checksum | Provider callback |
-| GET | `/api/health` | – | Table counts plus `drivers`, `requests` and `tripsCompleted` (the three numbers the booking page shows as *Abamotari* / *Abiteguye* / *Abatwaye*), payment provider readiness, the `kyc` block (`smsProvider`, `rra`, `idProvider`, `phoneCheck` — `false`,
+| GET | `/api/health` | – | Table counts plus `drivers`, `requests` and `tripsCompleted` (the three numbers the booking page shows as *Abamotari* / *Abiteguye* / *Abatwaye*), payment provider readiness, the `kyc` block (`rra`, `idProvider`, `phoneCheck` — `false`,
 `"numverify"` or `"generic"`, so the reader learns *which* service answers for a phone number, `strict`), the `assistant` block (`configured`, `model`, `stages` — the booking page only asks the model when it is `true`), the `storage` block (`configured`, `bucket`, `maxUploadBytes`), the `divisions` block (rows loaded, per-level counts, mapped centroids, seed file), `adminConfigured` |
 
 Errors are `{"error": "<code>", "message": "<english detail>"}`. The UI translates the code, so the code
-names are part of the contract: `invalid_phone`, `invalid_code`, `otp_invalid`, `otp_expired`,
-`otp_attempts_exceeded`, `otp_rate_limited`, `sms_send_failed`, `sms_not_configured`, `invalid_verify_token`,
-`phone_not_verified`, `invalid_names`, `invalid_id_number`, `invalid_tin_number`, `invalid_plate`,
-`phone_taken`, `id_number_taken`, `tin_number_taken`, `plate_taken`, `account_pending`, `already_reviewed`,
+names are part of the contract: `invalid_phone`, `phone_invalid`, `verify_rate_limited`,
+`invalid_names`, `invalid_id_number`, `invalid_tin_number`, `invalid_plate`,
+`invalid_email`, `invalid_credentials`, `login_rate_limited`, `google_account_only`,
+`google_taken`, `details_already_filed`, `licence_required`,
+`phone_taken`, `email_taken`, `id_number_taken`, `tin_number_taken`, `plate_taken`, `account_pending`, `already_reviewed`,
 `incomplete_profile`, `admin_only`, `invalid_check`, `tin_check_unavailable`, `id_check_unavailable`,
 `phone_check_unavailable`, `tin_not_found`, `id_not_found`, `id_name_mismatch`, `phone_not_live`,
 `kyc_rate_limited`, `kyc_unreachable`, `google_not_configured`, `google_token_invalid`, `google_token_expired`,
 `google_signature_invalid`, `google_key_unknown`, `google_audience_mismatch`, `google_issuer_mismatch`,
-`google_lookup_failed`, `invalid_google_token`, `application_not_found`, `invalid_email`, `driver_unavailable`,
+`google_lookup_failed`, `invalid_google_token`, `application_not_found`, `driver_unavailable`,
 `driver_offline`, `driver_busy`, `driver_not_found`, `profile_incomplete`, `service_not_offered`,
 `capacity_exceeded`, `not_payable`, `invalid_status`, `invalid_status_change`, `authentication_required`,
 `place_not_found`, `invalid_near`, `invalid_distance_km`, `invalid_location_code`, `invalid_division`,
@@ -784,8 +805,8 @@ names are part of the contract: `invalid_phone`, `invalid_code`, `otp_invalid`, 
 
 ## Data
 
-The Neon database holds fifteen tables: `drivers`, `passengers`, `passenger_places`,
-`ride_requests`, `trip_ratings`, `payments`, `otp_challenges`, `webhook_events`, `driver_documents`
+The Neon database holds fourteen tables: `drivers`, `passengers`, `passenger_places`,
+`ride_requests`, `trip_ratings`, `payments`, `webhook_events`, `driver_documents`
 (one row per rider per document kind, with bucket key, declared type, real byte count from HEAD, and a
 `pending` → `uploaded` status), the OpenStreetMap caches
 `places` (name + anchor → coordinates) and `routes` (pair → distance), the three register verdict caches
@@ -795,8 +816,10 @@ the schema lives in `src/schema.js` and is applied on every boot, idempotently, 
 `data/division-coords.json` are committed: they are the app's geography, and a deploy without them has no
 divisions to offer. Every driver row carries the picked division as `loc_code` plus the leaf's level and its
 `province_code` / `district_code` / `sector_code` ancestors (copied down so a district filter is one column
-test, not a tree walk per request) and the sector its last fix fell nearest to as `live_code`. OTP codes are stored as salted SHA-256 hashes with an expiry
-and an attempt counter — a code is consumed on first use, so it cannot be replayed. `webhook_events` has a
+test, not a tree walk per request) and the sector its last fix fell nearest to as `live_code`. No password is
+ever stored: `password_hash` holds a `scrypt` (N=16384, r=8, p=1) digest with a per-account random salt baked
+into the string, the session is a signed token, and the hourly login and verification counters are kept in the
+process, so each warm serverless instance holds its own budget. `webhook_events` has a
 unique `(provider, external_id)` so a retried provider callback can never pay a trip twice. Each check table
 is keyed by the value looked up (`tin`, `id_number`, `phone`) and stores the verdict, the evidence the register
 returned (taxpayer name, holder name, operator), the `source`, a `note` with the unreadable body when the
@@ -835,9 +858,8 @@ HOST=0.0.0.0 PORT=3000 PUBLIC_URL=https://your-domain.rw npm start
   vercel env add DATABASE_URL production        # Neon pooled string, ?sslmode=require
   vercel env add JWT_SECRET production          # node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
   vercel env add PUBLIC_URL production          # https://<project>.vercel.app or your domain
-  vercel env add ADMIN_PHONE production         # the number that must own /admin
-  vercel env add SMS_PROVIDER production        # africastalking | twilio | generic
-  vercel env add SMS_PROVIDER_KEY production    # the provider's API key — without it no OTP is ever sent
+  vercel env add ADMIN_EMAIL production         # the address that must own /admin
+  vercel env add NUMVERIFY_ACCESS_KEY production # the passengers' sign-in door: no key, no phone sign-in
   vercel env add S3_BUCKET production           # plus S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY
   vercel deploy --prod
   ```
@@ -848,10 +870,11 @@ HOST=0.0.0.0 PORT=3000 PUBLIC_URL=https://your-domain.rw npm start
   only accepts an exact major. Fill the database once from a checkout before the first deploy —
   `npm run seed:locations` loads the 17,437 divisions, and the app only ever reads them back out of Postgres
   after that, because a function bundle does not carry `data/locations.json`. `functions."api/index.js".maxDuration`
-  is 60 seconds for that same first boot, which also creates the fifteen tables; every later start just reads
-  them. Neon holds
-  the data, so scale-to-zero is safe and nothing needs a disk beyond the checked-in `data/*.json`. Keep
-  `DATABASE_POOL_MAX` at 10: each warm function keeps its own pool. Do not add `OTP_ECHO`.
+  is 60 seconds for that same first boot, which also creates the fourteen tables; every later start just reads
+  them. Neon holds the data, so scale-to-zero is safe and nothing needs a disk beyond the checked-in
+  `data/*.json`. Keep `DATABASE_POOL_MAX` at 10: each warm function keeps its own pool. Delete any leftover
+  `SMS_*` / `OTP_*` project variables: nothing reads them since the SMS code was dropped, and a stale one only
+  misleads the next person to deploy.
   `vercel.json` keeps `cleanUrls` plus the `/api/(.*)` rewrite — without that rewrite the function stops
   answering anything under `/api`. Vercel does not bind `/` to `public/index.html` either, so the landing page
   is served by `src/app.js` from `src/landing.js`, a generated copy of the same HTML that the bundler can
@@ -863,19 +886,21 @@ HOST=0.0.0.0 PORT=3000 PUBLIC_URL=https://your-domain.rw npm start
   `npm --prefix seremoto start` and binds the platform-provided `PORT` variable. Set the rest as environment
   secrets (never in code), including `DATABASE_URL` — the database lives in Neon, not on the container, so a
   redeploy or a scale-to-zero does not touch a byte of data.
-* Set `DATABASE_URL`, `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `SMS_PROVIDER_KEY` (plus `SMS_USERNAME` or
-  `SMS_TWILIO_ACCOUNT_SID`, whichever `SMS_PROVIDER` you chose), `GOOGLE_CLIENT_ID`, `AI_API_KEY`, the `RRA_*` /
-  `ID_*` / `PHONE_CHECK_*` values and the `S3_*` block in the platform's secret store, then load them with the
+* Set `DATABASE_URL`, `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `NUMVERIFY_ACCESS_KEY`, `GOOGLE_CLIENT_ID`,
+  `AI_API_KEY`, the `RRA_*` /
+  `ID_*` values and the `S3_*` block in the platform's secret store, then load them with the
   real domain: `DATABASE_URL=postgresql://…?sslmode=require`,
   `PAYSTACK_SECRET_KEY=sk_live_...`,
   `MOMO_BASE_URL=https://<host-from-mtn>/api/v3`,
   `MOMO_CALLBACK_BASE=https://your-domain.rw`.
-* **Before the first public login**: delete `OTP_ECHO` from the production `.env`, set `ADMIN_PHONE` to the
-  number that should really hold the console (not the `0788210345` used during development), and configure the
-  SMS provider so codes leave the process instead of only reaching the server log — with no provider key a
-  customer can never log in, because the code they are waiting for was never sent. `npm start` prints
-  `OTP_ECHO=1` and every missing `RRA_*` / `ID_*` / `PHONE_CHECK_*` block as outstanding problems if they
-  survive into the deploy. Decide whether `KYC_STRICT=1` belongs in that deploy: it is the only mode where an
+* **Before the first public sign-up**: set `ADMIN_EMAIL` to the address that should really hold the console —
+  the first account to sign up with it is made an admin by the server itself, so a stray value hands the console
+  to whoever registers first — and make sure `NUMVERIFY_ACCESS_KEY` is the live key, because that lookup opens
+  the passengers' door: a wrong or missing key means no passenger can sign in by phone. `S3_BUCKET` and its
+  keys are what let a rider attach the trading licence PDF, and the details form will not accept an application
+  without it, so leaving storage unset keeps every rider stuck on the form. `npm start` prints
+  `NUMVERIFY_ACCESS_KEY (nobody can sign in…)` along with every missing `RRA_*` / `ID_*` block as outstanding
+  problems if they survive into the deploy. Decide whether `KYC_STRICT=1` belongs in that deploy: it is the only mode where an
   application cannot be filed while a register is unreachable, so it needs the contracts to be live first.
 * Add `https://your-domain.rw` to the Google client's authorized origins — the token is rejected as
   `google_token_invalid` if its `aud` is not the `GOOGLE_CLIENT_ID` you configured.
