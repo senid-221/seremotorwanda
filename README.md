@@ -35,7 +35,9 @@ There are no passwords to leak and no mocked responses anywhere in the code.
 
 There is no password. A driver proves a phone number, then proves identity through a SERE Moto admin:
 
-1. **Phone → OTP.** `POST /api/auth/otp/send` stores a hash of a 6-digit code with a TTL, an attempt cap, a
+1. **Phone → OTP.** `POST /api/auth/otp/send` first screens the digits with the phone provider (see
+   *Rider credential checks*), so a number that cannot exist is refused with `422 phone_invalid` before any
+   SMS credit is spent; then it stores a hash of a 6-digit code with a TTL, an attempt cap, a
    resend cooldown and an hourly cap. `POST /api/auth/otp/verify` returns a 15-minute `verify_token` bound
    to that exact number — proof the number is in the user's hand, nothing more.
 2. **Known number** → the session token is returned immediately with the driver's `status`.
@@ -183,10 +185,14 @@ switch only refetches what is still on screen.
 **The booking page asks instead of offering dropdowns.** `public/assets/interview.js` exposes `SERE_INTERVIEW` —
 `levels`, `mount(host, {api, onChange})`, `setLang()`, `getLang()` — and drives the passenger through the same
 register one question at a time: *Intara yawe?* → *Akarere kawe?* → *Umurenge wawe?* → *Akagari kawe?* →
-*Umudugudu wawe?*. Each screen is a list of big chips for the rows `list()` returns for the previous answer,
-plus a Back chip; the last two levels carry *Komeza* / *Continue*, because a search matches at any level and a
-sector answer is already a complete one. `value()` is the deepest answer picked, `done()` is true only when the
-ladder has ended, and `onChange` fires on every step — the page searches as the passenger answers, but the
+*Umudugudu wawe?*. Each screen is a plain list — one row per place `list()` returns under the previous answer,
+separated by hairlines, never boxed buttons — and each row is a `<label class="ask-opt">` holding a real
+`<input type="radio" class="ask-dot">` plus the UPPERCASE place name, so any tap on the row answers it, the
+picked circle fills for a beat, and the next question opens. Cell and village offer *Komeza* / *Continue* as an
+`.ask-act` row — an action, not a place — because a search matches at any level and a sector answer is already a
+complete one; an uppercase *Subira inyuma* / *Back* link sits under the list.
+`value()` is the deepest answer picked, `done()` is true only when the ladder has ended, and `onChange`
+fires on every step — the page searches as the passenger answers, but the
 *Noneho ushaka kujya hehe?* destination box stays hidden until `done()`, and the first time it opens a
 *Woow! Twamaze kumenya aho uri.* popup (`#congrats`) sits over it until tapped away. Its twelve `ask.*` strings
 are owned by the file and checked by `scripts/check-i18n.js` like every other dictionary; the page's RW/EN
@@ -291,7 +297,7 @@ generic agent gets the shared instance to throttle you. Set `LIVE_LOCATION_SECON
 keep the app open between fixes — it is the age at which a position stops being advertised as live.
 
 Leave `PAYSTACK_SECRET_KEY`, the `MOMO_*` values, `SMS_PROVIDER_KEY`, `GOOGLE_CLIENT_ID`, every
-`RRA_*` / `ID_*` / `PHONE_CHECK_*` value and the `S3_*` block empty until you have real credentials — a
+`RRA_*` / `ID_*` / `NUMVERIFY_*` / `PHONE_CHECK_*` value and the `S3_*` block empty until you have real credentials — a
 half-filled block is worse than an empty one because requests then fail with network errors instead of a
 clear "not configured". At boot the server prints every gap it found (`missing configuration:
 PAYSTACK_SECRET_KEY, RRA_BASE_URL …`) together with the vars the *chosen* SMS provider needs, so you know
@@ -385,10 +391,10 @@ dialled as `+250…`.
 ### Rider credential checks (RRA TIN, NIDA ID, live phone)
 
 Three registers can answer questions this server must not guess at: **RRA** for the 9-digit TIN, **NIDA** (or
-peleza.com, or any ID contract you are handed) for the 16-digit national ID, and an HLR-style service for
-whether a number is live. `src/kyc.js` holds one adapter per register; `src/routes/kyc.js` exposes them to the
-signup page. **The browser never talks to a register and never sees a credential** — it posts to this server,
-which holds the keys, caches the verdict and answers in one shape.
+peleza.com, or any ID contract you are handed) for the 16-digit national ID, and **numverify** (or an
+HLR-style service) for the phone number. `src/kyc.js` holds one adapter per register; `src/routes/kyc.js`
+exposes them to the signup page. **The browser never talks to a register and never sees a credential** — it
+posts to this server, which holds the keys, caches the verdict and answers in one shape.
 
 ```
 # RRA taxpayer register
@@ -413,7 +419,12 @@ ID_MATCH_FIELD=
 ID_NAME_FIELD=
 ID_TIMEOUT_MS=10000
 
-# Live-number / HLR check
+# Phone number check — numverify (apilayer.com) is the first-choice provider
+NUMVERIFY_ACCESS_KEY=          # one key from the apilayer dashboard; nothing else is needed
+NUMVERIFY_BASE_URL=https://api.apilayer.com/numverify   # legacy free keys: http://apilayer.net/api
+NUMVERIFY_TIMEOUT_MS=10000
+
+# …or any live-number / HLR endpoint you are handed (used only when NUMVERIFY_ACCESS_KEY is empty)
 PHONE_CHECK_URL=https://<endpoint>
 PHONE_CHECK_KEY=
 PHONE_CHECK_TIMEOUT_MS=10000
@@ -428,9 +439,21 @@ it returns `502 tin_check_unavailable` naming the keys the body actually contain
 `RRA_VALID_FIELD` / `RRA_NAME_FIELD` (or `ID_MATCH_FIELD` / `ID_NAME_FIELD`). A bare `0`/`1` is only trusted in
 a pinned field, because "0" means success in some government dialects and failure in others.
 
-With **no** `RRA_*`/`ID_*`/`PHONE_CHECK_*` keys the app still ships: the three digit laws are enforced in
-`src/validate.js`, every credential column is recorded as `unchecked`, and `POST /api/verify-tin` answers
-`503 tin_check_unavailable`. Nothing is ever displayed or stored as a pass that no register confirmed.
+**numverify is the one register with a self-serve key**, so it is wired as a first-class provider rather than a
+generic contract: `GET {base}/validate?access_key=…&number=+25078xxxxxxx` returns `{valid, country_code,
+carrier, line_type}` and nothing else is configured. `POST /api/auth/otp/send` screens the digits with it
+*before* an SMS goes out, so a number that cannot exist never spends aggregator credit — `422 phone_invalid`.
+What it proves is the numbering plan, not a live handset: the verdict is stored as `source = numverify` with
+the carrier and line type beside it, and the SMS code stays the only proof that somebody owns the number. A
+`{"success":false,"errors":{…}}` body (wrong key, spent quota, 401/500) is recorded as
+`phone_check_unavailable` and the code still goes out — an outage on our side must never be shown to a
+rider as "your number is wrong" — unless `KYC_STRICT=1`. The verdict is cached for 24 hours (30 minutes when
+it is a fail) in `phone_checks`, so the same digits are looked up once, not once per code.
+
+With **no** `RRA_*`/`ID_*`/`NUMVERIFY_ACCESS_KEY`/`PHONE_CHECK_*` keys the app still ships: the three digit laws
+are enforced in `src/validate.js`, every credential column is recorded as `unchecked`, and
+`POST /api/verify-tin` answers `503 tin_check_unavailable`. Nothing is ever displayed or stored as a pass that
+no register confirmed.
 
 | Method | Path | Body | Answer |
 | --- | --- | --- | --- |
@@ -580,7 +603,7 @@ frontend the live-location window and whether Google is configured, so no creden
 hard-coded in the UI.
 
 `/login`, `/signup`, `/rider`, `/passenger` and `/admin` mount the same header as the app — the SERE Moto logo,
-the *Nshaka Motari* / *Ndi Motari* / *Ibyange* tabs, the **Menu** and the RW/EN toggle — so signing up, riding
+the *Passenger* / *Rider* / *Ibyange* tabs, the **Menu** and the RW/EN toggle — so signing up, riding
 or administering never looks like a different product. A driver's *Ibyange* link points at `/rider`, a
 passenger's at `/passenger`; the account kind comes from `GET /api/auth/session`, which never confuses the two
 token types. The console stays at `/admin`, reachable only from the Menu row that appears when the stored
@@ -591,8 +614,8 @@ to cell) and `/admin` (riders filtered at sector depth); `/` loads the same file
 `list()` calls and asks the passenger through `interview.js` instead. `/passenger` saves addresses as text plus
 optional coordinates instead.
 
-The header **Menu** (between the account icon and the RW/EN toggle) holds the main views — *Nshaka Motari*,
-*Ndi Motari*, *Ibyange*, *Uko bikora* → `/guide`, plus the admin row when the session belongs to an admin — the
+The header **Menu** (between the account icon and the RW/EN toggle) holds the main views — *Passenger*,
+*Rider*, *Ibyange*, *Uko bikora* → `/guide`, plus the admin row when the session belongs to an admin — the
 *Bari online gusa* / *Online riders only* switch and **Shyira app kuri Phone** / **Install app on Phone** — a
 plain icon + title row, never a filled button. `public/manifest.json`, `public/sw.js` and the icons in
 `public/assets/` make the app installable.
@@ -605,7 +628,7 @@ the row shows the installed state in place.
 | Method | Path | Auth | Purpose |
 | --- | --- | --- | --- |
 | GET | `/api/config` | – | `googleClientId`, `liveLocationSeconds`, the RURA `fare` table, the KYC digit laws (`kyc.phoneDigits` 10, `kyc.idDigits` 16, `kyc.tinDigits` 9) and which registers are wired |
-| POST | `/api/auth/otp/send` | – | Issue an OTP; `devCode` in the response only with `OTP_ECHO=1` |
+| POST | `/api/auth/otp/send` | – | Screens the digits with the phone provider, then issues an OTP; `devCode` in the response only with `OTP_ECHO=1` |
 | POST | `/api/auth/otp/verify` | – | Verify the OTP → session token, or `verify_token` for a new number |
 | POST | `/api/auth/signup` | `verify_token` | KYC application → `status: pending`, with one register verdict per credential |
 | POST | `/api/verify-tin` | `verify_token` | Ask RRA about a 9-digit TIN → `{valid, taxpayer, source}`; 12 lookups/hour per phone |
@@ -661,7 +684,8 @@ the row shows the installed state in place.
 | GET | `/api/admin/overview` | Bearer + admin | 7-day series, per-zone / provider / kind breakdowns, top riders with their division, webhook health |
 | POST | `/api/webhooks/paystack` | signature | Provider callback |
 | POST | `/api/webhooks/mtn-momo` | checksum | Provider callback |
-| GET | `/api/health` | – | Table counts, payment provider readiness, the `kyc` block (`smsProvider`, `rra`, `idProvider`, `phoneCheck`, `strict`), the `storage` block (`configured`, `bucket`, `maxUploadBytes`), the `divisions` block (rows loaded, per-level counts, mapped centroids, seed file), `adminConfigured` |
+| GET | `/api/health` | – | Table counts plus `drivers`, `requests` and `tripsCompleted` (the three numbers the booking page shows as *Abamotari* / *Abiteguye* / *Abatwaye*), payment provider readiness, the `kyc` block (`smsProvider`, `rra`, `idProvider`, `phoneCheck` — `false`,
+`"numverify"` or `"generic"`, so the reader learns *which* service answers for a phone number, `strict`), the `storage` block (`configured`, `bucket`, `maxUploadBytes`), the `divisions` block (rows loaded, per-level counts, mapped centroids, seed file), `adminConfigured` |
 
 Errors are `{"error": "<code>", "message": "<english detail>"}`. The UI translates the code, so the code
 names are part of the contract: `invalid_phone`, `invalid_code`, `otp_invalid`, `otp_expired`,

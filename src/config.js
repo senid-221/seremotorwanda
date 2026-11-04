@@ -68,6 +68,14 @@ export const config = {
     key: process.env.PHONE_CHECK_KEY || '',
     timeoutMs: num(process.env.PHONE_CHECK_TIMEOUT_MS, 10000),
   },
+  /* numverify (apilayer.com) checks a number against the international numbering plan: it says
+     whether +250 7x xxx xxxx is a real Rwandan mobile range at all, before an SMS credit goes out.
+     It is not an HLR probe, so a "valid" verdict never means somebody answered the phone. */
+  numverify: {
+    key: process.env.NUMVERIFY_ACCESS_KEY || '',
+    baseUrl: (process.env.NUMVERIFY_BASE_URL || 'https://api.apilayer.com/numverify').replace(/\/+$/, ''),
+    timeoutMs: num(process.env.NUMVERIFY_TIMEOUT_MS, 10000),
+  },
   /* With 1 every configured check must return a verdict before a signup is accepted. */
   kycStrict: process.env.KYC_STRICT === '1',
   google: {
@@ -141,7 +149,8 @@ export const kycHealth = () => ({
   smsProvider: otpDevMode() ? 'none' : config.sms.provider,
   rra: Boolean(config.rra.baseUrl && (config.rra.apiKey || (config.rra.username && config.rra.password))),
   idProvider: config.idCheck.url ? (config.idCheck.provider || 'generic') : null,
-  phoneCheck: Boolean(config.phoneCheck.url && config.phoneCheck.key),
+  phoneCheck: config.numverify.key ? 'numverify'
+    : (config.phoneCheck.url && config.phoneCheck.key ? 'generic' : false),
   strict: config.kycStrict,
 });
 
@@ -154,7 +163,9 @@ export const missingConfig = () => {
   if (config.otpEcho) problems.push('OTP_ECHO=1 (codes are returned in the API response — remove it before going live)');
   if (!config.rra.baseUrl) problems.push('RRA_BASE_URL + RRA_API_KEY (TIN numbers are format-checked only, never looked up at RRA)');
   if (!config.idCheck.url) problems.push('ID_CHECK_URL + ID_CHECK_KEY (national ID numbers are format-checked only, never matched against NIDA)');
-  if (!config.phoneCheck.url) problems.push('PHONE_CHECK_URL + PHONE_CHECK_KEY (phone numbers are format-checked only)');
+  if (!config.numverify.key && !config.phoneCheck.url) {
+    problems.push('NUMVERIFY_ACCESS_KEY (Rwandan phone numbers are format-checked only, never looked up)');
+  }
   if (!config.google.clientId) problems.push('GOOGLE_CLIENT_ID (Google sign-in returns 503)');
   if (!config.adminPhone) problems.push('ADMIN_PHONE (no account can become an admin)');
   if (!storageConfigured()) problems.push('S3_BUCKET + S3_ACCESS_KEY_ID + S3_SECRET_ACCESS_KEY (rider documents cannot be uploaded)');

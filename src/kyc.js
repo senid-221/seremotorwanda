@@ -1,6 +1,6 @@
 /* SERE Moto — identity and taxpayer lookups against the services that actually know:
    RRA for the 9-digit TIN, NIDA (or peleza.com, or any contract handed to us) for the
-   national ID, and an HLR-style service for the phone number.
+   national ID, and numverify (or an HLR-style service) for the phone number.
 
    The frontend never talks to these providers. It calls /api/verify-tin and /api/verify-id
    on this server, which holds the credentials, caches the verdict and answers in one shape.
@@ -258,13 +258,72 @@ export async function verifyId(number, names, { phone = null, force = false } = 
 
 /* ---------------------------------- phone number check --------------------------------- */
 
-export const phoneCheckConfigured = () => Boolean(config.phoneCheck.url && config.phoneCheck.key);
+/* Two contracts are understood here. numverify (one access key, one GET) answers whether the
+   digits form a real number in the international numbering plan; a handed-over HLR endpoint
+   behind PHONE_CHECK_* answers whether the line is live. numverify is checked first because it
+   is the cheaper call, and a number it rejects should never reach an SMS aggregator. */
+
+export const numverifyConfigured = () => Boolean(config.numverify.key);
+export const phoneCheckConfigured = () => numverifyConfigured()
+  || Boolean(config.phoneCheck.url && config.phoneCheck.key);
+export const phoneCheckProvider = () => (numverifyConfigured() ? 'numverify'
+  : (config.phoneCheck.url && config.phoneCheck.key ? 'generic' : null));
+
+const invalidPhone = (source) => new ApiError(
+  422,
+  source === 'numverify' ? 'phone_invalid' : 'phone_not_live',
+  source === 'numverify'
+    ? 'That is not a valid Rwandan mobile number. Check the digits and try again.'
+    : 'That number is not active on any Rwandan network.',
+);
+
+/* numverify answers with {"success":false,"errors":{...}} or {"error":{...}} when the key is
+   wrong or the quota is spent — an outage on our side, never a verdict about the passenger. */
+function numverifyFault(body) {
+  if (!body || typeof body !== 'object') return null;
+  const errors = body.errors || body.error || null;
+  if (body.success === false || errors) {
+    const info = errors && typeof errors === 'object'
+      ? (errors.info || errors.message || errors.type || JSON.stringify(errors))
+      : String(errors || 'rejected');
+    return `numverify refused the request: ${String(info).slice(0, 160)}`;
+  }
+  return null;
+}
+
+async function queryNumverify(phone) {
+  const url = new URL(`${config.numverify.baseUrl}/validate`);
+  url.searchParams.set('access_key', config.numverify.key);
+  url.searchParams.set('number', `+250${phone.slice(1)}`);
+  let response;
+  try {
+    response = await request(url, { method: 'GET', timeoutMs: config.numverify.timeoutMs });
+  } catch (error) {
+    throw new ApiError(502, 'phone_check_unavailable', `numverify did not answer: ${error.message}`);
+  }
+  const body = await response.json().catch(() => null);
+  const fault = numverifyFault(body);
+  if (fault) throw new ApiError(response.ok ? 502 : 502, 'phone_check_unavailable', fault);
+  if (!response.ok) {
+    throw new ApiError(502, 'phone_check_unavailable', `numverify replied with HTTP ${response.status}`);
+  }
+  const valid = pickFlag(body, '', ['valid', 'isvalid', 'validphone', 'numbervalid']);
+  if (valid === null) {
+    throw new ApiError(502, 'phone_check_unavailable', `The numverify answer could not be read (${describe(body)})`);
+  }
+  const carrier = pickText(body, '', ['carrier', 'network', 'operator', 'provider']);
+  const lineType = pickText(body, '', ['line_type', 'linetype', 'type']);
+  const detail = [carrier, lineType].filter(Boolean).join(' / ') || null;
+  await writeCache('phone', phone, valid, detail, 'numverify', valid ? null : describe(body));
+  return { valid, operator: detail, source: 'numverify' };
+}
 
 export async function checkPhone(phone, { force = false } = {}) {
   if (!force) {
     const hit = await readCache('phone', phone);
     if (hit) return { valid: Boolean(hit.valid), operator: hit.operator, source: 'cache' };
   }
+  if (numverifyConfigured()) return queryNumverify(phone);
   if (!phoneCheckConfigured()) {
     throw new ApiError(503, 'phone_check_unavailable', 'Phone number verification is not configured');
   }
@@ -314,6 +373,16 @@ const verdictOf = async (check) => {
   }
 };
 
+/* A number that cannot exist should not spend an SMS credit, so the OTP endpoint screens the
+   digits first. No provider wired up, or a provider that is down, still sends the code — the
+   code itself is the proof of ownership — unless KYC_STRICT=1 says otherwise. */
+export const screenPhone = (phone) => (phoneCheckConfigured()
+  ? verdictOf(async () => {
+    const result = await checkPhone(phone);
+    if (!result.valid) throw invalidPhone(result.source);
+  })
+  : Promise.resolve('unchecked'));
+
 export async function gateSignup({ phone, id, tin, names }) {
   const verdict = { tin: 'unchecked', id: 'unchecked', phone: 'unchecked' };
 
@@ -335,7 +404,7 @@ export async function gateSignup({ phone, id, tin, names }) {
   if (phoneCheckConfigured()) {
     verdict.phone = await verdictOf(async () => {
       const result = await checkPhone(phone);
-      if (!result.valid) throw new ApiError(422, 'phone_not_live', 'That number is not active on any Rwandan network.');
+      if (!result.valid) throw invalidPhone(result.source);
     });
   }
 
@@ -351,6 +420,6 @@ export async function gateSignup({ phone, id, tin, names }) {
 export const kycSummary = () => ({
   rra: rraConfigured(),
   id: idConfigured() ? (config.idCheck.provider || 'generic') : false,
-  phone: phoneCheckConfigured(),
+  phone: phoneCheckProvider() || false,
   strict: config.kycStrict,
 });

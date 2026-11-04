@@ -5,7 +5,7 @@ import { signToken, verifyToken, requireAuth, sessionPayload } from '../auth.js'
 import { sendOtp, consumeOtp } from '../otp.js';
 import { verifyGoogleCredential } from '../google.js';
 import { fareHealth } from '../fares.js';
-import { gateSignup, idConfigured, phoneCheckConfigured, rraConfigured } from '../kyc.js';
+import { gateSignup, idConfigured, phoneCheckProvider, rraConfigured, screenPhone } from '../kyc.js';
 import { divisionHealth } from '../locations.js';
 import {
   ApiError, KYC_RULES, normalizeRwandaPhone, normalizePlate, text, oneOf, idNumber, tinNumber, otpCode,
@@ -66,7 +66,7 @@ router.get('/api/config', (_req, res) => {
       ...KYC_RULES,
       rra: rraConfigured(),
       id: idConfigured() ? (config.idCheck.provider || 'generic') : null,
-      phone: phoneCheckConfigured(),
+      phone: phoneCheckProvider(),
     },
     /* The dropdowns only ask for divisions the server actually holds, so an unseeded build says so
        here rather than showing five empty selects. */
@@ -76,6 +76,7 @@ router.get('/api/config', (_req, res) => {
 
 router.post('/api/auth/otp/send', async (req, res) => {
   const phone = normalizeRwandaPhone(req.body.phone);
+  await screenPhone(phone);
   res.json(await sendOtp(phone));
 });
 

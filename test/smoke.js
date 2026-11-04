@@ -5,6 +5,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { config } from '../src/config.js';
 import { runSeed, startPostgres, scratchEnv } from './pg-harness.js';
+import { NUMVERIFY_TEST_KEY, startFakeNumverify } from './fake-numverify.js';
 
 /* The suite seeds and boots its own server against a throwaway database, so `npm test` cannot leave test
    accounts in live data. Set BASE_URL only when you deliberately want to run these checks against a server
@@ -106,14 +107,18 @@ let scratchWatchdog = null;
 let scratchExitCode = null;
 let scratchLog = '';
 let scratchPg = null;
+let scratchNumverify = null;
 
 async function startScratchServer() {
   scratchPg = await startPostgres();
+  scratchNumverify = await startFakeNumverify();
   const env = scratchEnv(scratchPg, {
     PORT: String(PORT),
     HOST: '127.0.0.1',
     ADMIN_PHONE,
     OTP_ECHO: '1',
+    NUMVERIFY_ACCESS_KEY: NUMVERIFY_TEST_KEY,
+    NUMVERIFY_BASE_URL: scratchNumverify.base,
   });
   await runSeed(env);
 
@@ -317,6 +322,53 @@ await check('the lookups report what they could actually reach', async () => {
     assert.equal(id.status, 503);
     assert.equal(id.json.error, 'id_check_unavailable');
   }
+});
+
+await check('health names the service that checks phone numbers', async () => {
+  const { json } = await api('/api/health');
+  assert.ok([false, 'numverify', 'generic'].includes(json.kyc.phoneCheck),
+    `phoneCheck must be false, "numverify" or "generic", got ${JSON.stringify(json.kyc.phoneCheck)}`);
+  const { json: cfg } = await api('/api/config');
+  assert.equal(cfg.kyc.phone, json.kyc.phoneCheck || null, 'the signup page must be told the same provider');
+});
+
+await check('a number the phone service rejects never spends an SMS code', async () => {
+  const health = (await api('/api/health')).json;
+  if (!scratchNumverify || health.kyc.phoneCheck !== 'numverify') throw new Error('__SKIP__');
+  const dead = `079${tag}01`;
+  const { status, json } = await api('/api/auth/otp/send', { method: 'POST', body: { phone: dead } });
+  assert.equal(status, 422, `a dead number returned ${status} ${JSON.stringify(json)}`);
+  assert.equal(json.error, 'phone_invalid');
+  assert.ok(scratchNumverify.calls.some((call) => call.number === `+250${dead.slice(1)}`),
+    'the digits must be sent to the phone service in international form');
+});
+
+await check('a screened number is cached, so the same digits are not looked up twice', async () => {
+  const health = (await api('/api/health')).json;
+  if (!scratchNumverify || health.kyc.phoneCheck !== 'numverify') throw new Error('__SKIP__');
+  const phone = `078${tag}41`;
+  const before = scratchNumverify.calls.length;
+  assert.equal((await api('/api/auth/otp/send', { method: 'POST', body: { phone } })).status, 200);
+  assert.equal(scratchNumverify.calls.length, before + 1, 'the first code screens the number once');
+  const again = await api('/api/auth/otp/send', { method: 'POST', body: { phone } });
+  assert.notEqual(again.json.error, 'phone_invalid', 'a cached pass must not turn into a rejection');
+  assert.equal(scratchNumverify.calls.length, before + 1, 'the second code must read the cached verdict');
+});
+
+await check('a phone service that cannot answer is an outage, never a verdict about the number', async () => {
+  const health = (await api('/api/health')).json;
+  if (!scratchNumverify || health.kyc.phoneCheck !== 'numverify') throw new Error('__SKIP__');
+  for (const [mode, phone] of [['down', `078${tag}42`], ['gibberish', `078${tag}43`]]) {
+    await scratchNumverify.setMode(mode);
+    const { status, json } = await api('/api/auth/otp/send', { method: 'POST', body: { phone } });
+    assert.notEqual(json.error, 'phone_invalid', `${mode}: an unreadable service must not call the number wrong`);
+    if (health.kyc.strict) {
+      assert.ok([502, 503].includes(status), `${mode}: strict mode must refuse to file blind, got ${status}`);
+    } else {
+      assert.equal(status, 200, `${mode}: the code still goes out when the service is down, got ${status} ${JSON.stringify(json)}`);
+    }
+  }
+  await scratchNumverify.setMode('ok');
 });
 
 await check('an invented TIN is refused by RRA, or marked unchecked when RRA is not wired', async () => {
@@ -1172,5 +1224,6 @@ if (scratchChild) {
   scratchChild.kill();
   await sleep(400);
   await scratchPg?.stop();
+  await scratchNumverify?.stop();
 }
 process.exit(process.exitCode || 0);
