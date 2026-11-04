@@ -347,6 +347,13 @@
     point: function (lat, lng, requestApi) {
       return (requestApi || getJson)('/api/locations/point?lat=' + lat + '&lng=' + lng + '&lang=' + lang);
     },
+    /* One level's rows, asked the way a cascade asks them: all provinces, or everything under a parent. */
+    list: function (parentCode, levelKey, requestApi) {
+      var path = parentCode
+        ? '/api/locations?parent=' + encodeURIComponent(parentCode) + '&lang=' + lang
+        : '/api/locations?level=' + encodeURIComponent(levelKey) + '&lang=' + lang;
+      return (requestApi || getJson)(path).then(function (body) { return body.items || []; });
+    },
     /* One box over all five levels: type "Biryogo", get "Biryogo, Gashora, Bugesera, Intara y'Iburasirazuba". */
     suggest: function (needle, requestApi, limit) {
       var path = '/api/locations/search?q=' + encodeURIComponent(needle) + '&lang=' + lang

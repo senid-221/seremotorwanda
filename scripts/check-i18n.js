@@ -1,6 +1,7 @@
 /* Fails when the Kinyarwanda and English halves of a dictionary drift apart:
    I18N (labels) and EC (error sentences) in public/assets/auth.js, the dropdown library's own
-   I18N in public/assets/divisions.js, and the booking page's I18N plus its error map T. */
+   I18N in public/assets/divisions.js, the interview's I18N in public/assets/interview.js, and the
+   booking page's I18N plus its error map T. */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -84,6 +85,7 @@ function walk(lines, dictionaryNames) {
 const SOURCES = [
   { file: 'public/assets/auth.js', dictionaries: ['I18N', 'EC'] },
   { file: 'public/assets/divisions.js', dictionaries: ['I18N'] },
+  { file: 'public/assets/interview.js', dictionaries: ['I18N'] },
   { file: 'public/index.html', dictionaries: ['I18N', 'T'] },
 ];
 
@@ -150,7 +152,7 @@ const codeOf = (rel) => {
   return source.split('\n').filter((_line, index) => !cut.has(index + 1)).join('\n');
 };
 
-for (const js of ['auth', 'divisions', 'rider', 'passenger', 'admin']) {
+for (const js of ['auth', 'divisions', 'interview', 'rider', 'passenger', 'admin']) {
   const source = codeOf(`public/assets/${js}.js`);
   for (const match of source.matchAll(/t\(\s*'([a-zA-Z0-9_.]+)'/g)) noteRef(match[1], `${js}.js`);
   for (const match of source.matchAll(/'([a-z][a-z0-9_]*\.[a-z][a-zA-Z0-9_.]*)'/g)) noteRef(match[1], `${js}.js`);

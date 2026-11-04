@@ -32,19 +32,19 @@ body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;back
 a{color:var(--navy)}
 button{font:inherit;cursor:pointer}
 header{background:var(--navy);color:var(--white);position:sticky;top:0;z-index:40;box-shadow:0 1px 3px rgba(15,23,42,.24)}
-.hd{display:flex;align-items:center;gap:8px;min-height:52px;position:relative}
+.hd{display:flex;align-items:center;gap:8px;min-height:56px;position:relative}
 .logo{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:-.2px}
-.logo svg{width:26px;height:26px;flex:none}
-.logo b{font-size:18px}
-.logo span{font-size:10px;opacity:.85;display:block;font-weight:600;letter-spacing:.4px}
+.logo svg{width:28px;height:28px;flex:none}
+.logo b{font-size:20px}
+.logo span{font-size:11.5px;opacity:.85;display:block;font-weight:600;letter-spacing:.4px}
 .nav{margin-left:auto;display:flex;align-items:center;gap:2px}
-.tab{background:transparent;border:0;color:#dbe4ff;padding:6px 9px;border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap;line-height:1.25}
+.tab{background:transparent;border:0;color:#dbe4ff;padding:7px 10px;border-radius:8px;font-weight:700;font-size:14.5px;white-space:nowrap;line-height:1.25}
 .tab:hover{background:var(--navy-2);color:var(--white)}
 .tab[aria-selected="true"]{color:var(--white);box-shadow:inset 0 -2px 0 var(--white)}
-.tab-icon{display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;line-height:0}
-.tab-icon svg{width:20px;height:20px;display:block}
+.tab-icon{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;line-height:0}
+.tab-icon svg{width:22px;height:22px;display:block}
 a.tab{display:inline-flex;align-items:center;text-decoration:none}
-.tabbtn{display:inline-flex;align-items:center;background:transparent;border:0;border-radius:8px;padding:6px 9px;font-weight:700;font-size:13px;line-height:1.25;text-decoration:none;color:var(--navy)}
+.tabbtn{display:inline-flex;align-items:center;background:transparent;border:0;border-radius:8px;padding:7px 10px;font-weight:700;font-size:15px;line-height:1.25;text-decoration:none;color:var(--navy)}
 .tabbtn:hover{background:var(--bg);color:var(--navy-3)}
 .tabbtn:focus-visible{outline:3px solid var(--navy-3);outline-offset:1px}
 .menu{position:absolute;top:calc(100% - 4px);right:0;z-index:46;width:min(268px,calc(100vw - 24px));max-height:calc(100vh - 74px);overflow:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);box-shadow:0 10px 28px rgba(15,23,42,.22);padding:5px;text-align:left;color:var(--ink)}
@@ -63,46 +63,45 @@ a.tab{display:inline-flex;align-items:center;text-decoration:none}
 .lang{display:flex;background:var(--navy-2);border-radius:7px;padding:2px;gap:1px;margin-left:auto}
 .lang button{border:0;background:transparent;color:#dbe4ff;font-size:10.5px;font-weight:800;padding:3px 0;flex:0 0 30px;text-align:center;border-radius:5px;line-height:1.2}
 .lang button[aria-pressed="true"]{background:var(--white);color:var(--navy)}
-.hero{background:var(--navy-2);color:var(--white);padding:13px 0 15px;text-align:center}
-.hero h1{margin:0 0 5px;font-size:clamp(21px,4.2vw,27px);line-height:1.15;font-weight:800;letter-spacing:-.5px}
-.hero p{margin:0 auto 10px;color:#dbe4ff;font-size:13.5px;max-width:48ch}
-.promise{display:inline-flex;align-items:center;gap:6px;background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber-ink);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;margin-bottom:11px}
-.promise svg{width:14px;height:14px;flex:none}
+.hero{background:var(--navy-2);color:var(--white);padding:14px 0 16px;text-align:center}
+.hero h1{margin:0 0 6px;font-size:clamp(24px,5.4vw,32px);line-height:1.14;font-weight:800;letter-spacing:-.6px}
+.hero p{margin:0 auto 12px;color:#dbe4ff;font-size:16px;line-height:1.45;max-width:42ch}
+.promise{display:inline-flex;align-items:center;gap:6px;background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber-ink);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:800;margin-bottom:12px}
+.promise svg{width:16px;height:16px;flex:none}
 .cta{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.btn{border:1px solid transparent;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13.5px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;justify-content:center;line-height:1.3}
+.btn{border:1px solid transparent;border-radius:11px;padding:12px 16px;font-weight:700;font-size:16px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;justify-content:center;line-height:1.3;min-height:46px}
 .btn-p{background:var(--navy);color:var(--white)}
 .btn-p:hover{background:var(--navy-3)}
 .hero .btn-p{border-color:#7f9ede}
 .hero .btn-p:hover{background:var(--navy-3);border-color:#a9bfe8}
 .btn-ghost{background:transparent;color:var(--navy);border-color:#c3d3f3}
 .btn-ghost:hover{background:#eef3fd;border-color:var(--navy-3)}
-.btn-s{border-radius:999px;padding:6px 12px;font-size:12.5px}
-.btn-xs{padding:4px 10px;font-size:11.5px}
+.btn-s{border-radius:999px;padding:8px 14px;font-size:14.5px;min-height:40px}
+.btn-xs{padding:6px 12px;font-size:13.5px;min-height:36px}
 .btn-block{width:100%}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:3px 8px;flex:1 1 76px;min-width:0}
-.stat b{display:block;font-size:14px;line-height:1.25}
-.stat i{font-style:normal;font-size:9.5px;line-height:1.2;color:#dbe4ff;letter-spacing:.2px}
+.stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:4px 9px;flex:1 1 92px;min-width:0}
+.stat b{display:block;font-size:17px;line-height:1.25}
+.stat i{font-style:normal;font-size:11.5px;line-height:1.3;color:#dbe4ff;letter-spacing:.2px}
 main{padding:14px 0 30px}
 .card,section.card{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
-h2{margin:0 0 3px;font-size:17px;letter-spacing:-.3px}
-h3{margin:0 0 7px;font-size:14.5px}
-.sub{color:var(--ink-soft);font-size:13px;margin:0 0 10px}
-.bk-hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px}
-.bk-hd h2{margin:0}
-.bk-hd .sub{display:inline-flex;align-items:center;max-width:100%;margin:0;padding:3px 9px;background:#eff6ff;border:1px solid #dbeafe;color:var(--navy);border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:-.1px;word-spacing:-.4px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+h2{margin:0 0 4px;font-size:21px;letter-spacing:-.4px}
+h3{margin:0 0 8px;font-size:17.5px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 10px}
+.bk-hd{margin-bottom:12px}
+.bk-hd h2{margin:0;text-align:center}
 [hidden]{display:none !important}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .book .grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-.f label{display:block;font-size:12px;font-weight:700;margin-bottom:4px;color:#1e293b}
-input,select,textarea{width:100%;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:#0f172a;font-size:16px;font-weight:500}
+.f label{display:block;text-align:center;font-size:14.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px;color:#1e293b}
+input,select,textarea{width:100%;min-width:0;padding:12px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:#0f172a;font-size:17px;font-weight:500;min-height:46px}
 input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset:1px;border-color:var(--navy-3);background:#fff}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;font-size:15px;font-weight:700;color:var(--ink);min-height:42px}
 .chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--white)}
 .row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.msg{font-size:13px;font-weight:700;margin-top:8px;border-radius:10px;padding:7px 10px}
+.msg{font-size:15px;font-weight:700;margin-top:8px;border-radius:10px;padding:9px 12px;line-height:1.4}
 .msg-err{color:#fff;background:var(--danger)}
 .msg-ok{color:#fff;background:var(--brand)}
 .review{display:flex;gap:11px;align-items:flex-start;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 13px}
@@ -115,23 +114,40 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .review.rejected p{color:#b91c1c}
 .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .bar input,.bar select{width:auto;min-width:150px;flex:1 1 160px}
-.search{flex:2 1 220px}
-.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:7px}
-.steps li{display:flex;gap:7px;align-items:center;background:#f8fafc;border:1px solid var(--line-2);border-radius:9px;padding:7px 9px;font-size:12px;font-weight:700;color:#1e293b}
-.steps li span{flex:none;width:18px;height:18px;border-radius:50%;background:var(--navy);color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
-.steps li em{font-style:normal;color:var(--ink-soft);font-weight:600;margin-left:auto}
+.search{flex:2 1 220px;padding-left:36px;background-repeat:no-repeat;background-position:10px center;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4 4'/%3E%3C/svg%3E")}
+.askbox{margin:0 0 12px}
+.ask{display:flex;flex-direction:column;gap:9px}
+.ask-head{display:flex;align-items:center;justify-content:center;gap:8px}
+.ask-q{margin:0;font-size:20px;font-weight:800;letter-spacing:-.2px;line-height:1.2;text-align:center;text-transform:uppercase;color:var(--navy)}
+.ask-n{flex:none;font-size:13px;font-weight:800;color:var(--ink-soft);background:#eef2f7;border-radius:999px;padding:3px 9px}
+.ask-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px;max-height:296px;overflow:auto;overscroll-behavior:contain;padding:2px}
+.ask-opt{min-height:54px;padding:9px 11px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-size:17px;font-weight:700;line-height:1.25;text-align:center;overflow-wrap:anywhere}
+.ask-opt:hover{border-color:var(--navy-3);background:#f5f8ff}
+.ask-opt.on{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.ask-opt:focus-visible,.ask-back:focus-visible,.ask-edit:focus-visible{outline:3px solid #bfdbfe;outline-offset:2px}
+.ask-next{border-style:dashed;background:#f8fafc;color:var(--navy)}
+.ask-load,.ask-err{grid-column:1/-1;margin:0;padding:8px 0;text-align:center;font-size:15px;font-weight:700}
+.ask-load{color:var(--ink-soft)}
+.ask-err{color:var(--accent)}
+.ask-back,.ask-edit{align-self:center;background:none;border:0;color:var(--navy);font-size:15px;font-weight:800;text-decoration:underline;padding:5px 10px}
+.ask-done{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:#eff6ff;border:1.5px solid #dbeafe;border-radius:12px;padding:11px 12px}
+.ask-path{margin:0;font-size:17px;font-weight:800;line-height:1.3;text-align:center;color:var(--navy)}
+.dest{display:flex;flex-direction:column;gap:12px}
 .results{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:15px 0 9px}
 .results h2{margin:0}
 .list{display:grid;gap:9px}
-.d{border:1px solid var(--line-2);border-radius:var(--r);padding:11px;background:#fff;display:flex;flex-direction:column;gap:7px;min-width:0;box-shadow:0 1px 1px rgba(15,23,42,.04)}
-.d-top{display:flex;gap:9px;align-items:flex-start}
-.av{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;font-size:13.5px}
+.d{border:1px solid var(--line-2);border-radius:var(--r);padding:13px;background:#fff;display:flex;flex-direction:column;gap:8px;min-width:0;box-shadow:0 1px 1px rgba(15,23,42,.04)}
+.d-top{display:flex;gap:10px;align-items:flex-start}
+.av{width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;font-size:16px}
 .d-id{flex:1;min-width:0}
-.d-id b{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.d-id em{font-style:normal;font-size:12px;color:var(--ink-soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rate{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-soft);margin-top:1px}
+.d-id b{display:block;font-size:17.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.d-id em{font-style:normal;font-size:14px;color:var(--ink-soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rate{display:flex;align-items:center;gap:5px;font-size:13.5px;color:var(--ink-soft);margin-top:2px}
 .rate b{color:var(--ink)}
-.badge{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;border-radius:5px;padding:2px 6px;white-space:nowrap}
+.badge{font-size:11.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;border-radius:5px;padding:3px 7px;white-space:nowrap}
+.avail{display:inline-flex;align-items:baseline;gap:5px;background:#0f172a;color:#fff;border-radius:999px;padding:5px 12px;font-size:14px;font-weight:700}
+.avail b{font-size:17px;line-height:1.2}
 .b-on{background:#dcfce7;color:#14532d}
 .b-off{background:#e2e8f0;color:#334155}
 .b-moto{background:#fef3c7;color:#78350f}
@@ -141,44 +157,41 @@ input:focus,select:focus,textarea:focus{outline:3px solid #bfdbfe;outline-offset
 .b-live i{width:6px;height:6px;border-radius:50%;background:#4ade80;flex:none;animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @media (prefers-reduced-motion:reduce){.b-live i,.track .spin,.track li[data-s="on"]::before{animation:none}}
-.dist{font-size:11.5px;font-weight:800;color:var(--brand);white-space:nowrap}
-.dwhere{font-size:11px;font-weight:700;color:var(--ink-soft);max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dvbox{margin:0 0 12px}
-.dvhd{margin:0 0 6px;font-size:12px;font-weight:700;color:#1e293b}
-.farebox{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:10px 12px;margin-top:12px}
-.farebox h4{margin:0 0 2px;font-size:19px;letter-spacing:-.4px;color:#14532d}
-.farebox p{margin:0;font-size:12px;font-weight:700;color:#166534}
-.farebox ul{margin:6px 0 0;padding:0 0 0 14px;font-size:11.5px;color:#166534;font-weight:600}
-.farebox small{display:block;margin-top:5px;font-size:10.5px;font-weight:700;color:#3f6212}
-.locbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#0f172a;color:#e2e8f0;border-radius:12px;padding:9px 11px;margin-bottom:10px;font-size:12px;font-weight:700}
+.dist{font-size:14px;font-weight:800;color:var(--brand);white-space:nowrap}
+.dwhere{font-size:13px;font-weight:700;color:var(--ink-soft);max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.farebox{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:11px 13px;margin-top:12px}
+.farebox h4{margin:0 0 3px;font-size:23px;letter-spacing:-.5px;color:#14532d}
+.farebox p{margin:0;font-size:14px;font-weight:700;color:#166534}
+.farebox ul{margin:7px 0 0;padding:0 0 0 16px;font-size:13.5px;color:#166534;font-weight:600;line-height:1.5}
+.farebox small{display:block;margin-top:6px;font-size:12.5px;font-weight:700;color:#3f6212;line-height:1.4}
+.locbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#0f172a;color:#e2e8f0;border-radius:12px;padding:11px 13px;margin-bottom:10px;font-size:15px;font-weight:700;line-height:1.35}
 .locbar b{color:#fff}
-.locbar .btn{margin-left:auto}
-.nearbar{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:800;color:var(--ink)}
-.nearbar[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
-.track{border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);padding:11px 12px;margin:0 0 9px}
-.track .tk-hd{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--navy);letter-spacing:-.1px}
-.track .spin{width:15px;height:15px;flex:none;border-radius:50%;border:2.5px solid #c7d6f5;border-top-color:var(--navy);animation:spin 0.9s linear infinite}
+.locbar .btn{margin-left:auto;background:var(--white);color:var(--navy);border-color:var(--white)}
+.locbar .btn:hover{background:#dbeafe;border-color:#dbeafe;color:var(--navy-2)}
+.track{border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);padding:12px 13px;margin:0 0 9px}
+.track .tk-hd{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.2px;line-height:1.3}
+.track .spin{width:18px;height:18px;flex:none;border-radius:50%;border:3px solid #c7d6f5;border-top-color:var(--navy);animation:spin 0.9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.track ol{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:5px}
-.track li{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:3px 8px}
+.track ol{list-style:none;margin:9px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.track li{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
 .track li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--line);flex:none}
 .track li[data-s="on"]{color:var(--navy);border-color:#bfdbfe;background:#eff6ff}
 .track li[data-s="on"]::before{background:var(--navy);animation:pulse 1s ease-in-out infinite}
 .track li[data-s="ok"]{color:#14532d;border-color:#bbf7d0;background:#f0fdf4}
 .track li[data-s="ok"]::before{background:#15803d}
-.track .tk-note{margin:7px 0 0;font-size:11.5px;font-weight:700;color:var(--ink-soft);line-height:1.4}
+.track .tk-note{margin:8px 0 0;font-size:14px;font-weight:700;color:var(--ink-soft);line-height:1.45}
 .d-closest{border-color:var(--navy);box-shadow:0 0 0 2px rgba(30,58,138,.14)}
 .b-near{background:var(--navy);color:#fff}
-.nearline{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--navy)}
-.empty{margin:0;padding:13px 12px;border:1px dashed var(--line);border-radius:10px;text-align:center;font-size:12.5px;font-weight:700;color:var(--navy)}
-.d-meta{font-size:12px;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nearline{margin:0 0 8px;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.4}
+.empty{margin:0;padding:15px 13px;border:1px dashed var(--line);border-radius:10px;text-align:center;font-size:16px;font-weight:700;color:var(--navy);line-height:1.4}
+.d-meta{font-size:14px;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .d-meta b{color:var(--ink);font-weight:700}
-.d-act{display:flex;gap:6px;margin-top:auto;align-items:center;flex-wrap:wrap}
+.d-act{display:flex;gap:7px;margin-top:auto;align-items:center;flex-wrap:wrap}
 .d-act .btn{flex:0 0 auto}
 .d-act>span{min-width:0}
 .stars{color:var(--accent);letter-spacing:1px}
 .ratebtns{display:inline-flex;gap:1px;margin-left:4px;vertical-align:middle}
-.ratebtn{font-size:15px;line-height:1;padding:1px 2px;border:0;background:none;cursor:pointer;color:#64748b}
+.ratebtn{font-size:17px;line-height:1;padding:2px 3px;border:0;background:none;cursor:pointer;color:#64748b}
 .ratebtn:hover,.ratebtn:focus-visible{color:var(--accent)}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -189,25 +202,9 @@ th{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink
 .pill-fail{background:#fee2e2;color:#7f1d1d}
 .sheet{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:50;display:flex;align-items:flex-end;justify-content:center}
 .sheet>div{background:#fff;width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:14px;max-height:92vh;overflow:auto}
-footer{background:var(--navy);color:#dbe4ff;padding:12px 0;font-size:12.5px}
+footer{background:var(--navy);color:#dbe4ff;padding:12px 0;font-size:14.5px}
 footer .wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-right:96px}
 footer a{color:#fff}
-.how{padding:12px 14px}
-.how h3{margin:0 0 6px;font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-soft)}
-.howsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-@media (min-width:600px){.howsteps{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.howsteps li{min-width:0}
-.howsteps a{display:flex;align-items:flex-start;gap:7px;border-radius:10px;padding:6px 9px;border:1px solid transparent;min-width:0;text-decoration:none}
-.howsteps a:hover{box-shadow:0 2px 8px rgba(15,23,42,.14)}
-.howsteps a:focus-visible{outline:3px solid #bfdbfe;outline-offset:2px}
-.howsteps a>div{min-width:0;display:flex;flex-direction:column;gap:1px}
-.howsteps b{font-size:11.5px;font-weight:800;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.howsteps i{font-style:normal;font-size:9.5px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.howsteps span{flex:none;width:17px;height:17px;margin-top:1px;border-radius:50%;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
-.hs-1{background:#eff6ff;border-color:#dbeafe;color:#1e3a8a}.hs-1 span{background:#1e3a8a}
-.hs-2{background:#f0fdf4;border-color:#dcfce7;color:#14532d}.hs-2 span{background:#15803d}
-.hs-3{background:#fffbeb;border-color:#fde68a;color:#78350f}.hs-3 span{background:#b45309}
-.hs-4{background:#f5f3ff;border-color:#ddd6fe;color:#4c1d95}.hs-4 span{background:#6d28d9}
 .fab{position:fixed;right:16px;bottom:16px;z-index:45;width:48px;height:48px;border-radius:50%;background:var(--wa);color:#fff;display:flex;align-items:center;justify-content:center;border:0;box-shadow:0 6px 16px rgba(15,23,42,.3)}
 .fab svg{width:24px;height:24px}
 .fab:hover{background:var(--brand)}
@@ -215,20 +212,24 @@ footer a{color:#fff}
   .hd{flex-wrap:wrap;padding-top:7px;padding-bottom:7px}
   .nav{width:100%;margin-left:0;justify-content:space-between}
   .nav .lang{margin-left:0}
-  .tab{padding:6px 8px;font-size:12.5px}
-  .tab-icon{padding:4px 7px}
-  .book .grid{grid-template-columns:1fr 1fr}
+  .tab{padding:7px 9px;font-size:14px}
+  .tab-icon{padding:5px 8px}
+  .book .grid{grid-template-columns:1fr}
+  .ask-opts{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
   footer .wrap{padding-right:16px;flex-direction:column;align-items:flex-start;gap:8px}
 }
 @media (max-width:430px){
   .logo span{display:none}
   .hero p{display:none}
+  .ask-opts{max-height:252px}
 }
 @media (max-width:360px){
   .nav{gap:1px}
-  .tab{padding:6px 5px;font-size:11.5px;line-height:1.4}
-  .tab-icon{padding:4px 5px;line-height:0}
-  .lang button{flex:0 0 27px;font-size:10px}
+  .tab{padding:6px 5px;font-size:13px;line-height:1.4}
+  .tab-icon{padding:5px 5px;line-height:0}
+  .lang button{flex:0 0 29px;font-size:11px}
+  .ask-q{font-size:18px}
+  .ask-opts{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -266,7 +267,6 @@ footer a{color:#fff}
       </ul>
       <h4 data-i18n="menu.settings">Igenamiterere</h4>
       <ul>
-        <li><button class="mrow" type="button" id="miNear" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-i18n="menu.near">Hafi yanjye</span><span class="val" id="miNearVal" aria-hidden="true"></span></button></li>
         <li><button class="mrow" type="button" id="miOnline" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 20v-7"/><path d="M6.5 12.5a7 7 0 1 1 11 0"/></svg><span data-i18n="menu.online">Bari online gusa</span><span class="val" id="miOnlineVal" aria-hidden="true"></span></button></li>
       </ul>
     </div>
@@ -293,38 +293,32 @@ footer a{color:#fff}
     <div class="card book">
       <div class="bk-hd">
         <h2 data-i18n="book.title">Tumiza urugendo</h2>
-        <p class="sub" data-i18n="book.sub">Aho uri, Aho ujya, Ikinyabiziga — kanda rimwe.</p>
       </div>
-      <div class="dvbox">
-        <p class="dvhd" data-i18n="book.div">Aho uvuye — hitamo intara, akarere cyangwa umurenge</p>
-        <div id="divFrom"></div>
+      <div class="askbox" id="ask"></div>
+      <div class="dest" id="destBox" hidden>
+        <div class="f"><label for="fTo" data-i18n="book.where">Nono ushaka kujya hehe?</label><input id="fTo" list="zones"></div>
+        <div class="grid">
+          <div class="f"><label for="fType" data-i18n="book.type">Ikinyabiziga</label>
+            <select id="fType" aria-label="Vehicle"><option value=""></option><option value="moto" data-i18n="t.moto">Moto</option><option value="car" data-i18n="t.car">Imodoka/Taksi</option></select></div>
+          <div class="f"><label for="fNeed" data-i18n="book.service">Icyo ushaka</label>
+            <select id="fNeed" aria-label="Service"><option value=""></option><option value="ride" data-i18n="n.ride">Gutwarwa</option><option value="delivery" data-i18n="n.delivery">Kohereza Imizigo (Derivari)</option></select></div>
+        </div>
+        <button class="btn btn-p btn-block" id="btnSearch" type="button"><span data-i18n="book.go">Nshaka Motari</span></button>
       </div>
-      <div class="grid">
-        <div class="f"><label for="fTo" data-i18n="book.to">Ujyayo</label><input id="fTo" list="zones"></div>
-        <div class="f"><label for="fType" data-i18n="book.type">Ikinyabiziga</label>
-          <select id="fType" aria-label="Vehicle"><option value="" data-i18n="find.allTypes">Ibinyabiziga byose</option><option value="moto" data-i18n="t.moto">Moto</option><option value="car" data-i18n="t.car">Imodoka/Taksi</option></select></div>
-        <div class="f"><label for="fNeed" data-i18n="book.service">Icyo ushaka</label>
-          <select id="fNeed" aria-label="Service"><option value="" data-i18n="find.allNeeds">Serivise yose</option><option value="ride" data-i18n="n.ride">Gutwarwa</option><option value="delivery" data-i18n="n.delivery">Kohereza Imizigo (Derivari)</option></select></div>
-      </div>
-      <button class="btn btn-p btn-block" id="btnSearch" type="button" style="margin-top:12px"><span data-i18n="book.go">Nshaka Motari</span> <span data-i18n="book.sec">· 10s</span></button>
-      <ol class="steps" style="margin-top:12px">
-        <li><span>1</span><b data-i18n="step1">Hitamo aho uvuye n'ikinyabiziga</b> <em>10s</em></li>
-        <li><span>2</span><b data-i18n="step2">Kanda "Ntwara"</b> <em>25s</em></li>
-        <li><span>3</span><b data-i18n="step3">Diringa kuri WhatsApp</b> <em>15s</em></li>
-      </ol>
     </div>
     <div class="results">
-      <h2 data-i18n="results.title">Abashoferi bari hafi</h2>
-      <p class="sub" id="count" style="margin:0"></p>
-      <span class="badge b-live" id="liveTag" hidden><i></i><span id="liveCount"></span></span>
-      <label class="row" style="margin-left:auto;gap:6px;font-size:14px;font-weight:700"><input type="checkbox" id="fOnline" style="width:auto;min-width:0;flex:0;padding:0"> <span data-i18n="find.online">Bari online kandi bateguye</span></label>
-      <button class="nearbar" id="btnNear" type="button" aria-pressed="false" data-i18n="near.off">Koresha hafi yanjye</button>
-      <input id="q" class="search" type="search" data-i18n-ph="find.search" placeholder="Shaka site cyangwa plaque…" aria-label="Search" style="flex:1 1 200px">
+      <h2 id="resultsTitle" data-i18n="results.title">Abashoferi bari hafi</h2>
+      <span class="avail" id="availPill" hidden style="margin-left:auto"><b id="availN">0</b> <span data-i18n="find.ready">bateguye</span></span>
+      <input id="q" class="search" type="search" aria-label="Search" style="flex:1 1 200px">
+    </div>
+    <div class="locbar" id="locBar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="width:18px;height:18px;flex:none"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      <span id="locText" data-i18n="loc.waiting">Turimo kumenya aho uri…</span>
+      <button class="btn btn-s btn-ghost" id="btnLoc" type="button" hidden data-i18n="loc.retry">Ongera ugerageze</button>
     </div>
     <div class="track" id="track" role="status" aria-live="polite" hidden>
       <div class="tk-hd"><span class="spin" aria-hidden="true"></span><span data-i18n="track.title">Gutegereza — turimo gushaka moto hafi yawe</span></div>
       <ol>
-        <li data-step="geo"><span data-i18n="track.geo">Kumenya aho uri</span></li>
         <li data-step="scan"><span data-i18n="track.scan">Kubara abamotari bari hafi</span></li>
         <li data-step="sort"><span data-i18n="track.sort">Gutondeka ku ntera</span></li>
       </ol>
@@ -336,16 +330,6 @@ footer a{color:#fff}
     <p class="msg msg-err" id="findErr" hidden></p>
     <datalist id="zones"></datalist>
   </section>
-
-  <div class="card how">
-    <h3 data-i18n="how">Uko bikora</h3>
-    <ol class="howsteps">
-      <li><a class="hs-1" href="/guide#register" target="_blank" rel="noopener" data-i18n-tip="how1"><span>1</span><div><b data-i18n="hs1">Iyandikishe</b><i data-i18n="hi1">Izina, ID, TIN, plaque</i></div></a></li>
-      <li><a class="hs-2" href="/guide#find" target="_blank" rel="noopener" data-i18n-tip="how2"><span>2</span><div><b data-i18n="hs2">Nshaka Motari</b><i data-i18n="hi2">Zone, ikinyabiziga, serivise</i></div></a></li>
-      <li><a class="hs-3" href="/guide#send" target="_blank" rel="noopener" data-i18n-tip="how3"><span>3</span><div><b data-i18n="hs3">Ohereza</b><i data-i18n="hi3">Kuri WhatsApp</i></div></a></li>
-      <li><a class="hs-4" href="/guide#pay" target="_blank" rel="noopener" data-i18n-tip="how4"><span>4</span><div><b data-i18n="hs4">Kwishyura</b><i data-i18n="hi4">MoMo cyangwa ikarita</i></div></a></li>
-    </ol>
-  </div>
 </main>
 
 <a class="fab" href="https://wa.me/250780000000" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
@@ -398,32 +382,29 @@ footer a{color:#fff}
 </footer>
 
 <script src="/assets/divisions.js"></script>
+<script src="/assets/interview.js"></script>
 <script>
 var I18N = {
   rw: {
     tagline:"Transport & clients","nav.find":"Nshaka Motari","nav.join":"Ndi Motari","nav.mine":"Ibyange",
-    "nav.menu":"Menu","menu.app":"Porogaramu","menu.settings":"Igenamiterere","menu.admin":"Ubuyobozi","menu.near":"Hafi yanjye","menu.online":"Bari online gusa","menu.install":"Shyira app kuri Phone","menu.installed":"App imaze gushyirwa kuri Phone",
+    "nav.menu":"Menu","menu.app":"Porogaramu","menu.settings":"Igenamiterere","menu.admin":"Ubuyobozi","menu.online":"Bari online gusa","menu.install":"Shyira app kuri Phone","menu.installed":"App imaze gushyirwa kuri Phone",
     "hero.title":"Tumiza moto mu munota 1","hero.body":"Hitamo intara, akarere cyangwa umurenge wawe, ubone umumotari ugutwara cyangwa ukujyanira ibintu aho ushaka hose. Kwishyura biroroshye.",
     "promise.text":"Mu munota 1: bona motari",
     "hero.cta2":"Ndi Motari — iyandikishe",
-    "book.title":"Tumiza urugendo","book.sub":"Aho uri, Aho ujya, Ikinyabiziga — kanda rimwe.","book.div":"Aho uvuye — hitamo intara, akarere cyangwa umurenge","book.to":"Ujyayo","book.type":"Ikinyabiziga","book.service":"Icyo ushaka","book.go":"Nshaka Motari","book.sec":"· 10s",
-    "step1":"Hitamo aho uvuye n'ikinyabiziga","step2":"Kanda \\"Ntwara\\"","step3":"Diringa kuri WhatsApp",
-    "results.title":"Abamotari bari hafi",
-    "find.search":"Shaka site cyangwa plaque…","find.allTypes":"Ibinyabiziga byose","find.allNeeds":"Serivise yose","find.online":"Bari online kandi bateguye",
+    "book.title":"Tumiza urugendo","book.where":"Nono ushaka kujya hehe?","book.type":"Ikinyabiziga","book.service":"Icyo ushaka","book.go":"Nshaka Motari",
+    "results.title":"Abamotari bari hafi","pick.title":"Hitamo umumotari",
+    "find.ready":"bateguye",
     "t.moto":"Moto","t.car":"Imodoka/Taksi","n.ride":"Gutwarwa","n.delivery":"Kohereza Imizigo (Derivari)","n.both":"Gutwarwa + Kohereza Imizigo",
-    "loc.unsupported":"Iyi browser ntishobora gutanga location.",
+    "loc.unsupported":"Iyi browser ntishobora gutanga location.","loc.waiting":"Turimo kumenya aho uri…","loc.deny":"Iyi app ikora neza iyo Location ifunguye — kemera location wongere ugerageze.","loc.retry":"Ongera ugerageze",
     "r.fare":"Amafaranga",
-    "how":"Uko bikora","hs1":"Iyandikishe","hs2":"Nshaka Motari","hs3":"Ohereza","hs4":"Kwishyura",
-    "hi1":"Izina, ID, TIN","hi2":"Aho uvuye · serivise","hi3":"WhatsApp","hi4":"MoMo · ikarita",
-    "how1":"Andikisha: amazina, ID, TIN, plaque na telefone — umuyobozi arakwemeza.","how2":"Shakisha ku ntara, akarere cyangwa umurenge, ikinyabiziga na serivise.","how3":"Demand ibikwa, ihita yerekeza kuri WhatsApp.","how4":"Nyuma y'urugendo wishyura kuri MoMo cyangwa ikarita.",
+    "how":"Uko bikora",
     "sh.title":"Ohereza demand","sh.close":"Funga","sh.name":"Izina ryawe","sh.phone":"Telefone","sh.kind":"Icyo ushaka","sh.from":"Uva","sh.to":"Ujya","sh.when":"Igihe","sh.pax":"Abantu / ibiro","sh.km":"Intera (km) — niba map itabibonye","sh.note":"Ubutumwa","sh.send":"Ntwara","sh.call":"Hamagara",
     "sh.fare":"Igiciro ntangere","sh.dist":"Intera","sh.fareKm":"{km} km ku muhanda nyawo","sh.fareLoading":"Turapima intera…","sh.fareNone":"Ubushe ntitubashije kubona intera — shyiramo km.","sh.fareBasis":"Igiciro kigenwa na RURA ku mapingu. Nta wushobora kucyihindurira.",
     "fare.first":"{km} km zambere: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (harengeze {over} km)","fare.wait":"{min} min zo gutegereza × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
     "fare.regulated":"Igiciro kigenwa na RURA","fare.driverRate":"Igiciro gishyirwaho n'umushoferi",
-    "near.off":"Koresha hafi yanjye","near.on":"Hafi yanjye · {km} km","near.none":"Nta motari igaragaza GPS mu ntera ya {km} km — izi ni izo mu gace kawe.","list.empty":"Nta motari iboneka ubu — ugerageze nyuma.","near.onHint":"Dukoresheje GPS yawe","near.offHint":"Kanda ukoresheshe location yawe",
-    "track.title":"Gutegereza — turimo gushaka moto hafi yawe","track.geo":"Kumenya aho uri","track.at":"Aho uri: ±{m} m","track.where":"Aho uri: {where}","track.scan":"Kubara abamotari bari hafi","track.sort":"Gutondeka ku ntera","track.found":"Abamotari {n} babonetse hafi ya {km} km","track.noFix":"Ntiwashoboye kumenya aho uri — kemera location wongere ugerageze","track.noLive":"Nta motari igaragaza GPS hafi yawe — turimo kureba mu gace kawe","c.closest":"Hafi cyane","near.line":"Iyi ni yo moto hafi yawe: {name} · {km}. Ni wowe uhitamo uwo utega.",
+    "near.none":"Nta motari igaragaza GPS mu ntera ya {km} km — izi ni izo mu gace kawe.","list.empty":"Nta motari iboneka ubu — ugerageze nyuma.",
+    "track.title":"Gutegereza — turimo gushaka moto hafi yawe","track.at":"Aho uri: ±{m} m","track.where":"Aho uri: {where}","track.scan":"Kubara abamotari bari hafi","track.sort":"Gutondeka ku ntera","track.found":"Abamotari {n} babonetse hafi ya {km} km","track.noLive":"Nta motari igaragaza GPS hafi yawe — turimo kureba mu gace kawe","c.closest":"Hafi cyane","near.line":"Iyi ni yo moto hafi yawe: {name} · {km}. Ni wowe uhitamo uwo utega.",
     "where.line":"Aho uri: {where} · intera {km} km uvuye hagati",
-    "live.count":"{n} bari live hafi yawe","live.one":"{n} uri live hafi yawe",
     "c.off":"offline","c.book":"Ntwara","c.call":"Hamagara","c.rate":"Shorta",
     "c.available":"Nditeguye","c.busy":"Afite umugenzi","c.live":"LIVE","c.km":"{km} km","c.noGps":"Nta GPS",
     "m.drivers":"Abamotari","m.online":"Bari online","m.areas":"Uturere",
@@ -433,28 +414,24 @@ var I18N = {
   },
   en: {
     tagline:"Transport & clients","nav.find":"Need a moto","nav.join":"I'm a rider","nav.mine":"My account",
-    "nav.menu":"Menu","menu.app":"App","menu.settings":"Settings","menu.admin":"Admin console","menu.near":"Near me","menu.online":"Online riders only","menu.install":"Install app on Phone","menu.installed":"App is on this Phone",
+    "nav.menu":"Menu","menu.app":"App","menu.settings":"Settings","menu.admin":"Admin console","menu.online":"Online riders only","menu.install":"Install app on Phone","menu.installed":"App is on this Phone",
     "hero.title":"Book a moto in 1 minute","hero.body":"Pick where you are in Rwanda — province, district or sector — and find a rider to take you or carry anything across town. Paying is easy.",
     "promise.text":"1 minute: get a rider",
-    "book.title":"Book a ride","book.sub":"Where you are, where you are going, the vehicle — one tap.","book.div":"Where you start — pick province, district or sector","book.to":"Going to","book.type":"Vehicle","book.service":"Service","book.go":"Find a moto near me","book.sec":"· 10s",
-    "step1":"Pick your area and vehicle","step2":"Tap \\"Drive me\\"","step3":"Dealing on WhatsApp",
-    "results.title":"Moto riders near you",
+    "book.title":"Book a ride","book.where":"And where do you want to go?","book.type":"Vehicle","book.service":"Service","book.go":"Find a moto near me",
+    "results.title":"Moto riders near you","pick.title":"PICK A RIDER",
     "hero.cta2":"I'm a moto rider — register",
-    "find.search":"Search an area or plate…","find.allTypes":"All vehicles","find.allNeeds":"All services","find.online":"Online and ready",
+    "find.ready":"ready",
     "t.moto":"Moto","t.car":"Car/Taxi","n.ride":"Get a ride","n.delivery":"Send goods (Delivery)","n.both":"Ride + delivery",
-    "loc.unsupported":"This browser cannot share a location.",
+    "loc.unsupported":"This browser cannot share a location.","loc.waiting":"Finding your position…","loc.deny":"This app works best when Location is on — allow location and try again.","loc.retry":"Try again",
     "r.fare":"Fare",
-    "how":"How it works","hs1":"Register","hs2":"Find a rider","hs3":"Send","hs4":"Pay",
-    "hi1":"Name, ID, TIN","hi2":"Area · service","hi3":"WhatsApp","hi4":"MoMo · card",
-    "how1":"Register: names, national ID, TIN, plate and phone — an admin then approves you.","how2":"Search by province, district or sector, plus vehicle and service.","how3":"Your request is saved and sent on WhatsApp.","how4":"After the trip, pay by MoMo or card.",
+    "how":"How it works",
     "sh.title":"Send a request","sh.close":"Close","sh.name":"Your name","sh.phone":"Phone","sh.kind":"What you need","sh.from":"From","sh.to":"To","sh.when":"When","sh.pax":"People / kg","sh.km":"Distance (km) — only if the map misses it","sh.note":"Message","sh.send":"Drive me","sh.call":"Call",
     "sh.fare":"Fare estimate","sh.dist":"Distance","sh.fareKm":"{km} km on real roads","sh.fareLoading":"Measuring the distance…","sh.fareNone":"We could not find that route — enter the distance.","sh.fareBasis":"Motorcycle fares are set by RURA. Nobody can change them.",
     "fare.first":"First {km} km: {amt} RWF","fare.mid":"{km} km × {rate} RWF","fare.long":"{km} km × {rate} RWF (over {over} km)","fare.wait":"{min} waiting minutes × {rate} RWF","fare.rate":"{km} km × {rate} RWF/km",
     "fare.regulated":"Fare set by RURA","fare.driverRate":"Rate set by the driver",
-    "near.off":"Use my location","near.on":"Near me · {km} km","near.none":"No rider shares a GPS fix within {km} km — these are the riders in your area.","list.empty":"No riders available right now — try again later.","near.onHint":"Using your GPS position","near.offHint":"Tap to share your position",
-    "track.title":"Please wait — looking for a moto near you","track.geo":"Getting your position","track.at":"Your position: ±{m} m","track.where":"You are around {where}","track.scan":"Counting riders close by","track.sort":"Sorting by distance","track.found":"{n} riders found within {km} km","track.noFix":"We could not get your position — allow location and try again","track.noLive":"No rider shares GPS near you — looking in your area instead","c.closest":"Closest","near.line":"This moto is closest to you: {name} · {km}. You still choose who to wait for.",
+    "near.none":"No rider shares a GPS fix within {km} km — these are the riders in your area.","list.empty":"No riders available right now — try again later.",
+    "track.title":"Please wait — looking for a moto near you","track.at":"Your position: ±{m} m","track.where":"You are around {where}","track.scan":"Counting riders close by","track.sort":"Sorting by distance","track.found":"{n} riders found within {km} km","track.noLive":"No rider shares GPS near you — looking in your area instead","c.closest":"Closest","near.line":"This moto is closest to you: {name} · {km}. You still choose who to wait for.",
     "where.line":"You are around {where} · {km} km from its centre",
-    "live.count":"{n} riders live near you","live.one":"{n} rider live near you",
     "c.off":"offline","c.book":"Drive me","c.call":"Call","c.rate":"Rate",
     "c.available":"Ready","c.busy":"Has a passenger","c.live":"LIVE","c.km":"{km} km","c.noGps":"No GPS",
     "m.drivers":"Riders","m.online":"Online now","m.areas":"Districts",
@@ -511,9 +488,10 @@ var session = { kind: null };
 var health = {};
 var sheetDriver = null;
 var clientPos = null;
-var nearOn = false;
+var locStage = "wait";
+var availableOnly = false;
 var fareQuote = null;
-var cascadeFrom = null;
+var interview = null;
 var wherePoint = null;
 
 function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
@@ -549,12 +527,12 @@ function geoFix(options){
 }
 function nearParam(){ return clientPos ? clientPos.lat.toFixed(4) + "," + clientPos.lng.toFixed(4) : ""; }
 
-// The deepest division the rider picked, or — while "near me" is on — the one their own GPS fix falls in.
-function pickedDivision(){ return cascadeFrom ? cascadeFrom.value() : null; }
+// The deepest place the interview has an answer for, and the GPS fix as the fallback area.
+function pickedDivision(){ return interview ? interview.value() : null; }
 function divisionFilter(useGpsArea){
   var picked = pickedDivision();
   if (picked) return picked.code;
-  return useGpsArea && nearOn && wherePoint ? wherePoint.code : "";
+  return useGpsArea && wherePoint ? wherePoint.code : "";
 }
 
 /* Which Rwandan area a rider answers for: the division they picked beats the old free-text zone. */
@@ -631,7 +609,8 @@ function applyLang(){
   [].forEach.call(document.querySelectorAll("[data-i18n-tip]"), function(el){ el.setAttribute("title", t(el.getAttribute("data-i18n-tip"))); });
   [].forEach.call(document.querySelectorAll(".lang button"), function(b){ b.setAttribute("aria-pressed", String(b.dataset.lang === lang)); });
   if (window.SERE_DIVISIONS) SERE_DIVISIONS.setLang(lang);
-  setNear(nearOn);
+  if (window.SERE_INTERVIEW) SERE_INTERVIEW.setLang(lang);
+  setLocStage(locStage);
   if (trackStage) setTrack(trackStage);
   renderDrivers(); renderStats(); renderMenu(); renderWhere();
   if (clientPos) loadWhere();
@@ -665,11 +644,8 @@ function renderInstall(){
 
 function renderMenu(){
   document.getElementById("miAdmin").hidden = !(session.kind === "driver" && session.driver.isAdmin);
-  document.getElementById("miNear").setAttribute("aria-checked", String(nearOn));
-  document.getElementById("miNearVal").textContent = nearOn ? "✓" : "";
-  var onlineOnly = document.getElementById("fOnline").checked;
-  document.getElementById("miOnline").setAttribute("aria-checked", String(onlineOnly));
-  document.getElementById("miOnlineVal").textContent = onlineOnly ? "✓" : "";
+  document.getElementById("miOnline").setAttribute("aria-checked", String(availableOnly));
+  document.getElementById("miOnlineVal").textContent = availableOnly ? "✓" : "";
   renderInstall();
 }
 
@@ -694,12 +670,7 @@ document.addEventListener("click", function(e){
   el.addEventListener("click", function(){
     if (el.id === "btnInstall") return;
     if (el.tagName === "A") { setMenu(false); return; }
-    if (el.id === "miNear") document.getElementById("btnNear").click();
-    if (el.id === "miOnline") {
-      var box = document.getElementById("fOnline");
-      box.checked = !box.checked;
-      box.dispatchEvent(new Event("change"));
-    }
+    if (el.id === "miOnline") { availableOnly = !availableOnly; loadDrivers(); }
     renderMenu();
   });
 });
@@ -738,7 +709,7 @@ async function fetchDrivers(extra, gpsArea){
   var code = divisionFilter(gpsArea);
   if (code) params.set("division", code);
   if (document.getElementById("fNeed").value) params.set("service", document.getElementById("fNeed").value);
-  if (document.getElementById("fOnline").checked) params.set("available", "1");
+  if (availableOnly) params.set("available", "1");
   (extra || []).forEach(function(pair){ params.set(pair[0], pair[1]); });
   var data = await api("/api/drivers?" + params.toString());
   return data.drivers;
@@ -746,7 +717,7 @@ async function fetchDrivers(extra, gpsArea){
 
 async function loadDrivers(){
   nearFallback = false;
-  var tracking = nearOn && !!clientPos;
+  var tracking = !!clientPos;
   var t0 = Date.now();
   trackInfo.riders = null;
   if (tracking) setTrack("scan");
@@ -781,7 +752,7 @@ async function loadDrivers(){
   }
 }
 
-var TRACK_STEPS = ["geo", "scan", "sort"];
+var TRACK_STEPS = ["scan", "sort"];
 var trackStage = null;
 var trackInfo = { accuracy: null, riders: null };
 function trackNote(){
@@ -805,13 +776,17 @@ function setTrack(stage, note){
 
 function renderDrivers(){
   var box = document.getElementById("drivers");
-  var liveCount = drivers.filter(function(d){ return d.live; }).length;
-  document.getElementById("count").textContent = drivers.length + " · " + t("m.drivers");
-  var tag = document.getElementById("liveTag");
-  tag.hidden = liveCount === 0;
-  document.getElementById("liveCount").textContent = t(liveCount === 1 ? "live.one" : "live.count").replace("{n}", liveCount);
+  /* The only number a passenger needs above the list is how many riders can take them right now. */
+  var ready = drivers.filter(function(d){ return d.online && d.state === "available"; }).length;
+  var pill = document.getElementById("availPill");
+  document.getElementById("availN").textContent = ready;
+  pill.hidden = drivers.length === 0;
+  var title = document.getElementById("resultsTitle");
+  var titleKey = drivers.length ? "pick.title" : "results.title";
+  title.setAttribute("data-i18n", titleKey);
+  title.textContent = t(titleKey);
   var nearest = null;
-  if (nearOn && !nearFallback) {
+  if (clientPos && !nearFallback) {
     var pool = drivers.filter(function(d){ return d.live && d.state === "available" && d.distanceKm != null; });
     if (!pool.length) pool = drivers.filter(function(d){ return d.distanceKm != null; });
     pool.sort(function(a, b){ return a.distanceKm - b.distanceKm; });
@@ -866,50 +841,38 @@ function renderDrivers(){
   });
 }
 
-["q","fType","fNeed","fOnline"].forEach(function(id){
+["q","fType","fNeed"].forEach(function(id){
   var el = document.getElementById(id);
   el.addEventListener(id==="q"?"input":"change", function(){ clearTimeout(el.timer); el.timer = setTimeout(loadDrivers, id==="q"?250:0); });
 });
 
-function setNear(on){
-  nearOn = on;
-  var btn = document.getElementById("btnNear");
-  btn.setAttribute("aria-pressed", String(on));
-  btn.textContent = on ? t("near.on").replace("{km}", NEAR_KM) : t("near.off");
-  btn.title = on ? t("near.onHint") : t("near.offHint");
-  if (menuOpen) renderMenu();
+/* Position is not an opt-in here: the page is a "who is closest" page, so the browser is asked the
+   moment the app opens, and a passenger who tapped "not now" gets one chip to ask again. */
+function setLocStage(stage){
+  locStage = stage;
+  var key = stage === "deny" ? "loc.deny" : "loc.waiting";
+  var text = document.getElementById("locText");
+  text.setAttribute("data-i18n", key);
+  text.textContent = t(key);
+  document.getElementById("locBar").hidden = stage === "fix";
+  document.getElementById("btnLoc").hidden = stage !== "deny";
 }
 
-document.getElementById("btnNear").onclick = async function(){
-  if (!navigator.geolocation) { showMsg("findErr", t("loc.unsupported"), false); return; }
-  if (!clientPos) {
-    this.disabled = true;
-    setTrack("geo");
-    clientPos = await geoFix();
-    this.disabled = false;
-    if (!clientPos) { trackInfo.accuracy = null; setTrack(null); showMsg("findErr", t("track.noFix"), false); return; }
-    trackInfo.accuracy = clientPos.accuracy;
-    setTrack("geo");
-    if (!wherePoint) await loadWhere();
+async function requireLocation(){
+  if (!navigator.geolocation) {
+    setLocStage("deny");
+    showMsg("findErr", t("loc.unsupported"), false);
+    return;
   }
-  setNear(!nearOn);
-  loadDrivers();
-};
-
-// A rider who already granted permission should not have to tap again to see who is close.
-async function autoNear(){
-  if (!navigator.permissions || !navigator.geolocation) return;
-  var status;
-  try { status = await navigator.permissions.query({ name: "geolocation" }); }
-  catch (error) { return; }
-  if (status.state !== "granted") return;
-  clientPos = await geoFix({ timeout: 5000 });
-  if (!clientPos) return;
+  setLocStage("wait");
+  clientPos = await geoFix();
+  if (!clientPos) { setLocStage("deny"); return; }
   trackInfo.accuracy = clientPos.accuracy;
-  setNear(true);
+  setLocStage("fix");
   await loadWhere();
   await loadDrivers();
 }
+document.getElementById("btnLoc").onclick = requireLocation;
 
 document.getElementById("btnSearch").onclick = function(){
   loadDrivers();
@@ -1031,10 +994,17 @@ document.getElementById("shForm").addEventListener("submit", async function(e){
   }
 });
 
+/* Every answer re-runs the search, so the list is already on screen by the time the
+   destination question appears under the interview. */
+function onAnswer(value){
+  document.getElementById("destBox").hidden = !value;
+  loadDrivers();
+}
+
 async function boot(){
   document.getElementById("yr").textContent = new Date().getFullYear();
-  if (window.SERE_DIVISIONS) {
-    cascadeFrom = SERE_DIVISIONS.mount(document.getElementById("divFrom"), { depth: 3, onChange: function(){ loadDrivers(); } });
+  if (window.SERE_DIVISIONS && window.SERE_INTERVIEW) {
+    interview = SERE_INTERVIEW.mount(document.getElementById("ask"), { onChange: onAnswer });
   }
   try { health = await api("/api/health"); } catch (error) { showMsg("findErr", error.message, false); }
   try {
@@ -1046,7 +1016,7 @@ async function boot(){
   await loadDrivers();
   applyLang();
   if (new URLSearchParams(location.search).get("view") === "mine") location.replace("/passenger");
-  autoNear();
+  requireLocation();
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function(){});
 }
 document.addEventListener("keydown", function(e){ if (e.key === "Escape") { setMenu(false); closeSheet(); } });

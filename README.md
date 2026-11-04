@@ -13,8 +13,9 @@ Motorcycle fares are not negotiated: the server prices every moto trip on the RU
 measured on real roads through OpenStreetMap, so neither the client nor the rider can move the number. A
 rider's phone posts their own GPS fix while the app is open, which is what makes "who is near me and free"
 a live answer instead of a zone guess. Every area in the app comes from Rwanda's own register of 17,437
-divisions — Intara, Akarere, Umurenge, Akagari and Umudugudu — picked from cascading dropdowns rather than
-typed, so a search for Gasabo and a fix posted in neighbouring Kimisagara reach the same rider.
+divisions — Intara, Akarere, Umurenge, Akagari and Umudugudu. The booking page asks for them one question at
+a time and the dashboards use cascading dropdowns, so a search for Gasabo and a fix posted in neighbouring
+Kimisagara reach the same rider.
 
 Real backend, not a prototype: Express + Neon Postgres (`pg`), passwordless OTP login, RSA-verified
 Google sign-in, admin-reviewed applications, rider documents in an S3-compatible bucket, and live provider
@@ -119,7 +120,9 @@ returns approved drivers with `distanceKm`, `locAgeSeconds`, `live` and `state`:
   clears the trip **and** takes the rider offline, so the next trip needs a deliberate `Nditeguye` (I'm ready).
   A rider already carrying a passenger cannot be accepted again — `409 driver_busy` — and the client card shows
   *Has a passenger* with the Drive-me button disabled.
-* `available=1` filters to riders who are online and free, which is what the "Near me · 25 km" toggle asks for.
+* `available=1` filters to riders who are online and free. On the booking page the passenger asks for it with
+  the *Bari online gusa* / *Online riders only* switch inside the Menu; the number beside the results heading is
+  the same set, counted from the rows already on screen.
 * `division=<code>` filters by Rwanda's own administrative map instead of a typed zone name — see below.
 
 ## Rwanda divisions
@@ -169,13 +172,22 @@ name, label, path}` in the language asked for — `label` is the one-line "Umujy
 Nyarutarama", `path` the chain above the leaf. `zone` still travels along as the free-text label the older
 screens show, rebuilt from the picked division.
 
-**Dropdowns are one component.** `public/assets/divisions.js` exposes `SERE_DIVISIONS` — `mount(host, {depth,
-onChange})`, `value()`, `set(code)`, `repaint()`, `point(lat, lng)` and a static `setLang()`. A mount builds one
-`<select>` per level and asks `/api/locations?parent=` for the next row only after the pick above it changes,
-so the browser never holds 14,837 names. Depth decides the reach: 3 (province → district → sector) for the
-booking filters and the admin console, 4 for a rider's own work area. Dashboards repaint their panel, so a host
-that leaves the document is dropped from the component's registry — a language switch only refetches what is
-still on screen.
+**The dashboards share one dropdown component.** `public/assets/divisions.js` exposes `SERE_DIVISIONS` —
+`mount(host, {depth, onChange})`, `value()`, `set(code)`, `repaint()`, `point(lat, lng)`, `list(parentCode,
+levelKey)` and a static `setLang()`. A mount builds one `<select>` per level and asks `/api/locations?parent=`
+for the next row only after the pick above it changes, so the browser never holds 14,837 names. Depth decides
+the reach: 3 (province → district → sector) for the admin console, 4 for a rider's own work area. Dashboards
+repaint their panel, so a host that leaves the document is dropped from the component's registry — a language
+switch only refetches what is still on screen.
+
+**The booking page asks instead of offering dropdowns.** `public/assets/interview.js` exposes `SERE_INTERVIEW` —
+`levels`, `mount(host, {api, onChange})`, `setLang()`, `getLang()` — and drives the passenger through the same
+register one question at a time: *Intara yawe?* → *Akarere kawe?* → *Umurenge wawe?* → *Akagari kawe?* →
+*Umudugudu wawe?*. Each screen is a list of big chips for the rows `list()` returns for the previous answer,
+plus a Back chip; the last two levels carry *Komeza* / *Continue*, because a search matches at any level and a
+sector answer is already a complete one. `value()` is the deepest answer picked, and `onChange` fires on every
+step so the host can search as soon as the ladder ends. Its twelve `ask.*` strings are owned by the file and
+checked by `scripts/check-i18n.js` like every other dictionary; the page's RW/EN toggle calls `setLang()`.
 
 **Language is a parameter, not a guess.** Division names are built by the server, and
 `src/validate.js:language()` answers English when `lang` is missing. `SERE.api()` therefore appends
@@ -538,10 +550,12 @@ cancel and rating gates, saved places, the rider's division pick and the console
 what each of them answers in Kinyarwanda — and each admin console read plus the rider/trip levers and their
 `409` guards. It also walks the document lifecycle end to end: a rejected content type, a signed PUT that
 really lands in the fake bucket, the `complete` call reading back the true byte count, and the admin's signed
-GET returning exactly the bytes the rider uploaded. `npm run test:i18n` parses the shared dictionaries in
-`public/assets/auth.js` and fails if a key exists in one language only, is declared twice, or holds something
-the UI cannot render — the guard that keeps a translated label from silently disappearing when a dashboard
-grows a new control.
+GET returning exactly the bytes the rider uploaded. `npm run test:i18n` parses every dictionary in the
+frontend — `I18N`/`EC` in `public/assets/auth.js`, the dropdown library's own `I18N`, the interview's `I18N` in
+`public/assets/interview.js`, and the booking page's `I18N` plus its error map `T` — and fails if a key exists
+in one language only, is declared twice, holds something the UI cannot render, or is referenced but never
+defined — the guard that keeps a translated label from silently disappearing when a dashboard grows a new
+control.
 
 ## Pages
 
@@ -553,7 +567,7 @@ grows a new control.
 | `/login` | Drivers | Phone → OTP, or Google. Approved → `/rider`; shows waiting/rejected states instead of an error |
 | `/signup` | New drivers | Names, ID (16 digits), TIN (9 digits), plate, verified phone, vehicle type; live RRA/NIDA verdict line per field once the phone is confirmed |
 | `/admin` | `ADMIN_PHONE` only | Console: KYC queue with the uploaded ID / licence / plate photos, riders, trips, payments ledger, passengers, 7-day overview |
-| `/guide.html` | Everyone | Bilingual how-to instructions opened from the "Uko bikora" tiles |
+| `/guide` | Everyone | Bilingual how-to instructions, opened from the *Uko bikora* row in the header Menu |
 
 `public/assets/auth.js` holds the shared ES5 library — dictionaries, the app header, the OTP widget and the
 API helper — plus a page-controller registry. Each dashboard lives in its own file (`rider.js`,
@@ -569,13 +583,16 @@ passenger's at `/passenger`; the account kind comes from `GET /api/auth/session`
 token types. The console stays at `/admin`, reachable only from the Menu row that appears when the stored
 session belongs to an admin. `/?view=mine` (the old account tab) forwards to `/passenger`.
 
-Area pickers are the shared `public/assets/divisions.js` component, loaded by `/`, `/rider` and `/admin` — the
-booking filters and the console at sector depth, a rider's own work area down to cell. `/passenger` saves
-addresses as text plus optional coordinates instead.
+The dropdown pickers are the shared `public/assets/divisions.js` component, used by `/rider` (own work area down
+to cell) and `/admin` (riders filtered at sector depth); `/` loads the same file only for its `point()` and
+`list()` calls and asks the passenger through `interview.js` instead. `/passenger` saves addresses as text plus
+optional coordinates instead.
 
-The header **Menu** (between the account icon and the RW/EN toggle) holds the main views, the two search
-filters and **Shyira app kuri Phone** / **Install app on Phone** — a plain icon + title row, never a filled
-button. `public/manifest.json`, `public/sw.js` and the icons in `public/assets/` make the app installable.
+The header **Menu** (between the account icon and the RW/EN toggle) holds the main views — *Nshaka Motari*,
+*Ndi Motari*, *Ibyange*, *Uko bikora* → `/guide`, plus the admin row when the session belongs to an admin — the
+*Bari online gusa* / *Online riders only* switch and **Shyira app kuri Phone** / **Install app on Phone** — a
+plain icon + title row, never a filled button. `public/manifest.json`, `public/sw.js` and the icons in
+`public/assets/` make the app installable.
 Browsers only offer the prompt in a secure context on a real domain, so test installation from the deployed
 site (`localhost` also counts); while no prompt is pending the row stays hidden, and once the app is installed
 the row shows the installed state in place.
